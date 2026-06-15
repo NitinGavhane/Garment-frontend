@@ -25,129 +25,135 @@ class _CartScreenState extends State<CartScreen> {
     final shipping = subtotal > 100 ? 0 : 9.99;
     final total = subtotal + shipping;
 
-    return Scaffold(
-      appBar: AppBar(
-        title: Text(
-          'My Cart (${cart.count})',
-          style: AppTextStyles.title,
-        ),
-      ),
-      body: items.isEmpty
-          ? Center(
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  const Icon(Iconsax.shopping_bag,
-                      size: 80, color: AppColors.textHint),
-                  const SizedBox(height: 16),
-                  Text(
-                    'Your cart is empty',
-                    style: AppTextStyles.headline3,
+    final screenSize = MediaQuery.of(context).size;
+    return ConstrainedBox(
+      constraints: BoxConstraints.loose(screenSize),
+      child: SafeArea(
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Padding(
+              padding: const EdgeInsets.fromLTRB(
+                  AppDimensions.md, AppDimensions.md, AppDimensions.md, 0),
+              child: Text(
+                'My Cart (${cart.count})',
+                style: AppTextStyles.title,
+              ),
+            ),
+            items.isEmpty
+                ? Expanded(
+                    child: Center(
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          const Icon(Iconsax.shopping_bag,
+                              size: 80, color: AppColors.textHint),
+                          const SizedBox(height: 16),
+                          Text(
+                            'Your cart is empty',
+                            style: AppTextStyles.headline3,
+                          ),
+                          const SizedBox(height: 8),
+                          Text(
+                            'Add items to get started',
+                            style: AppTextStyles.subtitle,
+                          ),
+                        ],
+                      ),
+                    ),
+                  )
+                : Expanded(
+                    child: ListView.separated(
+                      padding: const EdgeInsets.all(AppDimensions.md),
+                      itemCount: items.length,
+                      separatorBuilder: (_, __) => const SizedBox(height: 12),
+                      itemBuilder: (context, index) {
+                        final item = items[index];
+                        return _CartItemCard(
+                          item: item,
+                          onIncrement: () => context
+                              .read<CartProvider>()
+                              .updateQuantity(index, 1),
+                          onDecrement: () => context
+                              .read<CartProvider>()
+                              .updateQuantity(index, -1),
+                          onRemove: () =>
+                              context.read<CartProvider>().removeItem(index),
+                        );
+                      },
+                    ),
                   ),
-                  const SizedBox(height: 8),
-                  Text(
-                    'Add items to get started',
-                    style: AppTextStyles.subtitle,
+            Container(
+              padding: const EdgeInsets.all(AppDimensions.md),
+              decoration: BoxDecoration(
+                color: AppColors.surface,
+                boxShadow: [
+                  BoxShadow(
+                    color: AppColors.black.withValues(alpha: 0.05),
+                    blurRadius: 10,
+                    offset: const Offset(0, -2),
                   ),
                 ],
               ),
-            )
-          : Column(
-              children: [
-                Expanded(
-                  child: ListView.separated(
-                    padding: const EdgeInsets.all(AppDimensions.md),
-                    itemCount: items.length,
-                    separatorBuilder: (_, __) => const SizedBox(height: 12),
-                    itemBuilder: (context, index) {
-                      final item = items[index];
-                      return _CartItemCard(
-                        item: item,
-                        onIncrement: () =>
-                            context.read<CartProvider>().updateQuantity(index, 1),
-                        onDecrement: () =>
-                            context.read<CartProvider>().updateQuantity(index, -1),
-                        onRemove: () =>
-                            context.read<CartProvider>().removeItem(index),
-                      );
-                    },
-                  ),
-                ),
-                Container(
-                  padding: const EdgeInsets.all(AppDimensions.md),
-                  decoration: BoxDecoration(
-                    color: AppColors.surface,
-                    boxShadow: [
-                      BoxShadow(
-                        color: AppColors.black.withValues(alpha: 0.05),
-                        blurRadius: 10,
-                        offset: const Offset(0, -2),
-                      ),
-                    ],
-                  ),
-                  child: SafeArea(
-                    top: false,
-                    child: Column(
+              child: SafeArea(
+                top: false,
+                child: Column(
+                  children: [
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            Text('Subtotal',
-                                style: AppTextStyles.body),
-                            Text('₹${subtotal.toStringAsFixed(2)}',
-                                style: AppTextStyles.subtitle),
-                          ],
-                        ),
-                        const SizedBox(height: 6),
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            Text('Shipping',
-                                style: AppTextStyles.bodySmall),
-                            Text(
-                              shipping == 0
-                                  ? 'FREE'
-                                  : '₹${shipping.toStringAsFixed(2)}',
-                              style: AppTextStyles.bodySmall.copyWith(
-                                color: shipping == 0
-                                    ? AppColors.success
-                                    : AppColors.textSecondary,
-                              ),
-                            ),
-                          ],
-                        ),
-                        const SizedBox(height: 6),
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            Text(
-                              'Total',
-                              style: AppTextStyles.title,
-                            ),
-                            Text(
-                              '₹${total.toStringAsFixed(2)}',
-                              style: AppTextStyles.headline3.copyWith(
-                                color: AppColors.secondary,
-                              ),
-                            ),
-                          ],
-                        ),
-                        const SizedBox(height: AppDimensions.md),
-                        AppButton(
-                          label: 'Checkout • ₹${total.toStringAsFixed(2)}',
-                          onPressed: () => Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                              builder: (_) => const CheckoutScreen(),
-                            ),
+                        Text('Subtotal', style: AppTextStyles.body),
+                        Text('₹${subtotal.toStringAsFixed(2)}',
+                            style: AppTextStyles.subtitle),
+                      ],
+                    ),
+                    const SizedBox(height: 6),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Text('Shipping', style: AppTextStyles.bodySmall),
+                        Text(
+                          shipping == 0
+                              ? 'FREE'
+                              : '₹${shipping.toStringAsFixed(2)}',
+                          style: AppTextStyles.bodySmall.copyWith(
+                            color: shipping == 0
+                                ? AppColors.success
+                                : AppColors.textSecondary,
                           ),
                         ),
                       ],
                     ),
-                  ),
+                    const SizedBox(height: 6),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Text('Total', style: AppTextStyles.title),
+                        Text(
+                          '₹${total.toStringAsFixed(2)}',
+                          style: AppTextStyles.headline3.copyWith(
+                            color: AppColors.secondary,
+                          ),
+                        ),
+                      ],
+                    ),
+                    const SizedBox(height: AppDimensions.md),
+                    AppButton(
+                      label: 'Checkout • ₹${total.toStringAsFixed(2)}',
+                      onPressed: () => Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (_) => const CheckoutScreen(),
+                        ),
+                      ),
+                    ),
+                  ],
                 ),
-              ],
+              ),
             ),
+          ],
+        ),
+      ),
     );
   }
 }
