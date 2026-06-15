@@ -21,9 +21,14 @@ class CartProvider extends ChangeNotifier {
     notifyListeners();
     try {
       final response = await CartApiService.getCart();
-      final apiItems = (response['items'] as List<dynamic>?)
-              ?.map((i) => ApiCartItem.fromJson(i as Map<String, dynamic>))
-              .toList() ?? [];
+      final rawItems = response['items'] as List<dynamic>? ?? [];
+      final apiItems = <ApiCartItem>[];
+      for (final item in rawItems) {
+        try {
+          apiItems.add(ApiCartItem.fromJson(item as Map<String, dynamic>));
+        } catch (_) {
+        }
+      }
 
       for (final apiItem in apiItems) {
         final localIndex = _items.indexWhere(

@@ -882,9 +882,9 @@ class MockData {
   ];
 
   static List<Map<String, dynamic>> profileOptions = [
-    {'title': 'My Orders', 'icon': Icons.receipt_long, 'count': '4'},
-    {'title': 'Wishlist', 'icon': Icons.favorite_outline, 'count': '6'},
-    {'title': 'Rewards', 'icon': Icons.card_giftcard, 'count': '250'},
+    {'title': 'My Orders', 'icon': Icons.receipt_long, 'count': ''},
+    {'title': 'Wishlist', 'icon': Icons.favorite_outline, 'count': ''},
+    {'title': 'Rewards', 'icon': Icons.card_giftcard, 'count': ''},
     {'title': 'Payments', 'icon': Icons.payment_outlined, 'count': ''},
     {'title': 'Manage Account', 'icon': Icons.person_outline, 'count': ''},
     {'title': 'Help', 'icon': Icons.headset_mic, 'count': ''},

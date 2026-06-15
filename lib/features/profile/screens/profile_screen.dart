@@ -40,8 +40,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
     return Consumer<AuthProvider>(
       builder: (_, auth, __) {
         final user = auth.user;
-        final ordersCount = context.watch<OrderProvider>().count;
-        final wishlistCount = context.watch<WishlistProvider>().count;
 
         if (user == null) {
           return Scaffold(
@@ -154,75 +152,91 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      _statBadge('Orders', '$ordersCount'),
+                      _statBadge('Orders', '${context.watch<OrderProvider>().count}'),
                       const SizedBox(width: AppDimensions.lg),
-                      _statBadge('Wishlist', '$wishlistCount'),
+                      _statBadge('Wishlist', '${context.watch<WishlistProvider>().count}'),
                       const SizedBox(width: AppDimensions.lg),
                       _statBadge('Wallet', '₹${user.walletBalance.toStringAsFixed(0)}'),
                     ],
                   ),
                   const SizedBox(height: AppDimensions.xxl),
-                  ...MockData.profileOptions.map((opt) => ListTile(
-                        leading: Container(
-                          width: 40, height: 40,
-                          decoration: BoxDecoration(
-                            color: AppColors.divider,
-                            borderRadius: BorderRadius.circular(10),
-                          ),
-                          child: Icon(
-                            opt['icon'] as IconData,
-                            size: 20, color: AppColors.textPrimary,
-                          ),
+                  ...MockData.profileOptions.map((opt) {
+                    final title = opt['title'] as String;
+                    String? count;
+                    switch (title) {
+                      case 'My Orders':
+                        count = '${context.watch<OrderProvider>().count}';
+                        break;
+                      case 'Wishlist':
+                        count = '${context.watch<WishlistProvider>().count}';
+                        break;
+                      case 'Rewards':
+                        count = user.walletBalance > 0
+                            ? '${user.walletBalance.toStringAsFixed(0)} pts'
+                            : null;
+                        break;
+                    }
+                    return ListTile(
+                      leading: Container(
+                        width: 40, height: 40,
+                        decoration: BoxDecoration(
+                          color: AppColors.divider,
+                          borderRadius: BorderRadius.circular(10),
                         ),
-                        title: Text(
-                          opt['title'] as String,
-                          style: AppTextStyles.body,
+                        child: Icon(
+                          opt['icon'] as IconData,
+                          size: 20, color: AppColors.textPrimary,
                         ),
-                        trailing: Row(
-                          mainAxisSize: MainAxisSize.min,
-                          children: [
-                            if ((opt['count'] as String).isNotEmpty)
-                              Text(
-                                opt['count'] as String,
-                                style: AppTextStyles.bodySmall.copyWith(
-                                  color: AppColors.textHint,
-                                ),
+                      ),
+                      title: Text(
+                        title,
+                        style: AppTextStyles.body,
+                      ),
+                      trailing: Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          if (count != null)
+                            Text(
+                              count,
+                              style: AppTextStyles.bodySmall.copyWith(
+                                color: AppColors.textHint,
                               ),
-                            const SizedBox(width: 8),
-                            const Icon(Icons.chevron_right,
-                                color: AppColors.textHint, size: 20),
-                          ],
-                        ),
-                        contentPadding: const EdgeInsets.symmetric(
-                            horizontal: 4, vertical: 2),
-                        onTap: () {
-                          final title = opt['title'] as String;
-                          Widget screen;
-                          switch (title) {
-                            case 'My Orders':
-                              screen = const OrderListScreen(); break;
-                            case 'Wishlist':
-                              screen = const WishlistScreen(); break;
-                            case 'Rewards':
-                              screen = const WalletScreen(); break;
-                            case 'Payments':
-                              screen = const PaymentsScreen(); break;
-                            case 'Manage Account':
-                              screen = const SettingsScreen(); break;
-                            case 'Help':
-                              screen = const HelpScreen(); break;
-                            case 'Legal & Policies':
-                              _showLegalPolicies(context);
-                              return;
-                            default:
-                              return;
-                          }
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(builder: (_) => screen),
-                          );
-                        },
-                      )),
+                            ),
+                          const SizedBox(width: 8),
+                          const Icon(Icons.chevron_right,
+                              color: AppColors.textHint, size: 20),
+                        ],
+                      ),
+                      contentPadding: const EdgeInsets.symmetric(
+                          horizontal: 4, vertical: 2),
+                      onTap: () {
+                        Widget screen;
+                        switch (title) {
+                          case 'My Orders':
+                            screen = const OrderListScreen(); break;
+                          case 'Wishlist':
+                            screen = const WishlistScreen(); break;
+                          case 'Rewards':
+                            screen = const WalletScreen(); break;
+                          case 'Payments':
+                            screen = const PaymentsScreen(); break;
+                          case 'Manage Account':
+                            screen = const SettingsScreen(); break;
+                          case 'Help':
+                            screen = const HelpScreen(); break;
+                          case 'Legal & Policies':
+                            _showLegalPolicies(context);
+                            return;
+                          default:
+                            return;
+                        }
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(builder: (_) => screen),
+                        );
+                      },
+                    );
+                  }),
                   const SizedBox(height: AppDimensions.lg),
                   AppButton(
                     label: 'Sign Out',

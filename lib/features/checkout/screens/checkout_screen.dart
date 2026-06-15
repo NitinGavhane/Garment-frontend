@@ -8,13 +8,13 @@ import '../../../core/widgets/app_button.dart';
 import '../../../core/widgets/app_text_field.dart';
 import '../../../core/services/order_api_service.dart';
 import '../../../core/services/cart_api_service.dart';
+import '../../../core/services/payment_api_service.dart';
 import '../../../core/services/api_client.dart';
 import '../../../core/services/payment_methods_api_service.dart';
 import '../../../providers/cart_provider.dart';
 import '../../../providers/auth_provider.dart';
 import '../../../providers/address_provider.dart';
 import '../../../models/address.dart';
-import '../../payment/screens/payment_screen.dart';
 
 class CheckoutScreen extends StatefulWidget {
   const CheckoutScreen({super.key});
@@ -27,6 +27,7 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
   Address? _selectedAddress;
   String _selectedPayment = 'Google Pay';
   bool _isPlacing = false;
+  bool _isProcessing = false;
   String? _error;
   List<Map<String, dynamic>> _paymentMethods = [];
 
@@ -50,6 +51,7 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
       if (mounted) {
         setState(() {
           _paymentMethods = methods.cast<Map<String, dynamic>>();
+          _enrichPaymentMethods();
           if (_paymentMethods.isNotEmpty) {
             _selectedPayment = _paymentMethods.first['name'] as String;
           }
@@ -59,14 +61,35 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
       if (mounted) {
         setState(() {
           _paymentMethods = [
-            {'name': 'Google Pay', 'code': 'gpay', 'is_active': true},
-            {'name': 'PhonePe', 'code': 'phonepe', 'is_active': true},
-            {'name': 'Paytm', 'code': 'paytm', 'is_active': true},
-            {'name': 'Credit Card', 'code': 'card', 'is_active': true},
-            {'name': 'Cash on Delivery', 'code': 'cod', 'is_active': true},
+            {'name': 'Google Pay', 'code': 'gpay', 'is_active': true, 'isPopular': true},
+            {'name': 'PhonePe', 'code': 'phonepe', 'is_active': true, 'isPopular': true},
+            {'name': 'Paytm', 'code': 'paytm', 'is_active': true, 'isPopular': true},
+            {'name': 'Credit Card', 'code': 'card', 'is_active': true, 'isPopular': false},
+            {'name': 'Debit Card', 'code': 'debit', 'is_active': true, 'isPopular': false},
+            {'name': 'Net Banking', 'code': 'netbanking', 'is_active': true, 'isPopular': false},
+            {'name': 'Cash on Delivery', 'code': 'cod', 'is_active': true, 'isPopular': false},
           ];
         });
       }
+    }
+  }
+
+  void _enrichPaymentMethods() {
+    for (final pm in _paymentMethods) {
+      final code = pm['code'] as String? ?? '';
+      pm['isPopular'] = ['gpay', 'phonepe', 'paytm'].contains(code);
+    }
+  }
+
+  IconData _iconForPayment(String code) {
+    switch (code) {
+      case 'gpay': return Icons.g_mobiledata;
+      case 'phonepe': return Icons.phone_android;
+      case 'paytm': return Icons.account_balance_wallet;
+      case 'card': return Icons.credit_card;
+      case 'debit': return Icons.credit_card_outlined;
+      case 'netbanking': return Icons.account_balance;
+      default: return Icons.money;
     }
   }
 
@@ -98,29 +121,96 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
       final orderId = orderResult['id'] as String;
       final amount = (orderResult['final_amount'] as num).toDouble();
 
-      await CartApiService.getCart();
-
       if (!mounted) return;
 
-      await Navigator.push(
-        context,
-        MaterialPageRoute(
-          builder: (_) => PaymentScreen(
-            orderId: orderId,
-            amount: amount,
-          ),
-        ),
+      setState(() {
+        _isPlacing = false;
+        _isProcessing = true;
+      });
+
+      await PaymentApiService.createPayment(orderId: orderId);
+      final txnId = 'TXN${DateTime.now().millisecondsSinceEpoch}';
+      await PaymentApiService.verifyPayment(
+        orderId: orderId,
+        transactionId: txnId,
+        paymentMethod: _selectedPayment,
       );
 
-      cart.clear();
-      if (mounted) Navigator.pushNamedAndRemoveUntil(context, '/main', (_) => false);
+      if (!mounted) return;
+      _showSuccessDialog(orderId: orderId, amount: amount);
     } on ApiException catch (e) {
       setState(() => _error = e.message);
     } catch (e) {
-      setState(() => _error = 'Failed to place order. Please try again.');
+      setState(() => _error = 'Payment failed. Please try again.');
     } finally {
-      if (mounted) setState(() => _isPlacing = false);
+      if (mounted) setState(() {
+        _isPlacing = false;
+        _isProcessing = false;
+      });
     }
+  }
+
+  void _showSuccessDialog({required String orderId, required double amount}) {
+    final cart = context.read<CartProvider>();
+    cart.clear();
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      backgroundColor: Colors.transparent,
+      builder: (ctx) => Container(
+        padding: const EdgeInsets.all(AppDimensions.lg),
+        decoration: const BoxDecoration(
+          color: AppColors.surface,
+          borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
+        ),
+        child: SafeArea(
+          top: false,
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Container(
+                width: 48, height: 48,
+                decoration: BoxDecoration(
+                  color: AppColors.success.withValues(alpha: 0.1),
+                  shape: BoxShape.circle,
+                ),
+                child: const Icon(Icons.check, color: AppColors.success, size: 28),
+              ),
+              const SizedBox(height: AppDimensions.md),
+              Text('Payment Successful!', style: AppTextStyles.headline3),
+              const SizedBox(height: AppDimensions.sm),
+              Text(
+                '₹${amount.toStringAsFixed(2)} paid via $_selectedPayment',
+                style: AppTextStyles.bodySmall,
+                textAlign: TextAlign.center,
+              ),
+              const SizedBox(height: AppDimensions.xl),
+              AppButton(
+                label: 'View Order',
+                onPressed: () {
+                  Navigator.pop(ctx);
+                  Navigator.pushNamedAndRemoveUntil(context, '/orders', (_) => false);
+                },
+              ),
+              const SizedBox(height: AppDimensions.sm),
+              TextButton(
+                onPressed: () {
+                  Navigator.pop(ctx);
+                  Navigator.pushNamedAndRemoveUntil(context, '/main', (_) => false);
+                },
+                child: Text(
+                  'Continue Shopping',
+                  style: AppTextStyles.bodySmall.copyWith(
+                    color: AppColors.textSecondary,
+                    fontWeight: FontWeight.w500,
+                  ),
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
   }
 
   @override
@@ -194,6 +284,7 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
                 name: pm['name'] as String,
                 code: pm['code'] as String? ?? '',
                 isSelected: _selectedPayment == pm['name'],
+                isPopular: pm['isPopular'] as bool? ?? false,
                 onTap: () => setState(() => _selectedPayment = pm['name'] as String),
               )),
           const SizedBox(height: AppDimensions.lg),
@@ -323,9 +414,9 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
                 );
               }
               return AppButton(
-                label: 'Place Order • ₹${total.toStringAsFixed(2)}',
+                label: 'Pay ₹${total.toStringAsFixed(2)}',
                 onPressed: _placeOrder,
-                isLoading: _isPlacing,
+                isLoading: _isPlacing || _isProcessing,
               );
             },
           ),
@@ -552,11 +643,13 @@ class _PaymentMethodTile extends StatelessWidget {
   final String name;
   final String code;
   final bool isSelected;
+  final bool isPopular;
   final VoidCallback onTap;
 
   const _PaymentMethodTile({
     required this.name, required this.code,
-    required this.isSelected, required this.onTap,
+    required this.isSelected, this.isPopular = false,
+    required this.onTap,
   });
 
   IconData _iconFor(String code) {
@@ -593,7 +686,18 @@ class _PaymentMethodTile extends StatelessWidget {
                 color: isSelected ? AppColors.primary : AppColors.textHint),
             const SizedBox(width: 12),
             Expanded(child: Text(name, style: AppTextStyles.body)),
-            const SizedBox(width: 8),
+            if (isPopular)
+              Container(
+                margin: const EdgeInsets.only(right: 8),
+                padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
+                decoration: BoxDecoration(
+                  color: AppColors.success.withValues(alpha: 0.1),
+                  borderRadius: BorderRadius.circular(6),
+                ),
+                child: Text('Popular',
+                    style: AppTextStyles.caption.copyWith(
+                        color: AppColors.success, fontSize: 9)),
+              ),
             Icon(
               isSelected ? Icons.radio_button_checked : Icons.radio_button_off,
               size: 20,

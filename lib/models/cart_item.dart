@@ -59,12 +59,12 @@ class ApiCartItem {
 
   factory ApiCartItem.fromJson(Map<String, dynamic> json) {
     return ApiCartItem(
-      id: json['id'] as String,
-      productId: json['product_id'] as String,
+      id: (json['id'] as String?) ?? '',
+      productId: (json['product_id'] as String?) ?? '',
       productTitle: json['product_title'] as String?,
       variantId: json['variant_id'] as String?,
       variantInfo: json['variant_info'] as String?,
-      quantity: json['quantity'] as int,
+      quantity: (json['quantity'] as int?) ?? 1,
       price: (json['price'] as num?)?.toDouble(),
       imageUrl: json['image_url'] as String?,
     );
@@ -79,10 +79,10 @@ class ApiCartResponse {
 
   factory ApiCartResponse.fromJson(Map<String, dynamic> json) {
     return ApiCartResponse(
-      items: (json['items'] as List<dynamic>)
-          .map((i) => ApiCartItem.fromJson(i as Map<String, dynamic>))
-          .toList(),
-      total: (json['total'] as num).toDouble(),
+      items: (json['items'] as List<dynamic>?)
+              ?.map((i) => ApiCartItem.fromJson(i as Map<String, dynamic>))
+              .toList() ?? [],
+      total: (json['total'] as num?)?.toDouble() ?? 0,
     );
   }
 }
