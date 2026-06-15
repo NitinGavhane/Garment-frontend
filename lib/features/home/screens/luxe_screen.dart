@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
 import '../../../core/constants/app_colors.dart';
-import '../../../core/widgets/premium_product_card.dart';
+import '../../../core/constants/app_dimensions.dart';
+import '../../../core/widgets/product_card.dart';
 import '../../../core/services/product_api_service.dart';
 import '../../../models/product.dart';
 import '../../product/screens/product_detail_screen.dart';
@@ -60,13 +62,13 @@ class _LuxeScreenState extends State<LuxeScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color(0xFF0D0D0D),
+      backgroundColor: AppColors.inverseSurface,
       body: SafeArea(
         child: Column(
           children: [
             Container(
-              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-              color: const Color(0xFF0D0D0D),
+              padding: const EdgeInsets.symmetric(horizontal: AppDimensions.md, vertical: AppDimensions.sm),
+              color: AppColors.inverseSurface,
               child: Row(
                 children: [
                   Expanded(
@@ -79,20 +81,19 @@ class _LuxeScreenState extends State<LuxeScreen> {
                         height: 42,
                         decoration: BoxDecoration(
                           color: const Color(0xFF1A1A1A),
-                          borderRadius: BorderRadius.circular(999),
+                          borderRadius: BorderRadius.circular(AppDimensions.radiusFull),
                           border: Border.all(color: Colors.white.withValues(alpha: 0.1)),
                         ),
-                        padding: const EdgeInsets.symmetric(horizontal: 16),
+                        padding: const EdgeInsets.symmetric(horizontal: AppDimensions.md),
                         child: Row(
                           children: [
-                            Icon(Icons.search, size: 20, color: Colors.white.withValues(alpha: 0.5)),
-                            const SizedBox(width: 8),
+                            Icon(Icons.search, size: AppDimensions.iconSm, color: Colors.white.withValues(alpha: 0.5)),
+                            const SizedBox(width: AppDimensions.sm),
                             Text(
                               'Search luxury',
-                              style: TextStyle(
+                              style: GoogleFonts.poppins(
                                 fontSize: 13,
                                 color: Colors.white.withValues(alpha: 0.4),
-                                fontFamily: 'Poppins',
                               ),
                             ),
                           ],
@@ -100,7 +101,7 @@ class _LuxeScreenState extends State<LuxeScreen> {
                       ),
                     ),
                   ),
-                  const SizedBox(width: 8),
+                  const SizedBox(width: AppDimensions.sm),
                   IconButton(
                     icon: const Icon(Icons.person_outline, size: 22, color: Colors.white70),
                     onPressed: () => Navigator.push(
@@ -115,46 +116,43 @@ class _LuxeScreenState extends State<LuxeScreen> {
               child: _loading
                   ? const Center(child: CircularProgressIndicator(color: Colors.white54))
                   : SingleChildScrollView(
-                      padding: const EdgeInsets.all(16),
+                      padding: const EdgeInsets.all(AppDimensions.md),
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Text(
                             'Luxe Edit',
-                            style: TextStyle(
+                            style: GoogleFonts.poppins(
                               fontSize: 26,
                               fontWeight: FontWeight.w300,
-                              fontFamily: 'Poppins',
                               color: Colors.white,
                               letterSpacing: 2,
                             ),
                           ),
-                          const SizedBox(height: 4),
+                          const SizedBox(height: AppDimensions.xs),
                           Text(
                             'Premium selections for the discerning',
-                            style: TextStyle(
+                            style: GoogleFonts.poppins(
                               fontSize: 12,
                               color: Colors.white.withValues(alpha: 0.4),
-                              fontFamily: 'Poppins',
                               letterSpacing: 0.5,
                             ),
                           ),
-                          const SizedBox(height: 20),
+                          const SizedBox(height: AppDimensions.md + 4),
                           GridView.builder(
                             shrinkWrap: true,
                             physics: const NeverScrollableScrollPhysics(),
                             gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
                               crossAxisCount: 2,
-                              childAspectRatio: 0.55,
+                              childAspectRatio: 0.58,
                               crossAxisSpacing: 12,
                               mainAxisSpacing: 12,
                             ),
                             itemCount: _products.length,
                             itemBuilder: (context, index) {
                               final product = _products[index];
-                              return PremiumProductCard(
+                              return ProductCard(
                                 product: product,
-                                cardWidth: double.infinity,
                                 onTap: () => Navigator.push(
                                   context,
                                   MaterialPageRoute(

@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
 import '../../models/product.dart';
 import '../constants/app_colors.dart';
+import '../constants/app_dimensions.dart';
+import '../constants/app_text_styles.dart';
 import 'premium_product_card.dart';
 import 'animations.dart';
 import '../../features/product/screens/product_detail_screen.dart';
@@ -26,7 +27,12 @@ class ProductGridSection extends StatelessWidget {
 
     return Container(
       color: AppColors.surface,
-      padding: const EdgeInsets.fromLTRB(16, 20, 16, 8),
+      padding: const EdgeInsets.fromLTRB(
+        AppDimensions.md,
+        AppDimensions.md + 4,
+        AppDimensions.md,
+        AppDimensions.sm,
+      ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -38,21 +44,17 @@ class ProductGridSection extends StatelessWidget {
                 children: [
                   Text(
                     title,
-                    style: GoogleFonts.poppins(
-                      fontSize: 18,
+                    style: AppTextStyles.sectionLabel.copyWith(
                       fontWeight: FontWeight.w700,
-                      color: AppColors.nykaaBlack,
+                      fontSize: 18,
                       letterSpacing: 0.5,
                     ),
                   ),
                   if (subtitle != null) ...[
-                    const SizedBox(height: 2),
+                    const SizedBox(height: AppDimensions.xs - 2),
                     Text(
                       subtitle!,
-                      style: GoogleFonts.poppins(
-                        fontSize: 12,
-                        color: AppColors.textMuted,
-                      ),
+                      style: AppTextStyles.sectionSubtext,
                     ),
                   ],
                 ],
@@ -60,24 +62,28 @@ class ProductGridSection extends StatelessWidget {
               if (onViewAll != null)
                 TextButton(
                   onPressed: onViewAll,
+                  style: TextButton.styleFrom(
+                    padding: const EdgeInsets.symmetric(horizontal: AppDimensions.sm),
+                    minimumSize: Size.zero,
+                    tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                  ),
                   child: Text(
                     'View All',
-                    style: GoogleFonts.poppins(
-                      fontSize: 12,
+                    style: AppTextStyles.ctaButton.copyWith(
+                      color: AppColors.primary,
                       fontWeight: FontWeight.w600,
-                      color: AppColors.secondary,
                     ),
                   ),
                 ),
             ],
           ),
-          const SizedBox(height: 14),
-                SizedBox(
-                  height: 280,
+          const SizedBox(height: AppDimensions.sm + 6),
+          SizedBox(
+            height: 260,
             child: ListView.separated(
               scrollDirection: Axis.horizontal,
               itemCount: products.length,
-              separatorBuilder: (_, __) => const SizedBox(width: 12),
+              separatorBuilder: (_, __) => const SizedBox(width: AppDimensions.cardGap - 4),
               itemBuilder: (context, index) {
                 final product = products[index];
                 return StaggeredEntrance(

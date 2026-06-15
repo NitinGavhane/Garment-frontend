@@ -21,19 +21,27 @@ class CartProvider extends ChangeNotifier {
     notifyListeners();
     try {
       final response = await CartApiService.getCart();
-      final items = (response['items'] as List<dynamic>?)
+      final apiItems = (response['items'] as List<dynamic>?)
               ?.map((i) => ApiCartItem.fromJson(i as Map<String, dynamic>))
               .toList() ?? [];
-      _items = items.map((apiItem) {
-        final product = Product.fromApiCartItem(apiItem);
-        return CartItem(
-          id: apiItem.id,
-          product: product,
-          quantity: apiItem.quantity,
-          selectedSize: '',
-          selectedColor: '',
+
+      for (final apiItem in apiItems) {
+        final localIndex = _items.indexWhere(
+          (item) => item.product.id == apiItem.productId,
         );
-      }).toList();
+        if (localIndex >= 0) {
+          _items[localIndex].quantity = apiItem.quantity;
+        } else {
+          final product = Product.fromApiCartItem(apiItem);
+          _items.add(CartItem(
+            id: apiItem.id,
+            product: product,
+            quantity: apiItem.quantity,
+            selectedSize: '',
+            selectedColor: '',
+          ));
+        }
+      }
       _error = null;
     } on ApiException catch (e) {
       _error = e.message;

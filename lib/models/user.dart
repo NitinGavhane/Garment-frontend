@@ -34,4 +34,18 @@ class User {
       role: json['role'] as String? ?? 'customer',
     );
   }
+
+  Map<String, dynamic> toJson() {
+    return {
+      'id': id,
+      'full_name': fullName,
+      'email': email,
+      'phone': phone,
+      'avatar_url': avatarUrl,
+      'wallet_balance': walletBalance,
+      'referral_code': referralCode,
+      'is_verified': isVerified,
+      'role': role,
+    };
+  }
 }

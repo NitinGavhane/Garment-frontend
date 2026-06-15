@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:cached_network_image/cached_network_image.dart';
-import 'package:google_fonts/google_fonts.dart';
 import '../../models/product.dart';
 import '../constants/app_colors.dart';
+import '../constants/app_dimensions.dart';
+import '../constants/app_text_styles.dart';
 
 class PremiumProductCard extends StatelessWidget {
   final Product product;
@@ -23,8 +24,8 @@ class PremiumProductCard extends StatelessWidget {
       child: Container(
         width: cardWidth,
         decoration: BoxDecoration(
-          color: AppColors.white,
-          borderRadius: BorderRadius.circular(12),
+          color: AppColors.surfaceContainerLowest,
+          borderRadius: BorderRadius.circular(AppDimensions.radiusLg),
           boxShadow: [
             BoxShadow(
               color: Colors.black.withValues(alpha: 0.06),
@@ -36,50 +37,72 @@ class PremiumProductCard extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            AspectRatio(
-              aspectRatio: 0.83,
-              child: Container(
-                decoration: BoxDecoration(
-                  borderRadius: const BorderRadius.vertical(top: Radius.circular(12)),
-                  gradient: LinearGradient(
-                    colors: product.gradientColors,
-                    begin: Alignment.topLeft,
-                    end: Alignment.bottomRight,
-                  ),
-                ),
+            ClipRRect(
+              borderRadius: const BorderRadius.vertical(top: Radius.circular(AppDimensions.radiusLg)),
+              child: AspectRatio(
+                aspectRatio: 0.83,
                 child: Stack(
                   children: [
-                    Hero(
-                      tag: 'product-${product.id}',
-                      child: ClipRRect(
-                        borderRadius: const BorderRadius.vertical(top: Radius.circular(12)),
-                        child: CachedNetworkImage(
-                          imageUrl: product.imageUrl,
-                          width: double.infinity,
-                          height: double.infinity,
-                          fit: BoxFit.cover,
-                          placeholder: (_, __) => const SizedBox(),
-                          errorWidget: (_, __, ___) => const SizedBox(),
+                    CachedNetworkImage(
+                      imageUrl: product.imageUrl,
+                      width: double.infinity,
+                      height: double.infinity,
+                      fit: BoxFit.cover,
+                      placeholder: (_, __) => Container(
+                        color: AppColors.primaryLight,
+                        child: const Center(
+                          child: Icon(Icons.image, size: AppDimensions.iconLg, color: AppColors.primary),
+                        ),
+                      ),
+                      errorWidget: (_, __, ___) => Container(
+                        color: AppColors.primaryLight,
+                        child: const Center(
+                          child: Icon(Icons.image, size: AppDimensions.iconLg, color: AppColors.primary),
                         ),
                       ),
                     ),
                     if (product.discountPercentage > 0)
                       Positioned(
-                        top: 8,
-                        left: 8,
+                        top: AppDimensions.sm,
+                        left: AppDimensions.sm,
                         child: Container(
-                          padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 3),
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: AppDimensions.xs + 2,
+                            vertical: AppDimensions.xs - 2,
+                          ),
                           decoration: BoxDecoration(
-                            color: AppColors.secondary,
-                            borderRadius: BorderRadius.circular(4),
+                            color: AppColors.primary,
+                            borderRadius: BorderRadius.circular(AppDimensions.radiusSm),
                           ),
                           child: Text(
                             '-${product.discountPercentage}%',
-                            style: GoogleFonts.poppins(
-                              fontSize: 9,
-                              fontWeight: FontWeight.w700,
-                              color: AppColors.white,
-                            ),
+                            style: AppTextStyles.badge,
+                          ),
+                        ),
+                      ),
+                    if (product.rating > 0)
+                      Positioned(
+                        bottom: AppDimensions.sm,
+                        left: AppDimensions.sm,
+                        child: Container(
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: AppDimensions.xs + 1,
+                            vertical: AppDimensions.xs - 2,
+                          ),
+                          decoration: BoxDecoration(
+                            color: Colors.black.withValues(alpha: 0.55),
+                            borderRadius: BorderRadius.circular(AppDimensions.radiusSm),
+                          ),
+                          child: Row(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              const Icon(Icons.star, size: 10, color: AppColors.rating),
+                              const SizedBox(width: AppDimensions.xs - 2),
+                              Text(
+                                product.rating.toStringAsFixed(1),
+                                style: AppTextStyles.badge.copyWith(fontSize: 9),
+                              ),
+                            ],
                           ),
                         ),
                       ),
@@ -88,60 +111,60 @@ class PremiumProductCard extends StatelessWidget {
               ),
             ),
             Padding(
-              padding: const EdgeInsets.fromLTRB(8, 6, 8, 8),
+              padding: const EdgeInsets.fromLTRB(
+                AppDimensions.cardPadding,
+                AppDimensions.sm - 2,
+                AppDimensions.cardPadding,
+                AppDimensions.cardPadding,
+              ),
               child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    product.brand.isNotEmpty ? product.brand : product.title,
-                    style: GoogleFonts.poppins(
-                      fontSize: 11,
-                      fontWeight: FontWeight.w600,
-                      color: AppColors.textSecondary,
-                      letterSpacing: 0.5,
-                    ),
-                    maxLines: 1,
-                    overflow: TextOverflow.ellipsis,
-                  ),
-                  const SizedBox(height: 2),
-                  Text(
-                    product.brand.isNotEmpty ? product.title : '',
-                    style: GoogleFonts.poppins(
-                      fontSize: 13,
-                      fontWeight: FontWeight.w600,
-                      color: AppColors.nykaaBlack,
-                      letterSpacing: 0.3,
-                    ),
-                    maxLines: 2,
-                    overflow: TextOverflow.ellipsis,
-                  ),
-                  const SizedBox(height: 4),
-                  Row(
-                    children: [
-                      Text(
-                        '\u20B9${product.price.toStringAsFixed(0)}',
-                        style: GoogleFonts.poppins(
-                          fontSize: 14,
-                          fontWeight: FontWeight.w700,
-                          color: AppColors.nykaaBlack,
-                        ),
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      product.brand.isNotEmpty ? product.brand : product.title,
+                      style: AppTextStyles.labelSm.copyWith(
+                        color: AppColors.textMuted,
+                        letterSpacing: 0.5,
                       ),
-                      if (product.discountPercentage > 0) ...[
-                        const SizedBox(width: 6),
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                    ),
+                    const SizedBox(height: AppDimensions.xs - 2),
+                    Text(
+                      product.brand.isNotEmpty ? product.title : '',
+                      style: AppTextStyles.bodySmall.copyWith(
+                        color: AppColors.onSurface,
+                        fontWeight: FontWeight.w500,
+                        height: 1.3,
+                        fontSize: 12,
+                      ),
+                      maxLines: 2,
+                      overflow: TextOverflow.ellipsis,
+                    ),
+                    const SizedBox(height: AppDimensions.xs - 2),
+                    Row(
+                      children: [
                         Text(
-                          '\u20B9${product.originalPrice.toStringAsFixed(0)}',
-                          style: GoogleFonts.poppins(
-                            fontSize: 11,
-                            decoration: TextDecoration.lineThrough,
-                            color: AppColors.textMuted,
+                          '\u20B9${product.price.toStringAsFixed(0)}',
+                          style: AppTextStyles.priceSmall.copyWith(
+                            color: AppColors.primary,
+                            fontWeight: FontWeight.w700,
+                            fontSize: 13,
                           ),
                         ),
+                        if (product.discountPercentage > 0) ...[
+                          const SizedBox(width: AppDimensions.xs),
+                          Text(
+                            '\u20B9${product.originalPrice.toStringAsFixed(0)}',
+                            style: AppTextStyles.oldPrice.copyWith(fontSize: 9),
+                            overflow: TextOverflow.ellipsis,
+                          ),
+                        ],
                       ],
-                    ],
-                  ),
-                ],
+                    ),
+                  ],
+                ),
               ),
-            ),
           ],
         ),
       ),

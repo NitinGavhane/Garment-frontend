@@ -1,4 +1,6 @@
+import 'dart:convert';
 import 'package:flutter/foundation.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import '../core/services/api_client.dart';
 import '../core/services/auth_api_service.dart';
 import '../models/user.dart';
@@ -15,13 +17,34 @@ class AuthProvider extends ChangeNotifier {
 
   Future<void> checkAuth() async {
     await ApiClient.init();
-    if (await ApiClient.hasToken()) {
-      try {
-        final profile = await AuthApiService.getProfile();
-        _user = User.fromJson(profile);
-      } catch (_) {
-        await AuthApiService.logout();
+    if (!await ApiClient.hasToken()) {
+      _user = await _loadCachedUser();
+      notifyListeners();
+      return;
+    }
+
+    try {
+      final profile = await AuthApiService.getProfile();
+      _user = User.fromJson(profile);
+      await _cacheUser(_user!);
+    } on ApiException catch (e) {
+      if (e.statusCode == 401) {
+        try {
+          await AuthApiService.refreshToken();
+          final profile = await AuthApiService.getProfile();
+          _user = User.fromJson(profile);
+          await _cacheUser(_user!);
+        } catch (_) {
+          _user = await _loadCachedUser();
+          if (_user == null) {
+            await AuthApiService.logout();
+          }
+        }
+      } else {
+        _user = await _loadCachedUser();
       }
+    } catch (_) {
+      _user = await _loadCachedUser();
     }
     notifyListeners();
   }
@@ -38,6 +61,7 @@ class AuthProvider extends ChangeNotifier {
       await AuthApiService.login(email: email, password: password);
       final profile = await AuthApiService.getProfile();
       _user = User.fromJson(profile);
+      await _cacheUser(_user!);
       _isLoading = false;
       notifyListeners();
       return true;
@@ -162,6 +186,7 @@ class AuthProvider extends ChangeNotifier {
         phone: phone,
       );
       _user = User.fromJson(result);
+      await _cacheUser(_user!);
       _isLoading = false;
       notifyListeners();
       return true;
@@ -209,6 +234,7 @@ class AuthProvider extends ChangeNotifier {
 
   Future<void> logout() async {
     await AuthApiService.logout();
+    await _clearCachedUser();
     _user = null;
     notifyListeners();
   }
@@ -216,5 +242,26 @@ class AuthProvider extends ChangeNotifier {
   void clearError() {
     _error = null;
     notifyListeners();
+  }
+
+  Future<void> _cacheUser(User user) async {
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setString('cached_user', jsonEncode(user.toJson()));
+  }
+
+  Future<User?> _loadCachedUser() async {
+    try {
+      final prefs = await SharedPreferences.getInstance();
+      final data = prefs.getString('cached_user');
+      if (data != null) {
+        return User.fromJson(jsonDecode(data) as Map<String, dynamic>);
+      }
+    } catch (_) {}
+    return null;
+  }
+
+  Future<void> _clearCachedUser() async {
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.remove('cached_user');
   }
 }

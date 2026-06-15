@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
+import 'package:google_fonts/google_fonts.dart';
 import '../../../core/constants/app_colors.dart';
-import '../../../core/widgets/premium_product_card.dart';
+import '../../../core/constants/app_dimensions.dart';
+import '../../../core/widgets/product_card.dart';
 import '../../../core/services/product_api_service.dart';
 import '../../../models/product.dart';
 import '../../product/screens/product_detail_screen.dart';
@@ -65,7 +66,7 @@ class _NowScreenState extends State<NowScreen> {
         child: Column(
           children: [
             Container(
-              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+              padding: const EdgeInsets.symmetric(horizontal: AppDimensions.md, vertical: AppDimensions.sm),
               color: AppColors.surface,
               child: Row(
                 children: [
@@ -79,20 +80,19 @@ class _NowScreenState extends State<NowScreen> {
                         height: 42,
                         decoration: BoxDecoration(
                           color: AppColors.surfaceContainerLowest,
-                          borderRadius: BorderRadius.circular(999),
+                          borderRadius: BorderRadius.circular(AppDimensions.radiusFull),
                           border: Border.all(color: AppColors.outlineVariant.withValues(alpha: 0.2)),
                         ),
-                        padding: const EdgeInsets.symmetric(horizontal: 16),
+                        padding: const EdgeInsets.symmetric(horizontal: AppDimensions.md),
                         child: Row(
                           children: [
-                            Icon(Icons.search, size: 20, color: AppColors.onSurfaceVariant),
-                            const SizedBox(width: 8),
+                            Icon(Icons.search, size: AppDimensions.iconSm, color: AppColors.onSurfaceVariant),
+                            const SizedBox(width: AppDimensions.sm),
                             Text(
                               'Search trending styles',
-                              style: TextStyle(
+                              style: GoogleFonts.poppins(
                                 fontSize: 13,
                                 color: AppColors.textHint,
-                                fontFamily: 'Poppins',
                               ),
                             ),
                           ],
@@ -100,7 +100,7 @@ class _NowScreenState extends State<NowScreen> {
                       ),
                     ),
                   ),
-                  const SizedBox(width: 8),
+                  const SizedBox(width: AppDimensions.sm),
                   IconButton(
                     icon: const Icon(Icons.person_outline, size: 22),
                     color: AppColors.onSurface,
@@ -116,44 +116,41 @@ class _NowScreenState extends State<NowScreen> {
               child: _loading
                   ? const Center(child: CircularProgressIndicator())
                   : SingleChildScrollView(
-                      padding: const EdgeInsets.all(16),
+                      padding: const EdgeInsets.all(AppDimensions.md),
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Text(
                             'Trending Now',
-                            style: TextStyle(
+                            style: GoogleFonts.poppins(
                               fontSize: 22,
                               fontWeight: FontWeight.w700,
-                              fontFamily: 'Poppins',
-                              color: AppColors.nykaaBlack,
+                              color: AppColors.onSurface,
                             ),
                           ),
-                          const SizedBox(height: 4),
+                          const SizedBox(height: AppDimensions.xs),
                           Text(
                             'Fresh styles dropping daily',
-                            style: TextStyle(
+                            style: GoogleFonts.poppins(
                               fontSize: 13,
                               color: AppColors.textMuted,
-                              fontFamily: 'Poppins',
                             ),
                           ),
-                          const SizedBox(height: 16),
+                          const SizedBox(height: AppDimensions.md),
                           GridView.builder(
                             shrinkWrap: true,
                             physics: const NeverScrollableScrollPhysics(),
                             gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
                               crossAxisCount: 2,
-                              childAspectRatio: 0.55,
+                              childAspectRatio: 0.58,
                               crossAxisSpacing: 12,
                               mainAxisSpacing: 12,
                             ),
                             itemCount: _products.length,
                             itemBuilder: (context, index) {
                               final product = _products[index];
-                              return PremiumProductCard(
+                              return ProductCard(
                                 product: product,
-                                cardWidth: double.infinity,
                                 onTap: () => Navigator.push(
                                   context,
                                   MaterialPageRoute(

@@ -52,7 +52,9 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
   }
 
   void _buyNow() {
-    context.read<CartProvider>().addToCart(
+    final cart = context.read<CartProvider>();
+    cart.clear();
+    cart.addToCart(
       product: widget.product,
       quantity: _quantity,
       selectedSize: _selectedSize,

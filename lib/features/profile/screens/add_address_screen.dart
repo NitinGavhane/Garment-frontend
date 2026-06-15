@@ -4,6 +4,7 @@ import 'package:provider/provider.dart';
 import '../../../core/constants/app_colors.dart';
 import '../../../core/constants/app_dimensions.dart';
 import '../../../core/constants/app_text_styles.dart';
+import '../../../core/widgets/address_autocomplete_field.dart';
 import '../../../core/widgets/app_button.dart';
 import '../../../core/widgets/app_text_field.dart';
 import '../../../models/address.dart';
@@ -126,12 +127,23 @@ class _AddAddressScreenState extends State<AddAddressScreen> {
                 validator: (v) => v == null || v.trim().isEmpty ? 'Phone is required' : null,
               ),
               const SizedBox(height: AppDimensions.md),
-              AppTextField(
+              AddressAutocompleteField(
                 controller: _streetController,
                 labelText: 'Street / Area',
-                hintText: 'Enter street address',
+                hintText: 'Enter street address (min 3 chars)',
                 prefixIcon: const Icon(Iconsax.location, size: 20),
                 validator: (v) => v == null || v.trim().isEmpty ? 'Street is required' : null,
+                onSelected: (suggestion) {
+                  if (suggestion.city.isNotEmpty && _cityController.text.isEmpty) {
+                    _cityController.text = suggestion.city;
+                  }
+                  if (suggestion.state.isNotEmpty && _stateController.text.isEmpty) {
+                    _stateController.text = suggestion.state;
+                  }
+                  if (suggestion.pincode.isNotEmpty && _pincodeController.text.isEmpty) {
+                    _pincodeController.text = suggestion.pincode;
+                  }
+                },
               ),
               const SizedBox(height: AppDimensions.md),
               Row(

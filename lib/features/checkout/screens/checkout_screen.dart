@@ -207,46 +207,66 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
             ),
             child: Column(
               children: [
-                ...cart.items.map((item) => Padding(
-                      padding: const EdgeInsets.only(bottom: 12),
-                      child: Row(
-                        children: [
-                          Container(
-                            width: 44, height: 56,
-                            decoration: BoxDecoration(
-                              gradient: LinearGradient(
-                                colors: item.product.gradientColors,
-                                begin: Alignment.topLeft,
-                                end: Alignment.bottomRight,
-                              ),
-                              borderRadius: BorderRadius.circular(8),
-                            ),
-                            child: Icon(Icons.checkroom_rounded,
-                                size: 22,
-                                color: AppColors.white.withValues(alpha: 0.5)),
-                          ),
-                          const SizedBox(width: 10),
-                          Expanded(
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Text(item.product.title,
-                                    style: AppTextStyles.bodySmall
-                                        .copyWith(fontWeight: FontWeight.w500),
-                                    maxLines: 1,
-                                    overflow: TextOverflow.ellipsis),
-                                Text(
-                                  'Qty: ${item.quantity} • ${item.selectedSize} • ${item.selectedColor}',
-                                  style: AppTextStyles.caption,
+                ...cart.items.asMap().entries.map((entry) {
+                      final index = entry.key;
+                      final item = entry.value;
+                      return Padding(
+                        padding: const EdgeInsets.only(bottom: 12),
+                        child: Row(
+                          children: [
+                            Container(
+                              width: 44, height: 56,
+                              decoration: BoxDecoration(
+                                gradient: LinearGradient(
+                                  colors: item.product.gradientColors,
+                                  begin: Alignment.topLeft,
+                                  end: Alignment.bottomRight,
                                 ),
-                              ],
+                                borderRadius: BorderRadius.circular(8),
+                              ),
+                              child: Icon(Icons.checkroom_rounded,
+                                  size: 22,
+                                  color: AppColors.white.withValues(alpha: 0.5)),
                             ),
-                          ),
-                          Text('₹${item.totalPrice.toStringAsFixed(2)}',
-                              style: AppTextStyles.priceSmall),
-                        ],
-                      ),
-                    )),
+                            const SizedBox(width: 10),
+                            Expanded(
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Text(item.product.title,
+                                      style: AppTextStyles.bodySmall
+                                          .copyWith(fontWeight: FontWeight.w500),
+                                      maxLines: 1,
+                                      overflow: TextOverflow.ellipsis),
+                                  Text(
+                                    'Qty: ${item.quantity} • ${item.selectedSize} • ${item.selectedColor}',
+                                    style: AppTextStyles.caption,
+                                  ),
+                                ],
+                              ),
+                            ),
+                            const SizedBox(width: 4),
+                            GestureDetector(
+                              onTap: () {
+                                context.read<CartProvider>().removeItem(index);
+                              },
+                              child: Container(
+                                padding: const EdgeInsets.all(6),
+                                decoration: BoxDecoration(
+                                  color: AppColors.error.withValues(alpha: 0.1),
+                                  borderRadius: BorderRadius.circular(6),
+                                ),
+                                child: const Icon(Iconsax.trash,
+                                    size: 16, color: AppColors.error),
+                              ),
+                            ),
+                            const SizedBox(width: 8),
+                            Text('₹${item.totalPrice.toStringAsFixed(2)}',
+                                style: AppTextStyles.priceSmall),
+                          ],
+                        ),
+                      );
+                    }),
                 const Divider(),
                 _summaryRow('Subtotal', '₹${subtotal.toStringAsFixed(2)}'),
                 _summaryRow('Shipping',
