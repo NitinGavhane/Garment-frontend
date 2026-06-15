@@ -289,21 +289,23 @@ class ApiProductListItem {
   });
 
   double get displayPrice => discountPrice ?? price;
+  double get originalPrice => price;
 
   factory ApiProductListItem.fromJson(Map<String, dynamic> json) {
+    final price = (json['price'] as num).toDouble();
     return ApiProductListItem(
       id: json['id'] as String,
       title: json['title'] as String,
-      sku: json['sku'] as String,
-      price: (json['price'] as num).toDouble(),
-      discountPrice: (json['discount_price'] as num?)?.toDouble(),
+      sku: (json['sku'] as String?) ?? '',
+      price: (json['original_price'] as num?)?.toDouble() ?? price,
+      discountPrice: price,
       stock: json['stock'] as int,
-      featured: json['featured'] as bool? ?? false,
-      isActive: json['is_active'] as bool? ?? true,
-      gender: json['gender'] as String? ?? '',
+      featured: (json['is_featured'] ?? json['featured']) as bool? ?? false,
+      isActive: (json['is_active'] as bool?) ?? true,
+      gender: (json['gender'] as String?) ?? '',
       categoryId: json['category_id'] as String?,
       categoryName: json['category_name'] as String?,
-      primaryImage: json['primary_image'] as String?,
+      primaryImage: (json['primary_image'] ?? json['image_url']) as String?,
     );
   }
 }
