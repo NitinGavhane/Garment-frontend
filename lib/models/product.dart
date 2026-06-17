@@ -272,8 +272,8 @@ class ApiProduct {
       updatedAt: json['updated_at'] != null ? DateTime.parse(json['updated_at'] as String) : DateTime.now(),
       variants: parsedVariants ?? [],
       images: parsedImages ?? [],
-      _flatSizes: (json['sizes'] as List<dynamic>?)?.cast<String>().toList(),
-      _flatColors: (json['colors'] as List<dynamic>?)?.cast<String>().toList(),
+      flatSizes: (json['sizes'] as List<dynamic>?)?.cast<String>().toList(),
+      flatColors: (json['colors'] as List<dynamic>?)?.cast<String>().toList(),
     );
   }
 }
