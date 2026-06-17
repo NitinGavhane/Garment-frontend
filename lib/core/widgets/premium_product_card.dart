@@ -109,14 +109,14 @@ class PremiumProductCard extends StatelessWidget {
                 ),
               ),
             ),
-            Padding(
-              padding: const EdgeInsets.fromLTRB(
-                AppDimensions.cardPadding,
-                AppDimensions.sm - 2,
-                AppDimensions.cardPadding,
-                AppDimensions.cardPadding,
-              ),
-              child: Flexible(
+            Flexible(
+              child: Padding(
+                padding: const EdgeInsets.fromLTRB(
+                  AppDimensions.cardPadding,
+                  AppDimensions.sm - 2,
+                  AppDimensions.cardPadding,
+                  AppDimensions.cardPadding,
+                ),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [

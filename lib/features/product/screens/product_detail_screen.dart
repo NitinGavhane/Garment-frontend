@@ -37,8 +37,8 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
   @override
   void initState() {
     super.initState();
-    _selectedSize = widget.product.sizes.first;
-    _selectedColor = widget.product.colors.first;
+    _selectedSize = widget.product.sizes.isNotEmpty ? widget.product.sizes.first : '';
+    _selectedColor = widget.product.colors.isNotEmpty ? widget.product.colors.first : '';
     _fetchDetail();
   }
 
@@ -50,8 +50,8 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
           _fullProduct = detail;
           _isLoadingDetail = false;
           if (detail != null) {
-            _selectedSize = detail.sizes.isNotEmpty ? detail.sizes.first : _selectedSize;
-            _selectedColor = detail.colors.isNotEmpty ? detail.colors.first : _selectedColor;
+            if (detail.sizes.isNotEmpty) _selectedSize = detail.sizes.first;
+            if (detail.colors.isNotEmpty) _selectedColor = detail.colors.first;
           }
         });
       }
