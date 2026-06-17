@@ -37,10 +37,9 @@ class PremiumProductCard extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            ClipRRect(
-              borderRadius: const BorderRadius.vertical(top: Radius.circular(AppDimensions.radiusLg)),
-              child: AspectRatio(
-                aspectRatio: 0.83,
+            Expanded(
+              child: ClipRRect(
+                borderRadius: const BorderRadius.vertical(top: Radius.circular(AppDimensions.radiusLg)),
                 child: Stack(
                   children: [
                     CachedNetworkImage(
@@ -117,7 +116,8 @@ class PremiumProductCard extends StatelessWidget {
                 AppDimensions.cardPadding,
                 AppDimensions.cardPadding,
               ),
-              child: Column(
+              child: Flexible(
+                child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
@@ -165,6 +165,7 @@ class PremiumProductCard extends StatelessWidget {
                   ],
                 ),
               ),
+            ),
           ],
         ),
       ),
