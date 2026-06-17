@@ -72,21 +72,42 @@ class _HomeScreenState extends State<HomeScreen> {
                   );
                 }
               },
-              onCartTap: () => Navigator.push(
-                context,
-                MaterialPageRoute(builder: (_) => const CartScreen()),
-              ),
+              onCartTap: () {
+                final auth = context.read<AuthProvider>();
+                if (!auth.isLoggedIn) {
+                  Navigator.pushNamed(context, '/login');
+                } else {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (_) => const CartScreen()),
+                  );
+                }
+              },
               onNotificationTap: () {},
-              onProfileTap: () => Navigator.push(
-                context,
-                MaterialPageRoute(builder: (_) => const ProfileScreen()),
-              ),
-              onAddressTap: () => Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder: (_) => const AddressListScreen(),
-                ),
-              ),
+              onProfileTap: () {
+                final auth = context.read<AuthProvider>();
+                if (!auth.isLoggedIn) {
+                  Navigator.pushNamed(context, '/login');
+                } else {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (_) => const ProfileScreen()),
+                  );
+                }
+              },
+              onAddressTap: () {
+                final auth = context.read<AuthProvider>();
+                if (!auth.isLoggedIn) {
+                  Navigator.pushNamed(context, '/login');
+                } else {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (_) => const AddressListScreen(),
+                    ),
+                  );
+                }
+              },
             ),
             Expanded(
               child: SingleChildScrollView(

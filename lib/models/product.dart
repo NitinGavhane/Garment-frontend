@@ -197,6 +197,8 @@ class ApiProduct {
   final DateTime updatedAt;
   final List<ApiProductVariant> variants;
   final List<ApiProductImage> images;
+  final List<String>? _flatSizes;
+  final List<String>? _flatColors;
 
   const ApiProduct({
     required this.id,
@@ -216,45 +218,62 @@ class ApiProduct {
     required this.updatedAt,
     this.variants = const [],
     this.images = const [],
-  });
+    List<String>? flatSizes,
+    List<String>? flatColors,
+  }) : _flatSizes = flatSizes,
+       _flatColors = flatColors;
 
   String? get primaryImage =>
       images.where((i) => i.isPrimary).firstOrNull?.imageUrl ??
       images.firstOrNull?.imageUrl;
 
-  List<String> get availableSizes =>
-      variants.where((v) => v.size != null).map((v) => v.size!).toSet().toList();
+  List<String> get availableSizes {
+    if (variants.isNotEmpty) {
+      return variants.where((v) => v.size != null).map((v) => v.size!).toSet().toList();
+    }
+    return _flatSizes ?? [];
+  }
 
-  List<String> get availableColors =>
-      variants.where((v) => v.color != null).map((v) => v.color!).toSet().toList();
+  List<String> get availableColors {
+    if (variants.isNotEmpty) {
+      return variants.where((v) => v.color != null).map((v) => v.color!).toSet().toList();
+    }
+    return _flatColors ?? [];
+  }
 
   double get displayPrice => discountPrice ?? price;
 
   double get originalPrice => price;
 
   factory ApiProduct.fromJson(Map<String, dynamic> json) {
+    final parsedVariants = (json['variants'] as List<dynamic>?)
+        ?.map((v) => ApiProductVariant.fromJson(v as Map<String, dynamic>))
+        .toList();
+
+    final parsedImages = (json['images'] as List<dynamic>?)
+        ?.map((i) => ApiProductImage.fromJson(i as Map<String, dynamic>))
+        .toList();
+
     return ApiProduct(
       id: json['id'] as String,
       categoryId: json['category_id'] as String,
       title: json['title'] as String,
       description: json['description'] as String?,
       brand: json['brand'] as String?,
-      sku: json['sku'] as String,
-      price: (json['price'] as num).toDouble(),
+      sku: json['sku'] as String? ?? '',
+      price: (json['price'] as num?)?.toDouble() ?? 0.0,
       discountPrice: (json['discount_price'] as num?)?.toDouble(),
       gstPercentage: (json['gst_percentage'] as num?)?.toDouble() ?? 18.0,
-      stock: json['stock'] as int,
-      featured: json['featured'] as bool? ?? false,
+      stock: json['stock'] as int? ?? 0,
+      featured: json['featured'] as bool? ?? json['is_featured'] as bool? ?? false,
       isActive: json['is_active'] as bool? ?? true,
       gender: json['gender'] as String? ?? '',
-      createdAt: DateTime.parse(json['created_at'] as String),
-      updatedAt: DateTime.parse(json['updated_at'] as String),
-      variants: (json['variants'] as List<dynamic>?)
-              ?.map((v) => ApiProductVariant.fromJson(v as Map<String, dynamic>))
-              .toList() ?? [],
-      images: (json['images'] as List<dynamic>?)
-              ?.map((i) => ApiProductImage.fromJson(i as Map<String, dynamic>))
-              .toList() ?? [],
+      createdAt: json['created_at'] != null ? DateTime.parse(json['created_at'] as String) : DateTime.now(),
+      updatedAt: json['updated_at'] != null ? DateTime.parse(json['updated_at'] as String) : DateTime.now(),
+      variants: parsedVariants ?? [],
+      images: parsedImages ?? [],
+      _flatSizes: (json['sizes'] as List<dynamic>?)?.cast<String>().toList(),
+      _flatColors: (json['colors'] as List<dynamic>?)?.cast<String>().toList(),
     );
   }
 }
@@ -272,6 +291,10 @@ class ApiProductListItem {
   final String? categoryId;
   final String? categoryName;
   final String? primaryImage;
+  final String? description;
+  final String? brand;
+  final List<String> sizes;
+  final List<String> colors;
 
   const ApiProductListItem({
     required this.id,
@@ -286,6 +309,10 @@ class ApiProductListItem {
     this.categoryId,
     this.categoryName,
     this.primaryImage,
+    this.description,
+    this.brand,
+    this.sizes = const [],
+    this.colors = const [],
   });
 
   double get displayPrice => discountPrice ?? price;
@@ -306,6 +333,10 @@ class ApiProductListItem {
       categoryId: json['category_id'] as String?,
       categoryName: json['category_name'] as String?,
       primaryImage: (json['primary_image'] ?? json['image_url']) as String?,
+      description: json['description'] as String?,
+      brand: json['brand'] as String?,
+      sizes: (json['sizes'] as List<dynamic>?)?.cast<String>() ?? [],
+      colors: (json['colors'] as List<dynamic>?)?.cast<String>() ?? [],
     );
   }
 }

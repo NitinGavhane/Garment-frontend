@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
 import '../../../core/constants/app_colors.dart';
+import '../../../providers/auth_provider.dart';
 import '../../../providers/location_provider.dart';
 
 class TopBar extends StatelessWidget {
@@ -51,7 +52,38 @@ class _AddressBar extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final auth = context.watch<AuthProvider>();
     final location = context.watch<LocationProvider>();
+
+    if (!auth.isLoggedIn) {
+      final locText = location.isLoading
+          ? 'Detecting location...'
+          : location.address.isNotEmpty
+              ? location.address
+              : 'Your location';
+      return Container(
+        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
+        child: Row(
+          children: [
+            Icon(Icons.location_on, size: 18, color: AppColors.primaryContainer),
+            const SizedBox(width: 4),
+            Expanded(
+              child: Text(
+                locText,
+                style: GoogleFonts.poppins(
+                  fontSize: 11,
+                  fontWeight: FontWeight.w600,
+                  color: AppColors.onSurface,
+                ),
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
+              ),
+            ),
+          ],
+        ),
+      );
+    }
+
     final displayText = location.isLoading
         ? 'Detecting location...'
         : location.address.isNotEmpty

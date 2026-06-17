@@ -2,15 +2,19 @@ import 'package:flutter/foundation.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'dart:convert';
 import '../core/services/wishlist_api_service.dart';
+import '../core/services/product_api_service.dart';
 import '../core/services/api_client.dart';
+import '../models/product.dart';
 
 class WishlistProvider extends ChangeNotifier {
   Set<String> _wishlistedIds = {};
+  List<Product> _wishlistProducts = [];
   bool _isLoaded = false;
   bool _isLoading = false;
   String? _error;
 
   Set<String> get wishlistedIds => _wishlistedIds;
+  List<Product> get wishlistProducts => _wishlistProducts;
   int get count => _wishlistedIds.length;
   bool get isLoaded => _isLoaded;
   bool get isLoading => _isLoading;
@@ -28,12 +32,27 @@ class WishlistProvider extends ChangeNotifier {
       final data = await WishlistApiService.getWishlist();
       if (data.isNotEmpty) {
         _wishlistedIds = data.map((item) => item['product_id'] as String).toSet();
-        await _persist();
       }
     } catch (_) {}
 
     _isLoaded = true;
     notifyListeners();
+    await _fetchWishlistProductDetails();
+  }
+
+  Future<void> _fetchWishlistProductDetails() async {
+    if (_wishlistedIds.isEmpty) return;
+    try {
+      final results = await Future.wait(
+        _wishlistedIds.map((id) => ProductApiService.getProduct(id)),
+        eagerError: false,
+      );
+      _wishlistProducts = results.map((data) {
+        final apiProduct = ApiProduct.fromJson(data);
+        return Product.fromApiProduct(apiProduct);
+      }).toList();
+      notifyListeners();
+    } catch (_) {}
   }
 
   bool isWishlisted(String productId) {
@@ -48,9 +67,15 @@ class WishlistProvider extends ChangeNotifier {
       if (_wishlistedIds.contains(productId)) {
         await WishlistApiService.removeFromWishlist(productId);
         _wishlistedIds.remove(productId);
+        _wishlistProducts.removeWhere((p) => p.id == productId);
       } else {
         await WishlistApiService.addToWishlist(productId);
         _wishlistedIds.add(productId);
+        try {
+          final data = await ProductApiService.getProduct(productId);
+          final apiProduct = ApiProduct.fromJson(data);
+          _wishlistProducts.add(Product.fromApiProduct(apiProduct));
+        } catch (_) {}
       }
       _error = null;
       await _persist();

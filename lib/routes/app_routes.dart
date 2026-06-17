@@ -13,6 +13,7 @@ import '../features/wishlist/screens/wishlist_screen.dart';
 import '../features/search/screens/search_screen.dart';
 import '../features/product/screens/product_list_screen.dart';
 import '../features/categories/screens/categories_screen.dart';
+import '../providers/auth_provider.dart';
 import '../providers/cart_provider.dart';
 
 class AppRoutes {
@@ -119,7 +120,16 @@ class _MainShellState extends State<MainShell> {
           ),
         ],
         selectedIndex: _currentIndex,
-        onTap: (i) => setState(() => _currentIndex = i),
+        onTap: (i) {
+          if (i == 4) {
+            final auth = context.read<AuthProvider>();
+            if (!auth.isLoggedIn) {
+              Navigator.pushNamed(context, '/login');
+              return;
+            }
+          }
+          setState(() => _currentIndex = i);
+        },
       ),
       ),
     );

@@ -20,8 +20,11 @@ class _WishlistScreenState extends State<WishlistScreen> {
   @override
   Widget build(BuildContext context) {
     final wishlist = context.watch<WishlistProvider>();
-    final products = context.watch<ProductProvider>().products;
-    final items = products.where((p) => wishlist.wishlistedIds.contains(p.id)).toList();
+    final items = wishlist.wishlistProducts.isNotEmpty
+        ? wishlist.wishlistProducts
+        : context.watch<ProductProvider>().products
+            .where((p) => wishlist.wishlistedIds.contains(p.id))
+            .toList();
 
     return Scaffold(
       appBar: AppBar(
@@ -30,7 +33,9 @@ class _WishlistScreenState extends State<WishlistScreen> {
           style: AppTextStyles.title,
         ),
       ),
-      body: items.isEmpty
+      body: wishlist.isLoading
+          ? const Center(child: CircularProgressIndicator())
+          : items.isEmpty
           ? Center(
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,

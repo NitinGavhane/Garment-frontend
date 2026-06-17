@@ -9,6 +9,7 @@ import '../../../core/widgets/app_button.dart';
 import '../../../models/product.dart';
 import '../../../providers/auth_provider.dart';
 import '../../../providers/cart_provider.dart';
+import '../../../providers/product_provider.dart';
 import '../../../providers/wishlist_provider.dart';
 import '../../checkout/screens/checkout_screen.dart';
 
@@ -22,23 +23,50 @@ class ProductDetailScreen extends StatefulWidget {
 }
 
 class _ProductDetailScreenState extends State<ProductDetailScreen> {
+  Product? _fullProduct;
+  bool _isLoadingDetail = true;
   String _selectedSize = '';
   String _selectedColor = '';
   final int _quantity = 1;
 
+  Product get _product => _fullProduct ?? widget.product;
+
   bool get _isWishlisted =>
-      context.watch<WishlistProvider>().isWishlisted(widget.product.id);
+      context.watch<WishlistProvider>().isWishlisted(_product.id);
 
   @override
   void initState() {
     super.initState();
     _selectedSize = widget.product.sizes.first;
     _selectedColor = widget.product.colors.first;
+    _fetchDetail();
+  }
+
+  Future<void> _fetchDetail() async {
+    try {
+      final detail = await context.read<ProductProvider>().fetchProductDetail(widget.product.id);
+      if (mounted) {
+        setState(() {
+          _fullProduct = detail;
+          _isLoadingDetail = false;
+          if (detail != null) {
+            _selectedSize = detail.sizes.isNotEmpty ? detail.sizes.first : _selectedSize;
+            _selectedColor = detail.colors.isNotEmpty ? detail.colors.first : _selectedColor;
+          }
+        });
+      }
+    } catch (_) {
+      if (mounted) {
+        setState(() {
+          _isLoadingDetail = false;
+        });
+      }
+    }
   }
 
   void _addToCart() {
     context.read<CartProvider>().addToCart(
-      product: widget.product,
+      product: _product,
       quantity: _quantity,
       selectedSize: _selectedSize,
       selectedColor: _selectedColor,
@@ -55,7 +83,7 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
     final cart = context.read<CartProvider>();
     cart.clear();
     cart.addToCart(
-      product: widget.product,
+      product: _product,
       quantity: _quantity,
       selectedSize: _selectedSize,
       selectedColor: _selectedColor,
@@ -68,7 +96,26 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final product = widget.product;
+    final product = _product;
+
+    if (_isLoadingDetail) {
+      return Scaffold(
+        appBar: AppBar(
+          leading: IconButton(
+            icon: Container(
+              padding: const EdgeInsets.all(8),
+              decoration: BoxDecoration(
+                color: AppColors.white.withValues(alpha: 0.9),
+                shape: BoxShape.circle,
+              ),
+              child: const Icon(Icons.arrow_back_ios_new, size: 18),
+            ),
+            onPressed: () => Navigator.pop(context),
+          ),
+        ),
+        body: const Center(child: CircularProgressIndicator()),
+      );
+    }
 
     return Scaffold(
       body: SafeArea(
@@ -112,7 +159,7 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
                       Navigator.pushNamed(context, '/login');
                       return;
                     }
-                    context.read<WishlistProvider>().toggle(widget.product.id);
+                    context.read<WishlistProvider>().toggle(_product.id);
                     ScaffoldMessenger.of(context).showSnackBar(
                       SnackBar(
                         content: Text(
@@ -449,7 +496,7 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
             children: [
               Consumer<WishlistProvider>(
                 builder: (_, wishlist, __) {
-                  final isWishlisted = wishlist.isWishlisted(widget.product.id);
+                  final isWishlisted = wishlist.isWishlisted(_product.id);
                   return Container(
                     width: 48,
                     height: 48,
@@ -471,7 +518,7 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
                           Navigator.pushNamed(context, '/login');
                           return;
                         }
-                        wishlist.toggle(widget.product.id);
+                        wishlist.toggle(_product.id);
                         ScaffoldMessenger.of(context).showSnackBar(
                           SnackBar(
                             content: Text(

@@ -34,8 +34,8 @@ class ProductProvider extends ChangeNotifier {
         return Product(
           id: apiProduct.id,
           title: apiProduct.title,
-          description: '',
-          brand: '',
+          description: apiProduct.description ?? '',
+          brand: apiProduct.brand ?? '',
           category: apiProduct.categoryName ?? '',
           categoryId: apiProduct.categoryId ?? '',
           price: apiProduct.displayPrice,
@@ -43,6 +43,8 @@ class ProductProvider extends ChangeNotifier {
           discountPercentage: apiProduct.discountPrice != null
               ? ((apiProduct.price - apiProduct.discountPrice!) / apiProduct.price * 100).round()
               : 0,
+          sizes: apiProduct.sizes,
+          colors: apiProduct.colors,
           isFeatured: apiProduct.featured,
           stock: apiProduct.stock,
           imageUrl: apiProduct.primaryImage ?? '',
@@ -57,6 +59,27 @@ class ProductProvider extends ChangeNotifier {
     }
     _isLoading = false;
     notifyListeners();
+  }
+
+  Future<Product?> fetchProductDetail(String productId) async {
+    try {
+      final data = await ProductApiService.getProduct(productId);
+      final apiProduct = ApiProduct.fromJson(data);
+      final product = Product.fromApiProduct(apiProduct);
+
+      final existingIdx = _products.indexWhere((p) => p.id == productId);
+      if (existingIdx != -1) {
+        _products[existingIdx] = product;
+        notifyListeners();
+      }
+
+      return product;
+    } on ApiException catch (e) {
+      _error = e.message;
+    } catch (e) {
+      _error = 'Failed to load product details';
+    }
+    return null;
   }
 
   List<Product> filterByGender(String gender) {
