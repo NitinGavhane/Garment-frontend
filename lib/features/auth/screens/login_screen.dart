@@ -18,18 +18,27 @@ class LoginScreen extends StatefulWidget {
 
 class _LoginScreenState extends State<LoginScreen> {
   bool _useOtp = false;
+  bool _otpSent = false;
   final _emailController = TextEditingController();
   final _passwordController = TextEditingController();
-  final _otpController = TextEditingController();
   bool _obscurePassword = true;
-  bool _otpSent = false;
   int _timerSeconds = 30;
+  final List<TextEditingController> _otpControllers =
+      List.generate(6, (_) => TextEditingController());
+  final List<FocusNode> _focusNodes =
+      List.generate(6, (_) => FocusNode());
+  final List<String> _prevValues = List.generate(6, (_) => '');
 
   @override
   void dispose() {
     _emailController.dispose();
     _passwordController.dispose();
-    _otpController.dispose();
+    for (var c in _otpControllers) {
+      c.dispose();
+    }
+    for (var f in _focusNodes) {
+      f.dispose();
+    }
     super.dispose();
   }
 
@@ -89,8 +98,33 @@ class _LoginScreenState extends State<LoginScreen> {
     });
   }
 
+  void _onOtpChange(int index, String value) {
+    if (value.length > 1) {
+      _otpControllers[index].text = value.substring(value.length - 1);
+    }
+    if (value.isNotEmpty && index < 5) {
+      _focusNodes[index + 1].requestFocus();
+    }
+    if (value.isEmpty && _prevValues[index].isNotEmpty && index > 0) {
+      _focusNodes[index - 1].requestFocus();
+    }
+    _prevValues[index] = value.isEmpty ? '' : value;
+  }
+
+  String get _otp => _otpControllers.map((c) => c.text).join();
+
+  void _clearOtpFields() {
+    for (var c in _otpControllers) {
+      c.clear();
+    }
+    for (var i = 0; i < _prevValues.length; i++) {
+      _prevValues[i] = '';
+    }
+    _focusNodes[0].requestFocus();
+  }
+
   Future<void> _loginWithOtp() async {
-    if (_otpController.text.trim().length < 6) {
+    if (_otp.length < 6) {
       _showSnack('Please enter the full 6-digit OTP');
       return;
     }
@@ -98,7 +132,7 @@ class _LoginScreenState extends State<LoginScreen> {
     final auth = context.read<AuthProvider>();
     final success = await auth.loginWithOtp(
       email: _emailController.text.trim(),
-      otp: _otpController.text.trim(),
+      otp: _otp,
     );
 
     if (!mounted) return;
@@ -106,7 +140,8 @@ class _LoginScreenState extends State<LoginScreen> {
     if (success) {
       Navigator.pushNamedAndRemoveUntil(context, '/main', (_) => false);
     } else {
-      _showSnack(auth.error ?? 'Invalid OTP. Try again.');
+      _clearOtpFields();
+      _showSnack('Enter Valid OTP');
     }
   }
 
@@ -153,75 +188,6 @@ class _LoginScreenState extends State<LoginScreen> {
               ),
               const SizedBox(height: 24),
 
-              Row(
-                children: [
-                  Expanded(
-                    child: GestureDetector(
-                      onTap: () => setState(() {
-                        _useOtp = false;
-                        _otpSent = false;
-                        _otpController.clear();
-                      }),
-                      child: Container(
-                        padding: const EdgeInsets.symmetric(vertical: 12),
-                        decoration: BoxDecoration(
-                          border: Border(
-                            bottom: BorderSide(
-                              color: _useOtp
-                                  ? AppColors.textHint
-                                  : AppColors.nykaaPink,
-                              width: 2,
-                            ),
-                          ),
-                        ),
-                        child: Text(
-                          'Password',
-                          textAlign: TextAlign.center,
-                          style: GoogleFonts.poppins(
-                            fontSize: 14,
-                            fontWeight: FontWeight.w600,
-                            color: _useOtp
-                                ? AppColors.textSecondary
-                                : AppColors.nykaaPink,
-                          ),
-                        ),
-                      ),
-                    ),
-                  ),
-                  Expanded(
-                    child: GestureDetector(
-                      onTap: () => setState(() {
-                        _useOtp = true;
-                        _passwordController.clear();
-                      }),
-                      child: Container(
-                        padding: const EdgeInsets.symmetric(vertical: 12),
-                        decoration: BoxDecoration(
-                          border: Border(
-                            bottom: BorderSide(
-                              color: _useOtp
-                                  ? AppColors.nykaaPink
-                                  : AppColors.textHint,
-                              width: 2,
-                            ),
-                          ),
-                        ),
-                        child: Text(
-                          'OTP Login',
-                          textAlign: TextAlign.center,
-                          style: GoogleFonts.poppins(
-                            fontSize: 14,
-                            fontWeight: FontWeight.w600,
-                            color: _useOtp
-                                ? AppColors.nykaaPink
-                                : AppColors.textSecondary,
-                          ),
-                        ),
-                      ),
-                    ),
-                  ),
-                ],
-              ),
               const SizedBox(height: 32),
 
               AppTextField(
@@ -243,43 +209,96 @@ class _LoginScreenState extends State<LoginScreen> {
                       setState(() => _obscurePassword = !_obscurePassword),
                 ),
                 const SizedBox(height: 4),
-                Align(
-                  alignment: Alignment.centerRight,
-                  child: GestureDetector(
-                    onTap: () => Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (_) => const ForgotPasswordScreen(),
+                Row(
+                  children: [
+                    GestureDetector(
+                      onTap: () => setState(() {
+                        _useOtp = true;
+                        _passwordController.clear();
+                      }),
+                      child: Text(
+                        'Sign in with OTP',
+                        style: GoogleFonts.poppins(
+                          fontSize: 12,
+                          fontWeight: FontWeight.w500,
+                          color: AppColors.nykaaPink,
+                        ),
                       ),
                     ),
-                    child: Text(
-                      'Forgot Password?',
-                      style: GoogleFonts.poppins(
-                        fontSize: 12,
-                        fontWeight: FontWeight.w500,
-                        color: AppColors.nykaaPink,
+                    const Spacer(),
+                    GestureDetector(
+                      onTap: () => Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (_) => const ForgotPasswordScreen(),
+                        ),
+                      ),
+                      child: Text(
+                        'Forgot Password?',
+                        style: GoogleFonts.poppins(
+                          fontSize: 12,
+                          fontWeight: FontWeight.w500,
+                          color: AppColors.nykaaPink,
+                        ),
                       ),
                     ),
-                  ),
+                  ],
                 ),
               ],
 
-              if (_useOtp) ...[
-                if (!_otpSent)
-                  AppButton(
-                    label: 'Send OTP',
-                    onPressed: _sendOtp,
-                  )
-                else ...[
-                  AppTextField(
-                    controller: _otpController,
-                    hintText: 'Enter 6-digit OTP',
-                    keyboardType: TextInputType.number,
-                    prefixIcon: const Icon(Iconsax.lock, size: 20),
+              if (_useOtp && _otpSent) ...[
+                const SizedBox(height: 8),
+                Form(
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                    children: List.generate(6, (index) {
+                      return SizedBox(
+                        width: 48,
+                        height: 56,
+                        child: TextField(
+                          controller: _otpControllers[index],
+                          focusNode: _focusNodes[index],
+                          keyboardType: TextInputType.number,
+                          textAlign: TextAlign.center,
+                          maxLength: 1,
+                          style: GoogleFonts.poppins(
+                            fontSize: 22,
+                            fontWeight: FontWeight.w600,
+                            color: AppColors.nykaaBlack,
+                          ),
+                          decoration: InputDecoration(
+                            counterText: '',
+                            filled: true,
+                            fillColor: const Color(0xFFF5F5F5),
+                            border: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(8),
+                              borderSide: BorderSide.none,
+                            ),
+                            focusedBorder: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(8),
+                              borderSide: const BorderSide(
+                                color: AppColors.nykaaPink,
+                                width: 1.5,
+                              ),
+                            ),
+                            contentPadding: EdgeInsets.zero,
+                          ),
+                          onChanged: (v) => _onOtpChange(index, v),
+                        ),
+                      );
+                    }),
                   ),
-                  const SizedBox(height: 8),
-                  GestureDetector(
-                    onTap: _timerSeconds <= 0 ? _sendOtp : null,
+                ),
+                const SizedBox(height: 24),
+                Center(
+                  child: GestureDetector(
+                    onTap: _timerSeconds <= 0
+                        ? () {
+                            _clearOtpFields();
+                            _startTimer();
+                            _sendOtp();
+                          }
+                        : null,
                     child: Text(
                       _timerSeconds > 0
                           ? 'Resend code in ${_timerSeconds}s'
@@ -295,7 +314,7 @@ class _LoginScreenState extends State<LoginScreen> {
                       ),
                     ),
                   ),
-                ],
+                ),
               ],
 
               const SizedBox(height: 8),
@@ -322,7 +341,7 @@ class _LoginScreenState extends State<LoginScreen> {
                   width: double.infinity,
                   child: AppButton(
                     label: _useOtp
-                        ? (_otpSent ? 'Sign In with OTP' : 'Send OTP')
+                        ? (_otpSent ? 'Verify' : 'Send OTP')
                         : 'Sign In',
                     onPressed: _useOtp
                         ? (_otpSent ? _loginWithOtp : _sendOtp)
