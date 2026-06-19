@@ -78,6 +78,59 @@ class AuthProvider extends ChangeNotifier {
     }
   }
 
+  Future<bool> sendLoginOtp({
+    required String email,
+  }) async {
+    _isLoading = true;
+    _error = null;
+    notifyListeners();
+
+    try {
+      await AuthApiService.sendLoginOtp(email: email);
+      _isLoading = false;
+      notifyListeners();
+      return true;
+    } on ApiException catch (e) {
+      _error = e.message;
+      _isLoading = false;
+      notifyListeners();
+      return false;
+    } catch (e) {
+      _error = 'Connection error. Please try again.';
+      _isLoading = false;
+      notifyListeners();
+      return false;
+    }
+  }
+
+  Future<bool> loginWithOtp({
+    required String email,
+    required String otp,
+  }) async {
+    _isLoading = true;
+    _error = null;
+    notifyListeners();
+
+    try {
+      final result = await AuthApiService.loginWithOtp(email: email, otp: otp);
+      _user = User.fromJson(result['user']);
+      await _cacheUser(_user!);
+      _isLoading = false;
+      notifyListeners();
+      return true;
+    } on ApiException catch (e) {
+      _error = e.message;
+      _isLoading = false;
+      notifyListeners();
+      return false;
+    } catch (e) {
+      _error = 'Connection error. Please try again.';
+      _isLoading = false;
+      notifyListeners();
+      return false;
+    }
+  }
+
   Future<bool> register({
     required String fullName,
     required String email,
@@ -114,7 +167,7 @@ class AuthProvider extends ChangeNotifier {
   }
 
   Future<bool> verifyOtp({
-    required String phone,
+    required String email,
     required String otp,
   }) async {
     _isLoading = true;
@@ -122,10 +175,60 @@ class AuthProvider extends ChangeNotifier {
     notifyListeners();
 
     try {
-      final result = await AuthApiService.verifyOtp(phone: phone, otp: otp);
+      await AuthApiService.verifyOtp(email: email, otp: otp);
       _isLoading = false;
       notifyListeners();
-      return result['message'] != null;
+      return true;
+    } on ApiException catch (e) {
+      _error = e.message;
+      _isLoading = false;
+      notifyListeners();
+      return false;
+    } catch (e) {
+      _error = 'Connection error. Please try again.';
+      _isLoading = false;
+      notifyListeners();
+      return false;
+    }
+  }
+
+  Future<bool> resendOtp({
+    required String email,
+  }) async {
+    _isLoading = true;
+    _error = null;
+    notifyListeners();
+
+    try {
+      await AuthApiService.resendOtp(email: email);
+      _isLoading = false;
+      notifyListeners();
+      return true;
+    } on ApiException catch (e) {
+      _error = e.message;
+      _isLoading = false;
+      notifyListeners();
+      return false;
+    } catch (e) {
+      _error = 'Connection error. Please try again.';
+      _isLoading = false;
+      notifyListeners();
+      return false;
+    }
+  }
+
+  Future<bool> forgotPassword({
+    required String email,
+  }) async {
+    _isLoading = true;
+    _error = null;
+    notifyListeners();
+
+    try {
+      await AuthApiService.forgotPassword(email: email);
+      _isLoading = false;
+      notifyListeners();
+      return true;
     } on ApiException catch (e) {
       _error = e.message;
       _isLoading = false;
@@ -140,7 +243,7 @@ class AuthProvider extends ChangeNotifier {
   }
 
   Future<bool> resetPassword({
-    required String phone,
+    required String email,
     required String otp,
     required String newPassword,
   }) async {
@@ -150,7 +253,7 @@ class AuthProvider extends ChangeNotifier {
 
     try {
       await AuthApiService.resetPassword(
-        phone: phone,
+        email: email,
         otp: otp,
         newPassword: newPassword,
       );

@@ -8,13 +8,11 @@ import '../../../providers/auth_provider.dart';
 class OtpVerificationScreen extends StatefulWidget {
   final String email;
   final String? fullName;
-  final String? phone;
 
   const OtpVerificationScreen({
     super.key,
     required this.email,
     this.fullName,
-    this.phone,
   });
 
   @override
@@ -84,7 +82,7 @@ class _OtpVerificationScreenState extends State<OtpVerificationScreen> {
 
     final auth = context.read<AuthProvider>();
     final success = await auth.verifyOtp(
-      phone: widget.phone ?? widget.email,
+      email: widget.email,
       otp: _otp,
     );
 
@@ -102,16 +100,25 @@ class _OtpVerificationScreenState extends State<OtpVerificationScreen> {
     }
   }
 
-  void _resendOtp() {
-    _startTimer();
-    for (var c in _otpControllers) {
-      c.clear();
+  Future<void> _resendOtp() async {
+    final auth = context.read<AuthProvider>();
+    final success = await auth.resendOtp(email: widget.email);
+
+    if (!mounted) return;
+
+    if (success) {
+      _startTimer();
+      for (var c in _otpControllers) {
+        c.clear();
+      }
+      for (var i = 0; i < _prevValues.length; i++) {
+        _prevValues[i] = '';
+      }
+      _focusNodes[0].requestFocus();
+      _showSnack('OTP resent to your email');
+    } else {
+      _showSnack(auth.error ?? 'Failed to resend OTP');
     }
-    for (var i = 0; i < _prevValues.length; i++) {
-      _prevValues[i] = '';
-    }
-    _focusNodes[0].requestFocus();
-    _showSnack('OTP resent successfully');
   }
 
   void _showSnack(String msg) {
@@ -140,7 +147,7 @@ class _OtpVerificationScreenState extends State<OtpVerificationScreen> {
             children: [
               const SizedBox(height: 16),
               Text(
-                'Verify Phone',
+                'Verify Email',
                 style: GoogleFonts.poppins(
                   fontSize: 24,
                   fontWeight: FontWeight.bold,
@@ -157,7 +164,7 @@ class _OtpVerificationScreenState extends State<OtpVerificationScreen> {
               ),
               const SizedBox(height: 4),
               Text(
-                widget.phone ?? widget.email,
+                widget.email,
                 style: GoogleFonts.poppins(
                   fontSize: 14,
                   fontWeight: FontWeight.w600,
@@ -233,7 +240,9 @@ class _OtpVerificationScreenState extends State<OtpVerificationScreen> {
                     ),
                     if (_canResend)
                       GestureDetector(
-                        onTap: _resendOtp,
+                        onTap: () async {
+                          await _resendOtp();
+                        },
                         child: Text(
                           ' Resend',
                           style: GoogleFonts.poppins(

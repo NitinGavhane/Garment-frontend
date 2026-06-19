@@ -16,39 +16,62 @@ class ForgotPasswordScreen extends StatefulWidget {
 
 class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
   int _step = 1;
-  final _phoneController = TextEditingController();
+  final _emailController = TextEditingController();
   final _otpController = TextEditingController();
   final _passwordController = TextEditingController();
   final _confirmPasswordController = TextEditingController();
   bool _obscurePassword = true;
   bool _obscureConfirm = true;
+  int _timerSeconds = 30;
 
   @override
   void dispose() {
-    _phoneController.dispose();
+    _emailController.dispose();
     _otpController.dispose();
     _passwordController.dispose();
     _confirmPasswordController.dispose();
     super.dispose();
   }
 
-  void _nextStep() {
-    if (_step == 1) {
-      if (_phoneController.text.trim().length < 10) {
-        _showSnack('Please enter a valid phone number');
-        return;
-      }
-      setState(() => _step = 2);
-    } else if (_step == 2) {
-      if (_otpController.text.trim().length < 6) {
-        _showSnack('Please enter the full 6-digit OTP');
-        return;
-      }
-      setState(() => _step = 3);
+  Future<void> _sendOtp() async {
+    final email = _emailController.text.trim();
+    if (email.isEmpty || !email.contains('@')) {
+      _showSnack('Please enter a valid email address');
+      return;
+    }
+
+    final auth = context.read<AuthProvider>();
+    final success = await auth.forgotPassword(email: email);
+
+    if (!mounted) return;
+
+    if (success) {
+      setState(() {
+        _step = 2;
+      });
+      _startTimer();
+    } else {
+      _showSnack(auth.error ?? 'Failed to send OTP');
     }
   }
 
+  void _startTimer() {
+    _timerSeconds = 30;
+    Future.doWhile(() async {
+      await Future.delayed(const Duration(seconds: 1));
+      if (!mounted) return false;
+      setState(() {
+        _timerSeconds--;
+      });
+      return _timerSeconds > 0;
+    });
+  }
+
   Future<void> _resetPassword() async {
+    if (_otpController.text.trim().length < 6) {
+      _showSnack('Please enter the full 6-digit OTP');
+      return;
+    }
     if (_passwordController.text.length < 6) {
       _showSnack('Password must be at least 6 characters');
       return;
@@ -60,7 +83,7 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
 
     final auth = context.read<AuthProvider>();
     final success = await auth.resetPassword(
-      phone: _phoneController.text.trim(),
+      email: _emailController.text.trim(),
       otp: _otpController.text.trim(),
       newPassword: _passwordController.text,
     );
@@ -117,10 +140,8 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
               const SizedBox(height: 8),
               Text(
                 _step == 1
-                    ? 'Enter your registered phone number'
-                    : _step == 2
-                        ? 'Enter the 6-digit OTP sent to\n${_phoneController.text.trim()}'
-                        : 'Create a new password',
+                    ? 'Enter your registered email address'
+                    : 'Enter the OTP sent to\n${_emailController.text.trim()}',
                 style: GoogleFonts.poppins(
                   fontSize: 14,
                   color: AppColors.textSecondary,
@@ -130,37 +151,61 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
 
               if (_step == 1) ...[
                 AppTextField(
-                  controller: _phoneController,
-                  hintText: 'Phone Number',
-                  keyboardType: TextInputType.phone,
-                  prefixIcon: const Icon(Iconsax.call, size: 20),
+                  controller: _emailController,
+                  hintText: 'Email Address',
+                  keyboardType: TextInputType.emailAddress,
+                  prefixIcon: const Icon(Iconsax.sms, size: 20),
                 ),
                 const SizedBox(height: 24),
-                AppButton(
-                  label: 'Send OTP',
-                  onPressed: _nextStep,
+                Consumer<AuthProvider>(
+                  builder: (_, auth, __) => AppButton(
+                    label: 'Send OTP',
+                    onPressed: _sendOtp,
+                    isLoading: auth.isLoading,
+                  ),
                 ),
               ],
 
               if (_step == 2) ...[
                 AppTextField(
                   controller: _otpController,
-                  hintText: 'Enter OTP',
+                  hintText: 'Enter 6-digit OTP',
                   keyboardType: TextInputType.number,
                   prefixIcon: const Icon(Iconsax.lock, size: 20),
                 ),
                 const SizedBox(height: 8),
                 Text(
-                  'Use 000000 for testing',
+                  _timerSeconds > 0
+                      ? 'Resend code in ${_timerSeconds}s'
+                      : 'Did not receive? Tap Resend',
                   style: GoogleFonts.poppins(
-                    fontSize: 12,
-                    color: AppColors.textHint,
+                    fontSize: 13,
+                    color: AppColors.textSecondary,
                   ),
                 ),
+                const SizedBox(height: 4),
+                if (_timerSeconds <= 0)
+                  GestureDetector(
+                    onTap: _sendOtp,
+                    child: Text(
+                      'Resend OTP',
+                      style: GoogleFonts.poppins(
+                        fontSize: 13,
+                        fontWeight: FontWeight.w600,
+                        color: AppColors.nykaaPink,
+                      ),
+                    ),
+                  ),
                 const SizedBox(height: 24),
                 AppButton(
-                  label: 'Verify OTP',
-                  onPressed: _nextStep,
+                  label: 'Next',
+                  onPressed: () {
+                    if (_otpController.text.trim().length < 6) {
+                      _showSnack('Please enter the full 6-digit OTP');
+                      return;
+                    }
+                    setState(() => _step = 3);
+                  },
                 ),
               ],
 

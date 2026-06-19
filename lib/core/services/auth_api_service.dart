@@ -19,11 +19,11 @@ class AuthApiService {
   }
 
   static Future<Map<String, dynamic>> verifyOtp({
-    required String phone,
+    required String email,
     required String otp,
   }) async {
     return ApiClient.post('/api/v1/auth/verify-otp', body: {
-      'phone': phone,
+      'email': email,
       'otp': otp,
     });
   }
@@ -60,13 +60,52 @@ class AuthApiService {
     return ApiClient.get('/api/v1/auth/me');
   }
 
+  static Future<Map<String, dynamic>> resendOtp({
+    required String email,
+  }) async {
+    return ApiClient.post('/api/v1/auth/resend-otp', body: {
+      'email': email,
+    });
+  }
+
+  static Future<Map<String, dynamic>> sendLoginOtp({
+    required String email,
+  }) async {
+    return ApiClient.post('/api/v1/auth/send-login-otp', body: {
+      'email': email,
+    });
+  }
+
+  static Future<Map<String, dynamic>> loginWithOtp({
+    required String email,
+    required String otp,
+  }) async {
+    final result = await ApiClient.post('/api/v1/auth/login-with-otp', body: {
+      'email': email,
+      'otp': otp,
+    });
+    await ApiClient.setTokens(
+      result['access_token'] as String,
+      result['refresh_token'] as String,
+    );
+    return result;
+  }
+
+  static Future<Map<String, dynamic>> forgotPassword({
+    required String email,
+  }) async {
+    return ApiClient.post('/api/v1/auth/forgot-password', body: {
+      'email': email,
+    });
+  }
+
   static Future<Map<String, dynamic>> resetPassword({
-    required String phone,
+    required String email,
     required String otp,
     required String newPassword,
   }) async {
     return ApiClient.post('/api/v1/auth/reset-password', body: {
-      'phone': phone,
+      'email': email,
       'otp': otp,
       'new_password': newPassword,
     });

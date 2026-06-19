@@ -49,7 +49,6 @@ class _RegisterScreenState extends State<RegisterScreen> {
         MaterialPageRoute(
           builder: (_) => OtpVerificationScreen(
             email: _emailController.text.trim(),
-            phone: _phoneController.text.trim(),
             fullName: _nameController.text.trim(),
           ),
         ),
