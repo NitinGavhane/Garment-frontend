@@ -12,9 +12,12 @@ import '../features/profile/screens/profile_screen.dart';
 import '../features/wishlist/screens/wishlist_screen.dart';
 import '../features/search/screens/search_screen.dart';
 import '../features/product/screens/product_list_screen.dart';
+import '../features/product/screens/product_detail_screen.dart';
 import '../features/categories/screens/categories_screen.dart';
+import '../models/product.dart';
 import '../providers/auth_provider.dart';
 import '../providers/cart_provider.dart';
+import '../core/services/product_api_service.dart';
 
 class AppRoutes {
   static const String login = '/login';
@@ -25,6 +28,7 @@ class AppRoutes {
   static const String profile = '/profile';
   static const String search = '/search';
   static const String categories = '/categories';
+  static const String productDetail = '/product-detail';
 
   static Route<dynamic> generateRoute(RouteSettings settings) {
     switch (settings.name) {
@@ -40,6 +44,22 @@ class AppRoutes {
         return SlideFadeRoute(page: const SearchScreen());
       case categories:
         return SlideFadeRoute(page: const CategoriesScreen());
+      case productDetail:
+        final args = settings.arguments as Map<String, dynamic>?;
+        final productId = args?['product_id'] as String? ?? '';
+        final refCode = args?['ref'] as String?;
+        final product = Product(
+          id: productId,
+          title: args?['title'] as String? ?? '',
+          description: args?['description'] as String? ?? '',
+          brand: args?['brand'] as String? ?? '',
+          category: '',
+          categoryId: '',
+          price: (args?['price'] as num?)?.toDouble() ?? 0,
+          originalPrice: (args?['original_price'] as num?)?.toDouble() ?? 0,
+          imageUrl: args?['image_url'] as String? ?? '',
+        );
+        return SlideFadeRoute(page: ProductDetailScreen(product: product));
       case main:
         return SlideFadeRoute(page: const MainShell());
       default:

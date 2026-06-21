@@ -70,6 +70,7 @@ class _WalletScreenState extends State<WalletScreen> {
     final referralCode = _referralStats?['referral_code'] as String? ?? user.referralCode ?? '';
     final totalEarnings = (_referralStats?['total_earnings'] as num?)?.toDouble() ?? 0;
     final successfulReferrals = _referralStats?['successful_referrals'] as int? ?? 0;
+    final pendingReferrals = _referralStats?['pending_referrals'] as int? ?? 0;
     final totalReferrals = _referralStats?['total_referrals'] as int? ?? successfulReferrals;
 
     return Scaffold(
@@ -345,7 +346,7 @@ class _WalletScreenState extends State<WalletScreen> {
                       ],
                     ),
                   ),
-                  if (r['status'] == 'completed' || r['status'] == 'successful')
+                  if (r['status'] == 'approved' || r['status'] == 'credited')
                     Container(
                       padding: const EdgeInsets.symmetric(
                           horizontal: 8, vertical: 4),
@@ -354,7 +355,7 @@ class _WalletScreenState extends State<WalletScreen> {
                         borderRadius: BorderRadius.circular(6),
                       ),
                       child: Text(
-                        '₹${(r['earned'] as num?)?.toStringAsFixed(2) ?? '0'}',
+                        '₹${(r['reward_amount'] as num?)?.toStringAsFixed(2) ?? '0'}',
                         style: AppTextStyles.caption.copyWith(
                             color: AppColors.success,
                             fontWeight: FontWeight.w600),

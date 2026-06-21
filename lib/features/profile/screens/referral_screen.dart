@@ -59,6 +59,8 @@ class _ReferralScreenState extends State<ReferralScreen> {
     final referralCode = _stats?['referral_code'] as String? ?? user.referralCode ?? '';
     final totalEarnings = (_stats?['total_earnings'] as num?)?.toDouble() ?? 0;
     final successfulReferrals = _stats?['successful_referrals'] as int? ?? 0;
+    final pendingReferrals = _stats?['pending_referrals'] as int? ?? 0;
+    final totalClicks = _stats?['total_clicks'] as int? ?? 0;
 
     return Scaffold(
       appBar: AppBar(
@@ -139,11 +141,27 @@ class _ReferralScreenState extends State<ReferralScreen> {
                         _referralStat('Total Referrals',
                             '$successfulReferrals'),
                         const SizedBox(width: 12),
+                        _referralStat('Pending',
+                            '$pendingReferrals'),
+                      ],
+                    ),
+                    const SizedBox(height: AppDimensions.sm),
+                    Row(
+                      children: [
                         _referralStat('Earnings',
                             '₹${totalEarnings.toStringAsFixed(2)}'),
+                        const SizedBox(width: 12),
+                        _referralStat('Total Clicks',
+                            '$totalClicks'),
                       ],
                     ),
                     const SizedBox(height: AppDimensions.lg),
+                    if (_history.isNotEmpty) ...[
+                      Text('Referral History', style: AppTextStyles.subtitle),
+                      const SizedBox(height: AppDimensions.sm),
+                      ..._history.map((r) => _buildHistoryItem(r)),
+                      const SizedBox(height: AppDimensions.lg),
+                    ],
                     Text('How it works', style: AppTextStyles.subtitle),
                     const SizedBox(height: AppDimensions.sm),
                     _stepTile('1',
@@ -167,6 +185,100 @@ class _ReferralScreenState extends State<ReferralScreen> {
                   ],
                 ),
               ),
+      ),
+    );
+  }
+
+  Widget _buildHistoryItem(Map<String, dynamic> r) {
+    final status = r['status'] as String? ?? 'pending';
+    final rewardAmount = (r['reward_amount'] as num?)?.toDouble() ?? 0;
+    final purchaseAmount = (r['purchase_amount'] as num?)?.toDouble() ?? 0;
+    final productName = r['product_name'] as String?;
+    final referredName = r['referred_user_name'] as String? ?? 'A friend';
+
+    return Container(
+      margin: const EdgeInsets.only(bottom: 8),
+      padding: const EdgeInsets.all(12),
+      decoration: BoxDecoration(
+        color: AppColors.surface,
+        borderRadius: BorderRadius.circular(12),
+      ),
+      child: Row(
+        children: [
+          Container(
+            width: 40,
+            height: 40,
+            decoration: BoxDecoration(
+              color: AppColors.primary.withValues(alpha: 0.1),
+              borderRadius: BorderRadius.circular(10),
+            ),
+            child: const Icon(Iconsax.user, size: 20, color: AppColors.primary),
+          ),
+          const SizedBox(width: 12),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  productName != null
+                      ? '$referredName bought $productName'
+                      : '$referredName made a purchase',
+                  style: AppTextStyles.bodySmall.copyWith(fontWeight: FontWeight.w500),
+                ),
+                if (purchaseAmount > 0)
+                  Text(
+                    'Purchase: ₹${purchaseAmount.toStringAsFixed(2)}',
+                    style: AppTextStyles.caption,
+                  ),
+              ],
+            ),
+          ),
+          if (status == 'approved')
+            Container(
+              padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+              decoration: BoxDecoration(
+                color: AppColors.success.withValues(alpha: 0.1),
+                borderRadius: BorderRadius.circular(6),
+              ),
+              child: Text(
+                '₹${rewardAmount.toStringAsFixed(2)}',
+                style: AppTextStyles.caption.copyWith(
+                  color: AppColors.success,
+                  fontWeight: FontWeight.w600,
+                ),
+              ),
+            )
+          else if (status == 'pending')
+            Container(
+              padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+              decoration: BoxDecoration(
+                color: AppColors.warning.withValues(alpha: 0.1),
+                borderRadius: BorderRadius.circular(6),
+              ),
+              child: Text(
+                'Pending',
+                style: AppTextStyles.caption.copyWith(
+                  color: AppColors.warning,
+                  fontWeight: FontWeight.w500,
+                ),
+              ),
+            )
+          else
+            Container(
+              padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+              decoration: BoxDecoration(
+                color: AppColors.error.withValues(alpha: 0.1),
+                borderRadius: BorderRadius.circular(6),
+              ),
+              child: Text(
+                status.toUpperCase(),
+                style: AppTextStyles.caption.copyWith(
+                  color: AppColors.error,
+                  fontWeight: FontWeight.w500,
+                ),
+              ),
+            ),
+        ],
       ),
     );
   }

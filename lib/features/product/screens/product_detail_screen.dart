@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:iconsax/iconsax.dart';
 import 'package:provider/provider.dart';
+import 'package:share_plus/share_plus.dart';
 import '../../../core/constants/app_colors.dart';
 import '../../../core/constants/app_dimensions.dart';
 import '../../../core/constants/app_text_styles.dart';
@@ -182,7 +183,13 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
                     ),
                     child: const Icon(Iconsax.share, size: 18),
                   ),
-                  onPressed: () {},
+                  onPressed: () {
+                    final auth = context.read<AuthProvider>();
+                    final refCode = auth.user?.referralCode ?? '';
+                    final url = '/product/${_product.id}?ref=$refCode';
+                    final text = 'Check out ${_product.title} at ₹${_product.price.toStringAsFixed(2)}! $url';
+                    SharePlus.instance.share(ShareParams(text: text));
+                  },
                 ),
                 const SizedBox(width: 8),
               ],

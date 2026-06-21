@@ -3,9 +3,13 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../../core/constants/app_colors.dart';
 import '../../providers/location_provider.dart';
+import '../../routes/app_routes.dart';
 
 class SplashScreen extends StatefulWidget {
-  const SplashScreen({super.key});
+  final String? pendingProductId;
+  final String? pendingRefCode;
+
+  const SplashScreen({super.key, this.pendingProductId, this.pendingRefCode});
 
   @override
   State<SplashScreen> createState() => _SplashScreenState();
@@ -68,7 +72,17 @@ class _SplashScreenState extends State<SplashScreen>
       context.read<LocationProvider>().requestLocation();
     });
     Future.delayed(const Duration(milliseconds: 2800), () {
-      if (mounted) {
+      if (!mounted) return;
+      if (widget.pendingProductId != null) {
+        Navigator.pushReplacementNamed(
+          context,
+          AppRoutes.productDetail,
+          arguments: {
+            'product_id': widget.pendingProductId,
+            'ref': widget.pendingRefCode,
+          },
+        );
+      } else {
         Navigator.pushReplacementNamed(context, '/main');
       }
     });
