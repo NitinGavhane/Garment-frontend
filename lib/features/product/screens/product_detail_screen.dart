@@ -188,7 +188,7 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
                     final refCode = auth.user?.referralCode ?? '';
                     final url = '/product/${_product.id}?ref=$refCode';
                     final text = 'Check out ${_product.title} at ₹${_product.price.toStringAsFixed(2)}! $url';
-                    SharePlus.instance.share(ShareParams(text: text));
+                    Share.share(text);
                   },
                 ),
                 const SizedBox(width: 8),

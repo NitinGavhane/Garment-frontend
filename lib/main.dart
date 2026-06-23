@@ -107,31 +107,4 @@ class _GarmentEcommerceAppState extends State<GarmentEcommerceApp> {
   }
 }
 
-class GarmentEcommerceApp extends StatelessWidget {
-  final WishlistProvider wishlistProvider;
 
-  const GarmentEcommerceApp({super.key, required this.wishlistProvider});
-
-  @override
-  Widget build(BuildContext context) {
-    return MultiProvider(
-      providers: [
-        ChangeNotifierProvider(create: (_) => AuthProvider()..checkAuth()),
-        ChangeNotifierProvider.value(value: wishlistProvider),
-        ChangeNotifierProvider(create: (_) => CartProvider()),
-        ChangeNotifierProvider(create: (_) => LocationProvider()),
-        ChangeNotifierProvider(create: (_) => ProductProvider()),
-        ChangeNotifierProvider(create: (_) => CategoryProvider()),
-        ChangeNotifierProvider(create: (_) => OrderProvider()),
-        ChangeNotifierProvider(create: (_) => AddressProvider()),
-      ],
-      child: MaterialApp(
-        title: 'Fashion Store',
-        debugShowCheckedModeBanner: false,
-        theme: AppTheme.lightTheme,
-        home: const SplashScreen(),
-        onGenerateRoute: AppRoutes.generateRoute,
-      ),
-    );
-  }
-}
