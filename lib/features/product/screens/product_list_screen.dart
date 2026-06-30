@@ -32,6 +32,7 @@ class ProductListScreen extends StatefulWidget {
 }
 
 class _ProductListScreenState extends State<ProductListScreen> {
+  static const double _kMaxPrice = 50000;
   String? _selectedSize;
   String? _selectedColor;
   late double _maxPrice;
@@ -80,7 +81,7 @@ class _ProductListScreenState extends State<ProductListScreen> {
   @override
   void initState() {
     super.initState();
-    _maxPrice = widget.maxPrice ?? 5000;
+    _maxPrice = widget.maxPrice ?? _kMaxPrice;
     WidgetsBinding.instance.addPostFrameCallback((_) {
       context.read<ProductProvider>().fetchProducts(
         category: widget.category?.id,
@@ -240,7 +241,7 @@ class _ProductListScreenState extends State<ProductListScreen> {
                       setState(() {
                         _selectedSize = null;
                         _selectedColor = null;
-                        _maxPrice = widget.maxPrice ?? 5000;
+                        _maxPrice = widget.maxPrice ?? _kMaxPrice;
                       });
                       Navigator.pop(ctx);
                     },
@@ -271,7 +272,7 @@ class _ProductListScreenState extends State<ProductListScreen> {
               Slider(
                 value: _maxPrice,
                 min: 0,
-                max: 5000,
+                max: _kMaxPrice,
                 activeColor: AppColors.primary,
                 onChanged: (v) {
                   setSheetState(() => _maxPrice = v);

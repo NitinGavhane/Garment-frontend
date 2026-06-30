@@ -54,11 +54,12 @@ class CategoryProvider extends ChangeNotifier {
 
   List<models.Category> get filteredCategories {
     if (_selectedGender == 'ALL') return _categories;
-    return _categories.where((c) {
-      if (c.gender.isEmpty) return false;
-      if (c.gender == 'unisex') return true;
-      return c.gender.toUpperCase() == _selectedGender;
-    }).toList();
+    // A gender tab shows only categories that belong to that gender. "unisex"
+    // (and ungendered) categories are not leaked into every tab — they appear
+    // under ALL only.
+    return _categories
+        .where((c) => c.gender.toUpperCase() == _selectedGender)
+        .toList();
   }
 
   Future<void> fetchCategories() async {

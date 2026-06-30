@@ -84,11 +84,12 @@ class ProductProvider extends ChangeNotifier {
 
   List<Product> filterByGender(String gender) {
     if (gender == 'ALL') return _products;
-    return _products.where((p) {
-      if (p.gender.isEmpty) return false;
-      if (p.gender == 'unisex') return true;
-      return p.gender.toUpperCase() == gender;
-    }).toList();
+    // Strict per-gender filtering: a gender tab shows only products of that
+    // gender. "unisex"/ungendered products appear under ALL only, so a
+    // product is never shown under a gender it does not belong to.
+    return _products
+        .where((p) => p.gender.toUpperCase() == gender)
+        .toList();
   }
 
   List<Product> getProductsByCategory(String categoryId) {
