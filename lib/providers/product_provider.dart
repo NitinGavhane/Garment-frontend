@@ -34,6 +34,7 @@ class ProductProvider extends ChangeNotifier {
         return Product(
           id: apiProduct.id,
           title: apiProduct.title,
+          sku: apiProduct.sku,
           description: apiProduct.description ?? '',
           brand: apiProduct.brand ?? '',
           category: apiProduct.categoryName ?? '',
@@ -46,6 +47,8 @@ class ProductProvider extends ChangeNotifier {
           sizes: apiProduct.sizes,
           colors: apiProduct.colors,
           isFeatured: apiProduct.featured,
+          isReplaceable: apiProduct.isReplaceable,
+          isReturnable: apiProduct.isReturnable,
           stock: apiProduct.stock,
           imageUrl: apiProduct.primaryImage ?? '',
           gender: apiProduct.gender,

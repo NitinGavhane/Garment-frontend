@@ -440,26 +440,27 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
                     Text('Description', style: AppTextStyles.subtitle),
                     const SizedBox(height: AppDimensions.sm),
                     Text(
-                      product.description,
+                      product.description.trim().isNotEmpty
+                          ? product.description
+                          : 'No description available.',
                       style: AppTextStyles.body.copyWith(
                         color: AppColors.textSecondary,
                         height: 1.6,
                       ),
                     ),
                     const SizedBox(height: AppDimensions.md),
-                    Row(
+                    Wrap(
+                      spacing: 12,
+                      runSpacing: 12,
                       children: [
-                        _infoChip(Iconsax.box, 'SKU: ${product.id.toUpperCase()}'),
-                        const SizedBox(width: 12),
+                        if (product.sku.trim().isNotEmpty)
+                          _infoChip(Iconsax.box, 'SKU: ${product.sku}'),
                         _infoChip(Iconsax.verify, '100% Original'),
-                      ],
-                    ),
-                    const SizedBox(height: AppDimensions.md),
-                    Row(
-                      children: [
                         _infoChip(Iconsax.clock, 'Free Delivery'),
-                        const SizedBox(width: 12),
-                        _infoChip(Iconsax.refresh_circle, '7-day Returns'),
+                        if (product.isReturnable)
+                          _infoChip(Iconsax.refresh_circle, '7-day Returns'),
+                        if (product.isReplaceable)
+                          _infoChip(Iconsax.repeate_one, 'Replaceable'),
                       ],
                     ),
                   ],

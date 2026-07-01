@@ -5,6 +5,7 @@ import 'cart_item.dart';
 class Product {
   final String id;
   final String title;
+  final String sku;
   final String description;
   final String brand;
   final String category;
@@ -18,6 +19,8 @@ class Product {
   final List<String> colors;
   final bool isFeatured;
   final bool isNew;
+  final bool isReplaceable;
+  final bool isReturnable;
   final String badge;
   final int stock;
   final String imageUrl;
@@ -26,6 +29,7 @@ class Product {
   const Product({
     required this.id,
     required this.title,
+    this.sku = '',
     required this.description,
     required this.brand,
     required this.category,
@@ -39,6 +43,8 @@ class Product {
     this.colors = const ['Black', 'White', 'Blue'],
     this.isFeatured = false,
     this.isNew = false,
+    this.isReplaceable = false,
+    this.isReturnable = false,
     this.badge = '',
     this.stock = 50,
     this.imageUrl = '',
@@ -49,6 +55,7 @@ class Product {
     return Product(
       id: apiProduct.id,
       title: apiProduct.title,
+      sku: apiProduct.sku,
       description: apiProduct.description ?? '',
       brand: apiProduct.brand ?? '',
       category: '',
@@ -61,6 +68,8 @@ class Product {
       sizes: apiProduct.availableSizes,
       colors: apiProduct.availableColors,
       isFeatured: apiProduct.featured,
+      isReplaceable: apiProduct.isReplaceable,
+      isReturnable: apiProduct.isReturnable,
       stock: apiProduct.stock,
       imageUrl: apiProduct.primaryImage ?? '',
       gender: apiProduct.gender,
@@ -91,6 +100,7 @@ class Product {
   Product copyWith({
     String? id,
     String? title,
+    String? sku,
     String? description,
     String? brand,
     String? category,
@@ -104,6 +114,8 @@ class Product {
     List<String>? colors,
     bool? isFeatured,
     bool? isNew,
+    bool? isReplaceable,
+    bool? isReturnable,
     String? badge,
     int? stock,
     String? imageUrl,
@@ -112,6 +124,7 @@ class Product {
     return Product(
       id: id ?? this.id,
       title: title ?? this.title,
+      sku: sku ?? this.sku,
       description: description ?? this.description,
       brand: brand ?? this.brand,
       category: category ?? this.category,
@@ -125,6 +138,8 @@ class Product {
       colors: colors ?? this.colors,
       isFeatured: isFeatured ?? this.isFeatured,
       isNew: isNew ?? this.isNew,
+      isReplaceable: isReplaceable ?? this.isReplaceable,
+      isReturnable: isReturnable ?? this.isReturnable,
       badge: badge ?? this.badge,
       stock: stock ?? this.stock,
       imageUrl: imageUrl ?? this.imageUrl,
@@ -192,6 +207,8 @@ class ApiProduct {
   final int stock;
   final bool featured;
   final bool isActive;
+  final bool isReplaceable;
+  final bool isReturnable;
   final String gender;
   final DateTime createdAt;
   final DateTime updatedAt;
@@ -213,6 +230,8 @@ class ApiProduct {
     required this.stock,
     this.featured = false,
     this.isActive = true,
+    this.isReplaceable = false,
+    this.isReturnable = false,
     this.gender = '',
     required this.createdAt,
     required this.updatedAt,
@@ -267,6 +286,8 @@ class ApiProduct {
       stock: json['stock'] as int? ?? 0,
       featured: json['featured'] as bool? ?? json['is_featured'] as bool? ?? false,
       isActive: json['is_active'] as bool? ?? true,
+      isReplaceable: json['is_replaceable'] as bool? ?? false,
+      isReturnable: json['is_returnable'] as bool? ?? false,
       gender: json['gender'] as String? ?? '',
       createdAt: json['created_at'] != null ? DateTime.parse(json['created_at'] as String) : DateTime.now(),
       updatedAt: json['updated_at'] != null ? DateTime.parse(json['updated_at'] as String) : DateTime.now(),
@@ -295,6 +316,8 @@ class ApiProductListItem {
   final String? brand;
   final List<String> sizes;
   final List<String> colors;
+  final bool isReplaceable;
+  final bool isReturnable;
 
   const ApiProductListItem({
     required this.id,
@@ -313,6 +336,8 @@ class ApiProductListItem {
     this.brand,
     this.sizes = const [],
     this.colors = const [],
+    this.isReplaceable = false,
+    this.isReturnable = false,
   });
 
   double get displayPrice => discountPrice ?? price;
@@ -337,6 +362,8 @@ class ApiProductListItem {
       brand: json['brand'] as String?,
       sizes: (json['sizes'] as List<dynamic>?)?.cast<String>() ?? [],
       colors: (json['colors'] as List<dynamic>?)?.cast<String>() ?? [],
+      isReplaceable: json['is_replaceable'] as bool? ?? false,
+      isReturnable: json['is_returnable'] as bool? ?? false,
     );
   }
 }
