@@ -1,11 +1,11 @@
 {
-    "name": "Fashion Store",
-    "short_name": "Fashion Store",
+    "name": "Dristi Fashions",
+    "short_name": "Dristi",
     "start_url": ".",
     "display": "standalone",
-    "background_color": "#FFFFFF",
-    "theme_color": "#FFFFFF",
-    "description": "Garment E-commerce Platform",
+    "background_color": "#10195E",
+    "theme_color": "#1A2A80",
+    "description": "Dristi Fashions — Fashion That Reflects Your Personality",
     "orientation": "portrait-primary",
     "prefer_related_applications": false,
     "icons": [

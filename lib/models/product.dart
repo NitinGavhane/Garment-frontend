@@ -62,6 +62,8 @@ class Product {
       categoryId: apiProduct.categoryId,
       price: apiProduct.displayPrice,
       originalPrice: apiProduct.originalPrice,
+      rating: apiProduct.rating,
+      reviewCount: apiProduct.reviewCount,
       discountPercentage: apiProduct.discountPrice != null
           ? ((apiProduct.price - apiProduct.discountPrice!) / apiProduct.price * 100).round()
           : 0,
@@ -210,6 +212,8 @@ class ApiProduct {
   final bool isReplaceable;
   final bool isReturnable;
   final String gender;
+  final double rating;
+  final int reviewCount;
   final DateTime createdAt;
   final DateTime updatedAt;
   final List<ApiProductVariant> variants;
@@ -233,6 +237,8 @@ class ApiProduct {
     this.isReplaceable = false,
     this.isReturnable = false,
     this.gender = '',
+    this.rating = 0,
+    this.reviewCount = 0,
     required this.createdAt,
     required this.updatedAt,
     this.variants = const [],
@@ -289,6 +295,8 @@ class ApiProduct {
       isReplaceable: json['is_replaceable'] as bool? ?? false,
       isReturnable: json['is_returnable'] as bool? ?? false,
       gender: json['gender'] as String? ?? '',
+      rating: (json['rating'] as num?)?.toDouble() ?? 0,
+      reviewCount: (json['review_count'] as int?) ?? 0,
       createdAt: json['created_at'] != null ? DateTime.parse(json['created_at'] as String) : DateTime.now(),
       updatedAt: json['updated_at'] != null ? DateTime.parse(json['updated_at'] as String) : DateTime.now(),
       variants: parsedVariants ?? [],
@@ -318,6 +326,8 @@ class ApiProductListItem {
   final List<String> colors;
   final bool isReplaceable;
   final bool isReturnable;
+  final double rating;
+  final int reviewCount;
 
   const ApiProductListItem({
     required this.id,
@@ -338,6 +348,8 @@ class ApiProductListItem {
     this.colors = const [],
     this.isReplaceable = false,
     this.isReturnable = false,
+    this.rating = 0,
+    this.reviewCount = 0,
   });
 
   double get displayPrice => discountPrice ?? price;
@@ -364,6 +376,8 @@ class ApiProductListItem {
       colors: (json['colors'] as List<dynamic>?)?.cast<String>() ?? [],
       isReplaceable: json['is_replaceable'] as bool? ?? false,
       isReturnable: json['is_returnable'] as bool? ?? false,
+      rating: (json['rating'] as num?)?.toDouble() ?? 0,
+      reviewCount: (json['review_count'] as int?) ?? 0,
     );
   }
 }

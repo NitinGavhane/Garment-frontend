@@ -8,6 +8,7 @@ import 'providers/cart_provider.dart';
 import 'providers/wishlist_provider.dart';
 import 'providers/product_provider.dart';
 import 'providers/category_provider.dart';
+import 'providers/banner_provider.dart';
 import 'providers/location_provider.dart';
 import 'providers/order_provider.dart';
 import 'providers/address_provider.dart';
@@ -52,7 +53,7 @@ class _GarmentEcommerceAppState extends State<GarmentEcommerceApp> {
     // Returns the initial URI from the app launch
     // On Android/iOS, this comes from the platform channel
     try {
-      final platform = MethodChannel('com.garment.ecommerce/deeplink');
+      const platform = MethodChannel('com.garment.ecommerce/deeplink');
       final uri = await platform.invokeMethod<String>('getInitialUri');
       return uri;
     } catch (_) {
@@ -90,11 +91,12 @@ class _GarmentEcommerceAppState extends State<GarmentEcommerceApp> {
         ChangeNotifierProvider(create: (_) => LocationProvider()),
         ChangeNotifierProvider(create: (_) => ProductProvider()),
         ChangeNotifierProvider(create: (_) => CategoryProvider()),
+        ChangeNotifierProvider(create: (_) => BannerProvider()),
         ChangeNotifierProvider(create: (_) => OrderProvider()),
         ChangeNotifierProvider(create: (_) => AddressProvider()),
       ],
       child: MaterialApp(
-        title: 'Fashion Store',
+        title: 'Dristi Fashions',
         debugShowCheckedModeBanner: false,
         theme: AppTheme.lightTheme,
         home: SplashScreen(

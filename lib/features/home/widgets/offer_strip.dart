@@ -59,7 +59,7 @@ class OfferStrip extends StatelessWidget {
               ),
             ),
           ),
-          Icon(Icons.close, size: 16, color: AppColors.textMuted),
+          const Icon(Icons.close, size: 16, color: AppColors.textMuted),
         ],
       ),
     );

@@ -41,6 +41,8 @@ class ProductProvider extends ChangeNotifier {
           categoryId: apiProduct.categoryId ?? '',
           price: apiProduct.displayPrice,
           originalPrice: apiProduct.price,
+          rating: apiProduct.rating,
+          reviewCount: apiProduct.reviewCount,
           discountPercentage: apiProduct.discountPrice != null
               ? ((apiProduct.price - apiProduct.discountPrice!) / apiProduct.price * 100).round()
               : 0,

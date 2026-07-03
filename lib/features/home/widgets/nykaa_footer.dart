@@ -7,7 +7,7 @@ class NykaaFooter extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      color: const Color(0xFF1A1A1A),
+      color: const Color(0xFF10195E),
       padding: const EdgeInsets.symmetric(vertical: 32, horizontal: 16),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -19,24 +19,24 @@ class NykaaFooter extends StatelessWidget {
           ),
           const SizedBox(height: 8),
           Text(
-            'India\'s leading fashion destination',
+            'Fashion That Reflects Your Personality',
             style: GoogleFonts.poppins(
               fontSize: 12,
               color: Colors.white54,
             ),
           ),
           const SizedBox(height: 24),
-          _FooterLinksSection(
+          const _FooterLinksSection(
             title: 'SHOP',
             links: ['Women', 'Men', 'Kids', 'Home', 'Brands'],
           ),
           const SizedBox(height: 20),
-          _FooterLinksSection(
+          const _FooterLinksSection(
             title: 'HELP',
             links: ['About Us', 'Shipping & Return Policy', 'Help Center', 'Terms & Conditions', 'Privacy Policy'],
           ),
           const SizedBox(height: 20),
-          _FooterLinksSection(
+          const _FooterLinksSection(
             title: 'FOLLOW US',
             links: ['Instagram', 'Facebook', 'Twitter', 'YouTube'],
           ),
@@ -60,7 +60,7 @@ class NykaaFooter extends StatelessWidget {
           const Divider(color: Colors.white12, height: 1),
           const SizedBox(height: 16),
           Text(
-            '© 2026 Garment Ltd. All Rights Reserved.',
+            '© 2026 Dristi Fashions. All Rights Reserved.',
             style: GoogleFonts.poppins(
               fontSize: 10,
               color: Colors.white38,

@@ -7,39 +7,40 @@ class Footer extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      color: const Color(0xFF1A1A1A),
+      color: const Color(0xFF10195E),
       padding: const EdgeInsets.symmetric(vertical: 24, horizontal: 16),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
-            'Garment',
+            'DRISTI FASHIONS',
             style: GoogleFonts.poppins(
               fontSize: 20,
               fontWeight: FontWeight.bold,
-              color: Colors.white,
+              color: const Color(0xFFC9A227),
+              letterSpacing: 1.5,
             ),
           ),
           const SizedBox(height: 4),
           Text(
-            "India's leading fashion destination",
+            'Fashion That Reflects Your Personality',
             style: GoogleFonts.poppins(
               fontSize: 12,
               color: Colors.white54,
             ),
           ),
           const SizedBox(height: 20),
-          _FooterLinksSection(
+          const _FooterLinksSection(
             title: 'SHOP',
             links: ['Women', 'Men', 'Kids', 'Home', 'Brands'],
           ),
           const SizedBox(height: 16),
-          _FooterLinksSection(
+          const _FooterLinksSection(
             title: 'HELP',
             links: ['About Us', 'Shipping & Return Policy', 'Help Center', 'Terms & Conditions', 'Privacy Policy'],
           ),
           const SizedBox(height: 16),
-          _FooterLinksSection(
+          const _FooterLinksSection(
             title: 'FOLLOW US',
             links: ['Instagram', 'Facebook', 'Twitter', 'YouTube'],
           ),
@@ -56,7 +57,7 @@ class Footer extends StatelessWidget {
           const Divider(color: Colors.white12, height: 1),
           const SizedBox(height: 12),
           Text(
-            '© 2026 Garment Ltd. All Rights Reserved.',
+            '© 2026 Dristi Fashions. All Rights Reserved.',
             style: GoogleFonts.poppins(fontSize: 10, color: Colors.white38),
           ),
         ],

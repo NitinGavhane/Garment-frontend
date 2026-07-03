@@ -28,7 +28,7 @@ class _PrimaryStrip extends StatelessWidget {
       height: 44,
       decoration: const BoxDecoration(
         gradient: LinearGradient(
-          colors: [Color(0xFFbd003b), Color(0xFFe8144d)],
+          colors: [Color(0xFF1A2A80), Color(0xFF243AA0)],
           begin: Alignment.centerLeft,
           end: Alignment.centerRight,
         ),
@@ -36,7 +36,7 @@ class _PrimaryStrip extends StatelessWidget {
       child: ListView(
         scrollDirection: Axis.horizontal,
         padding: const EdgeInsets.symmetric(horizontal: 20),
-        children: [
+        children: const [
           _BrandItem('LIBAS'),
           _BrandItem('RARE RABBIT'),
           _BrandItem('LIBAS'),
@@ -83,7 +83,7 @@ class _SecondaryStrip extends StatelessWidget {
       child: ListView(
         scrollDirection: Axis.horizontal,
         padding: const EdgeInsets.symmetric(horizontal: 16),
-        children: [
+        children: const [
           _SecondaryBrand('Miraggio'),
           _SecondaryBrand('Jack & Jones'),
           _SecondaryBrand('Timex'),

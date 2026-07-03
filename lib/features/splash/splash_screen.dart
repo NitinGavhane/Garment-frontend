@@ -103,9 +103,9 @@ class _SplashScreenState extends State<SplashScreen>
             begin: Alignment.topCenter,
             end: Alignment.bottomCenter,
             colors: [
-              Color(0xFFfff8f7),
-              Color(0xFFfce4ec),
-              Color(0xFFfff8f7),
+              Color(0xFF10195E),
+              Color(0xFF1A2A80),
+              Color(0xFF10195E),
             ],
           ),
         ),
@@ -131,7 +131,7 @@ class _SplashScreenState extends State<SplashScreen>
                           child: CustomPaint(
                             painter: _RingPainter(
                               progress: _progress.value,
-                              color: AppColors.nykaaPink,
+                              color: AppColors.brandGold,
                             ),
                           ),
                         ),
@@ -145,7 +145,7 @@ class _SplashScreenState extends State<SplashScreen>
                           child: CustomPaint(
                             painter: _RingPainter(
                               progress: _progress.value * 0.8,
-                              color: AppColors.nykaaPink.withValues(alpha: 0.3),
+                              color: AppColors.brandGold.withValues(alpha: 0.35),
                             ),
                           ),
                         ),
@@ -162,9 +162,9 @@ class _SplashScreenState extends State<SplashScreen>
                               shape: BoxShape.circle,
                               boxShadow: [
                                 BoxShadow(
-                                  color: AppColors.nykaaPink
-                                      .withValues(alpha: 0.2),
-                                  blurRadius: 20,
+                                  color: AppColors.brandGold
+                                      .withValues(alpha: 0.35),
+                                  blurRadius: 24,
                                   spreadRadius: 2,
                                 ),
                               ],
@@ -188,27 +188,28 @@ class _SplashScreenState extends State<SplashScreen>
                 // Tagline
                 Opacity(
                   opacity: _taglineFade.value,
-                  child: Column(
+                  child: const Column(
                     children: [
                       Text(
-                        'FASHION STORE',
+                        'DRISTI FASHIONS',
                         style: TextStyle(
                           fontFamily: 'Poppins',
                           fontSize: 22,
                           fontWeight: FontWeight.w800,
-                          color: AppColors.nykaaBlack,
+                          color: AppColors.brandGold,
                           letterSpacing: 4,
                         ),
                       ),
-                      const SizedBox(height: 6),
+                      SizedBox(height: 8),
                       Text(
-                        'Style That Speaks',
+                        'Fashion That Reflects Your Personality',
+                        textAlign: TextAlign.center,
                         style: TextStyle(
                           fontFamily: 'Poppins',
-                          fontSize: 13,
+                          fontSize: 12,
                           fontWeight: FontWeight.w400,
-                          color: AppColors.textHint,
-                          letterSpacing: 2,
+                          color: Color(0xFFDDE2F8),
+                          letterSpacing: 1.5,
                         ),
                       ),
                     ],
@@ -230,20 +231,20 @@ class _SplashScreenState extends State<SplashScreen>
                             borderRadius: BorderRadius.circular(2),
                             child: LinearProgressIndicator(
                               value: _progress.value,
-                              backgroundColor: AppColors.divider,
-                              valueColor: AlwaysStoppedAnimation<Color>(
-                                AppColors.nykaaPink,
+                              backgroundColor: Colors.white24,
+                              valueColor: const AlwaysStoppedAnimation<Color>(
+                                AppColors.brandGold,
                               ),
                             ),
                           ),
                         ),
                         const SizedBox(height: 10),
-                        Text(
+                        const Text(
                           'Loading...',
                           style: TextStyle(
                             fontFamily: 'Poppins',
                             fontSize: 11,
-                            color: AppColors.textHint,
+                            color: Color(0xFFAFB8EE),
                             letterSpacing: 1,
                           ),
                         ),

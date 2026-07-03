@@ -5,7 +5,7 @@ import '../models/cart_item.dart';
 import '../models/product.dart';
 
 class CartProvider extends ChangeNotifier {
-  List<CartItem> _items = [];
+  final List<CartItem> _items = [];
   bool _isLoading = false;
   String? _error;
 

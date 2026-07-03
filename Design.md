@@ -1,8 +1,13 @@
-# Design.md — Garment App Home Screen
+# Design.md — Dristi Fashions App Home Screen
+
+## Brand
+
+**Dristi Fashions** — *Fashion That Reflects Your Personality.*
+Identity is a deep **royal blue** field with **gold** accents, taken directly from the logo (gold "DF" monogram, gown & blazer, woman silhouette on a royal-blue ground). Royal blue drives primary actions and branding; gold is the luxury accent for highlights, ratings, festive callouts, and premium badges. Surfaces stay light and cool for shopping readability.
 
 ## Overview
 
-**App:** Garment (Fashion & Lifestyle E-Commerce)
+**App:** Dristi Fashions (Fashion & Lifestyle E-Commerce)
 **Screen:** Home Screen
 **Platform:** Android Mobile (approx. 390×844pt viewport)
 **Purpose:** Discovery-first landing — drive browsing across fashion, beauty, footwear, and home categories through sales, banners, and brand spotlights.
@@ -11,17 +16,22 @@
 
 ## Color Palette
 
+Canonical values live in [`lib/core/constants/app_colors.dart`](lib/core/constants/app_colors.dart).
+
 | Token | Hex | Usage |
 |---|---|---|
-| `--brand-primary` | `#E8144D` | Garment logo, active tab indicator, sale banners, CTA backgrounds |
-| `--brand-dark` | `#1A1A1A` | Primary text, search placeholder, nav labels |
-| `--surface-bg` | `#FFFFFF` | App background, card surfaces |
-| `--surface-warm` | `#FFF5F0` | Subtle warm tint behind hero banner |
-| `--accent-gold` | `#F5A623` | "Stylish Steals" banner gradient, festive highlights |
-| `--banner-gradient-start` | `#FF6B00` | Brand partner & sale banner gradient start |
-| `--banner-gradient-end` | `#CC0000` | Brand partner & sale banner gradient end |
-| `--text-secondary` | `#757575` | Sub-labels, descriptive copy |
-| `--divider` | `#E0E0E0` | Hairline separators between sections |
+| `primary` (royal blue) | `#1A2A80` | Logo, active tab indicator, CTA backgrounds, input focus, links, selected chips |
+| `primaryDark` | `#10195E` | Splash/footer backgrounds, pressed states, native launch splash |
+| `primaryContainer` | `#243AA0` | Brighter royal for gradients & filled containers |
+| `brandGold` / `festiveGold` | `#C9A227` | Wordmark, festive highlights, ratings, "new" badges — the luxury accent |
+| `brandGoldLight` | `#E6C766` | Gold gradient stop, subtle gold highlights |
+| `surface` / `scaffoldBg` | `#FBFBFE` / `#F7F8FD` | App background, card surfaces (cool light) |
+| `surfaceWarm` / `heroBg` | `#EEF1FF` | Subtle cool tint behind hero banner |
+| `onSurface` (text primary) | `#181A2C` | Primary text, nav labels |
+| `textSecondary` | `#44465A` | Sub-labels, descriptive copy |
+| `discountGreen` | `#27AE60` | Discount % / savings |
+| `saleOrange` / `urgencyOrange` | `#FF6B00` | Urgency & sale-strip accent (complements blue/gold) |
+| `divider` | `#E2E3ED` | Hairline separators between sections |
 
 ---
 
@@ -78,14 +88,14 @@
 ## Component Inventory
 
 ### 1. Top Address Bar
-- Icon: 📍 (filled red pin)
+- Icon: 📍 (filled royal-blue pin)
 - Text: "Deliver to {name}, {address}" — truncated with ellipsis
 - Trailing dropdown chevron `˅`
 - Background: transparent (over hero gradient bleed)
 
 ### 2. Search Bar
 - Rounded rectangle pill, `border-radius: 24px`
-- Left: Garment "G" logo in magenta/pink
+- Left: Dristi "DF" gold monogram on royal-blue
 - Placeholder text in quotes: `"Joggers"`
 - Right: Search icon (magnifier)
 - Alongside: Notification bell, Heart (wishlist), Profile icons
@@ -93,7 +103,7 @@
 
 ### 3. Gender Filter Tabs
 - Options: ALL (active), MEN, WOMEN, KIDS + Grid/More icon
-- Active tab: bold text + red underline indicator
+- Active tab: bold text + royal-blue underline indicator
 - Style: flat tabs, no background pill, all caps
 
 ### 4. Category Chips (Horizontal Scroll)
@@ -113,14 +123,14 @@
 - Auto-slides (typically 3–5s interval)
 
 ### 6. Brand Partner Strips
-- Full-width red gradient (`#FF6B00 → #CC0000`) background
-- "POWERED BY" label left-aligned in white/yellow
+- Full-width royal-blue gradient (`#1A2A80 → #243AA0`) background
+- "POWERED BY" label left-aligned in white/gold
 - Brand logos separated by `|` dividers
 - Arrow `›` CTA per brand
 - Second strip: white background, brand name chips with `›`
 
 ### 7. Credit Card Offer Strip
-- White card with Garment + Flipkart bank logos
+- White card with Dristi + bank partner logos
 - Small text: "Get Extra 10% Savings* With Flipkart Axis Bank & SBI Credit Cards"
 - Dismissible or static
 
@@ -130,9 +140,9 @@
 - Equal width columns, ~8px gap, `border-radius: 10px`
 
 ### 9. Bottom Navigation Bar
-- 5 items: Home, Under ₹999, NOW (Garment Now), Luxe, Bag
-- Active (Home): filled icon + red label
-- Bag: badge count `1` in red circle
+- 5 items: Home, Under ₹999, NOW (Dristi Now), Luxe, Bag
+- Active (Home): filled icon + royal-blue label
+- Bag: badge count `1` in royal-blue circle
 - Fonts: 10–11px labels
 - Background: `#FFFFFF` with top divider line
 
@@ -188,23 +198,25 @@
 ## Accessibility Notes
 
 - Minimum tap target: 44×44px across all interactive elements
-- Color contrast: White text on red (`#E8144D`) passes AA at large sizes; verify at body sizes
+- Color contrast: White text on royal blue (`#1A2A80`) passes AA; gold (`#C9A227`) on royal blue is decorative/large-text only — use white/light copy for body text on blue surfaces
 - Search bar placeholder uses quoted keyword — ensure screen reader reads it correctly
 - Carousel: include pause control for reduced-motion preference
 - Badge count on Bag icon: requires `aria-label="Cart, 1 item"`
 
 ---
 
-## Brand Identity Tokens (Garment-specific)
+## Brand Identity Tokens (Dristi Fashions)
 
 | Token | Value |
 |---|---|
-| Logo Mark | Stylized "M" in gradient pink-magenta |
-| Primary Brand Color | `#E8144D` |
+| Logo Mark | Gold "DF" monogram on royal blue (gown + blazer, woman silhouette) |
+| Tagline | *Fashion That Reflects Your Personality* |
+| Primary Brand Color | `#1A2A80` (royal blue) |
+| Accent Color | `#C9A227` (gold) — highlights, ratings, premium badges |
 | Sale/Urgency Color | `#FF6B00` |
 | Trust/Savings Color | `#27AE60` (green for discount %) |
-| Font Brand Voice | Bold, energetic, fashion-forward — uppercase for deals |
+| Font Brand Voice | Elegant, premium, fashion-forward — gold wordmark, generous letter-spacing |
 
 ---
 
-*This Design.md was generated from a visual analysis of the Garment Android app Home Screen (captured June 2026).*
+*This Design.md reflects the Dristi Fashions royal-blue + gold rebrand (logo-driven, July 2026). Canonical color tokens: [`lib/core/constants/app_colors.dart`](lib/core/constants/app_colors.dart).*

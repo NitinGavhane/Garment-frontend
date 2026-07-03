@@ -21,7 +21,7 @@ class LuxeSection extends StatelessWidget {
         Padding(
           padding: const EdgeInsets.fromLTRB(16, 20, 16, 8),
           child: Text(
-            'Garment Luxe',
+            'Dristi Luxe',
             style: GoogleFonts.poppins(
               fontSize: 17,
               fontWeight: FontWeight.w600,

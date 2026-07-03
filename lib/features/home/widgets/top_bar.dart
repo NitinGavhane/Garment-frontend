@@ -65,7 +65,7 @@ class _AddressBar extends StatelessWidget {
         padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
         child: Row(
           children: [
-            Icon(Icons.location_on, size: 18, color: AppColors.primaryContainer),
+            const Icon(Icons.location_on, size: 18, color: AppColors.primaryContainer),
             const SizedBox(width: 4),
             Expanded(
               child: Text(
@@ -95,7 +95,7 @@ class _AddressBar extends StatelessWidget {
         padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
         child: Row(
           children: [
-            Icon(Icons.location_on, size: 18, color: AppColors.primaryContainer),
+            const Icon(Icons.location_on, size: 18, color: AppColors.primaryContainer),
             const SizedBox(width: 4),
             Expanded(
               child: Text(
@@ -109,7 +109,7 @@ class _AddressBar extends StatelessWidget {
                 overflow: TextOverflow.ellipsis,
               ),
             ),
-            Icon(Icons.expand_more, size: 20, color: AppColors.onSurfaceVariant),
+            const Icon(Icons.expand_more, size: 20, color: AppColors.onSurfaceVariant),
           ],
         ),
       ),
@@ -159,17 +159,13 @@ class _SearchHeader extends StatelessWidget {
                 padding: const EdgeInsets.symmetric(horizontal: 16),
                 child: Row(
                   children: [
-                    Container(
-                      width: 24,
-                      height: 24,
-                      alignment: Alignment.center,
-                      child: Text(
-                        'G',
-                        style: GoogleFonts.poppins(
-                          fontSize: 18,
-                          fontWeight: FontWeight.w800,
-                          color: AppColors.primaryContainer,
-                        ),
+                    ClipRRect(
+                      borderRadius: BorderRadius.circular(6),
+                      child: Image.asset(
+                        'assets/logo.jpg',
+                        width: 24,
+                        height: 24,
+                        fit: BoxFit.cover,
                       ),
                     ),
                     const SizedBox(width: 8),
@@ -183,7 +179,7 @@ class _SearchHeader extends StatelessWidget {
                         ),
                       ),
                     ),
-                    Icon(Icons.search, size: 22, color: AppColors.onSurfaceVariant),
+                    const Icon(Icons.search, size: 22, color: AppColors.onSurfaceVariant),
                   ],
                 ),
               ),
