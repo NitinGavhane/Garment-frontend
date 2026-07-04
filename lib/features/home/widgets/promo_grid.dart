@@ -183,7 +183,7 @@ class _StylishSteals extends StatelessWidget {
                     color: Colors.white.withValues(alpha: 0.3),
                     shape: BoxShape.circle,
                   ),
-                  child: Icon(
+                  child: const Icon(
                     Icons.play_arrow_rounded,
                     color: AppColors.white,
                     size: 32,

@@ -118,7 +118,7 @@ class ProductCard extends StatelessWidget {
                       Text(
                         '\u20B9${product.price.toStringAsFixed(0)}',
                         style: AppTextStyles.priceSmall.copyWith(
-                          color: AppColors.primary,
+                          color: AppColors.tertiary,
                           fontWeight: FontWeight.w700,
                         ),
                       ),
@@ -211,7 +211,7 @@ class ProductCard extends StatelessWidget {
       child: Row(
         mainAxisSize: MainAxisSize.min,
         children: [
-          Icon(Icons.star, size: 10, color: AppColors.rating),
+          const Icon(Icons.star, size: 10, color: AppColors.rating),
           const SizedBox(width: AppDimensions.xs - 2),
           Text(
             product.rating.toStringAsFixed(1),

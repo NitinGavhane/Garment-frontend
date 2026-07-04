@@ -70,7 +70,7 @@ class ProductGridSection extends StatelessWidget {
                   child: Text(
                     'View All',
                     style: AppTextStyles.ctaButton.copyWith(
-                      color: AppColors.primary,
+                      color: AppColors.tertiary,
                       fontWeight: FontWeight.w600,
                     ),
                   ),

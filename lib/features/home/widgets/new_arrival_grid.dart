@@ -38,7 +38,7 @@ class NewArrivalGrid extends StatelessWidget {
 
           return Column(
             children: [
-              SectionHeader(
+              const SectionHeader(
                 title: 'New Arrival',
                 subtext: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor.',
               ),

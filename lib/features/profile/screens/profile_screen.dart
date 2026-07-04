@@ -180,12 +180,12 @@ class _ProfileScreenState extends State<ProfileScreen> {
                       leading: Container(
                         width: 40, height: 40,
                         decoration: BoxDecoration(
-                          color: AppColors.divider,
+                          color: AppColors.tertiaryContainer.withValues(alpha: 0.5),
                           borderRadius: BorderRadius.circular(10),
                         ),
                         child: Icon(
                           opt['icon'] as IconData,
-                          size: 20, color: AppColors.textPrimary,
+                          size: 20, color: AppColors.tertiary,
                         ),
                       ),
                       title: Text(

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart' show SystemUiOverlayStyle;
 import 'package:google_fonts/google_fonts.dart';
 import '../constants/app_colors.dart';
 
@@ -37,12 +38,20 @@ class AppTheme {
         inversePrimary: AppColors.inversePrimary,
       ),
       textTheme: GoogleFonts.poppinsTextTheme(),
-      appBarTheme: const AppBarTheme(
+      appBarTheme: AppBarTheme(
         elevation: 0,
         centerTitle: false,
-        backgroundColor: AppColors.surface,
-        foregroundColor: AppColors.onSurface,
+        backgroundColor: AppColors.primary,
+        foregroundColor: AppColors.white,
         surfaceTintColor: Colors.transparent,
+        iconTheme: const IconThemeData(color: AppColors.white),
+        actionsIconTheme: const IconThemeData(color: AppColors.white),
+        titleTextStyle: GoogleFonts.poppins(
+          fontSize: 18,
+          fontWeight: FontWeight.w600,
+          color: AppColors.festiveGold,
+        ),
+        systemOverlayStyle: SystemUiOverlayStyle.light,
         titleSpacing: 0,
       ),
       bottomNavigationBarTheme: const BottomNavigationBarThemeData(
@@ -70,6 +79,7 @@ class AppTheme {
           minimumSize: const Size(double.infinity, 48),
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(999),
+            side: const BorderSide(color: AppColors.festiveGold, width: 1.2),
           ),
           textStyle: GoogleFonts.poppins(
             fontSize: 14,
@@ -79,8 +89,8 @@ class AppTheme {
       ),
       outlinedButtonTheme: OutlinedButtonThemeData(
         style: OutlinedButton.styleFrom(
-          foregroundColor: AppColors.primary,
-          side: const BorderSide(color: AppColors.primary, width: 1.5),
+          foregroundColor: AppColors.tertiary,
+          side: const BorderSide(color: AppColors.festiveGold, width: 1.5),
           minimumSize: const Size(double.infinity, 48),
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(999),

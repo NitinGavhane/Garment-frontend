@@ -19,14 +19,14 @@ class TrustBadgesRow extends StatelessWidget {
         builder: (context, constraints) {
           final isMobile = constraints.maxWidth < 600;
           if (isMobile) {
-            return Column(
+            return const Column(
               children: [
                 _TrustBadge(
                   icon: Icons.local_shipping_outlined,
                   title: 'Free Shipping',
                   description: 'Free shipping on all orders over ₹100',
                 ),
-                const Padding(
+                Padding(
                   padding: EdgeInsets.symmetric(horizontal: 48),
                   child: Divider(color: AppColors.border),
                 ),
@@ -35,7 +35,7 @@ class TrustBadgesRow extends StatelessWidget {
                   title: 'Support 24/7',
                   description: 'We support 24 hours a day, 7 days a week',
                 ),
-                const Padding(
+                Padding(
                   padding: EdgeInsets.symmetric(horizontal: 48),
                   child: Divider(color: AppColors.border),
                 ),
@@ -47,7 +47,7 @@ class TrustBadgesRow extends StatelessWidget {
               ],
             );
           }
-          return Row(
+          return const Row(
             children: [
               Expanded(child: _TrustBadge(
                 icon: Icons.local_shipping_outlined,

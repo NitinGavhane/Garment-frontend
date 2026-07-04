@@ -86,7 +86,7 @@ class _NowScreenState extends State<NowScreen> {
                         padding: const EdgeInsets.symmetric(horizontal: AppDimensions.md),
                         child: Row(
                           children: [
-                            Icon(Icons.search, size: AppDimensions.iconSm, color: AppColors.onSurfaceVariant),
+                            const Icon(Icons.search, size: AppDimensions.iconSm, color: AppColors.onSurfaceVariant),
                             const SizedBox(width: AppDimensions.sm),
                             Text(
                               'Search trending styles',

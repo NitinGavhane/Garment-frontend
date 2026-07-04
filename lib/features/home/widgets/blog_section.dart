@@ -61,7 +61,7 @@ class _BlogSectionState extends State<BlogSection> {
 
           return Column(
             children: [
-              SectionHeader(
+              const SectionHeader(
                 title: 'OUR BLOG',
                 hasDashes: true,
               ),

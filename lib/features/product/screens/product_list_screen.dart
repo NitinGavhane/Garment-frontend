@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:iconsax/iconsax.dart';
 import 'package:provider/provider.dart';
 import '../../../core/constants/app_colors.dart';
@@ -37,6 +38,8 @@ class _ProductListScreenState extends State<ProductListScreen> {
   String? _selectedColor;
   late double _maxPrice;
   String _sortBy = 'Popular';
+  final TextEditingController _searchCtrl = TextEditingController();
+  String _search = '';
 
   List<Product> get _products {
     final productProvider = context.read<ProductProvider>();
@@ -45,6 +48,16 @@ class _ProductListScreenState extends State<ProductListScreen> {
         : widget.searchQuery != null
             ? productProvider.searchProducts(widget.searchQuery!)
             : productProvider.products;
+
+    if (_search.isNotEmpty) {
+      final q = _search.toLowerCase();
+      filtered = filtered
+          .where((p) =>
+              p.title.toLowerCase().contains(q) ||
+              p.brand.toLowerCase().contains(q) ||
+              p.category.toLowerCase().contains(q))
+          .toList();
+    }
 
     if (_selectedSize != null) {
       filtered = filtered
@@ -92,12 +105,25 @@ class _ProductListScreenState extends State<ProductListScreen> {
   }
 
   @override
+  void dispose() {
+    _searchCtrl.dispose();
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text(
-          widget.title ?? widget.category?.name ?? 'Products',
-          style: AppTextStyles.title,
+        title: Padding(
+          padding: const EdgeInsets.only(left: 12),
+          child: Text(
+            widget.title ?? widget.category?.name ?? 'Products',
+            style: GoogleFonts.poppins(
+              fontSize: 18,
+              fontWeight: FontWeight.w600,
+              color: AppColors.festiveGold,
+            ),
+          ),
         ),
         actions: [
           IconButton(
@@ -114,6 +140,38 @@ class _ProductListScreenState extends State<ProductListScreen> {
           ? const Center(child: CircularProgressIndicator())
           : Column(
               children: [
+                Padding(
+                  padding: const EdgeInsets.fromLTRB(
+                    AppDimensions.md,
+                    AppDimensions.sm + 2,
+                    AppDimensions.md,
+                    0,
+                  ),
+                  child: TextField(
+                    controller: _searchCtrl,
+                    onChanged: (v) => setState(() => _search = v.trim()),
+                    textInputAction: TextInputAction.search,
+                    decoration: InputDecoration(
+                      hintText:
+                          'Search in ${widget.title ?? widget.category?.name ?? 'products'}...',
+                      prefixIcon: const Icon(Iconsax.search_normal_1,
+                          size: 18, color: AppColors.tertiary),
+                      suffixIcon: _search.isEmpty
+                          ? null
+                          : IconButton(
+                              icon: const Icon(Icons.close,
+                                  size: 18, color: AppColors.textHint),
+                              onPressed: () {
+                                _searchCtrl.clear();
+                                setState(() => _search = '');
+                              },
+                            ),
+                      isDense: true,
+                      contentPadding:
+                          const EdgeInsets.symmetric(vertical: 10),
+                    ),
+                  ),
+                ),
                 if (_products.isNotEmpty)
                   Padding(
                     padding: const EdgeInsets.symmetric(

@@ -38,7 +38,7 @@ class SectionHeader extends StatelessWidget {
           Container(
             width: 40,
             height: 2,
-            color: AppColors.textPrimary,
+            color: AppColors.festiveGold,
           ),
         ],
         if (subtext != null) ...[

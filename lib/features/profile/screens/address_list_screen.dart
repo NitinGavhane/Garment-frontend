@@ -5,7 +5,6 @@ import '../../../core/constants/app_colors.dart';
 import '../../../core/constants/app_dimensions.dart';
 import '../../../core/constants/app_text_styles.dart';
 import '../../../providers/address_provider.dart';
-import '../../../core/services/api_client.dart';
 import 'add_address_screen.dart';
 
 class AddressListScreen extends StatefulWidget {

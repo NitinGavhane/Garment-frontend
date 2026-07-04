@@ -113,12 +113,12 @@ class AppTextStyles {
   static TextStyle get buttonOutline => GoogleFonts.poppins(
         fontSize: 14,
         fontWeight: FontWeight.w600,
-        color: AppColors.primary,
+        color: AppColors.tertiary,
       );
   static TextStyle get price => GoogleFonts.poppins(
         fontSize: 16,
         fontWeight: FontWeight.w700,
-        color: AppColors.primary,
+        color: AppColors.tertiary,
       );
   static TextStyle get priceSmall => GoogleFonts.poppins(
         fontSize: 14,
@@ -164,7 +164,7 @@ class AppTextStyles {
   static TextStyle get navLabelActive => GoogleFonts.poppins(
         fontSize: 10,
         fontWeight: FontWeight.w700,
-        color: AppColors.primary,
+        color: AppColors.festiveGold,
       );
   static TextStyle get topBar => GoogleFonts.poppins(
         fontSize: 12,

@@ -36,21 +36,20 @@ class CategoryChips extends StatelessWidget {
                   Container(
                     width: 56,
                     height: 56,
+                    padding: const EdgeInsets.all(2),
                     decoration: BoxDecoration(
                       color: cat.color.withValues(alpha: 0.12),
                       shape: BoxShape.circle,
+                      // Gold ring — echoes the circular gold mark in the logo.
                       border: Border.all(
-                        color: cat.color.withValues(alpha: 0.25),
-                        width: 1,
+                        color: AppColors.festiveGold,
+                        width: 1.5,
                       ),
                     ),
                     child: cat.imageUrl != null
-                        ? ClipRRect(
-                            borderRadius: BorderRadius.circular(28),
+                        ? ClipOval(
                             child: CachedNetworkImage(
                               imageUrl: cat.imageUrl!,
-                              width: 56,
-                              height: 56,
                               fit: BoxFit.cover,
                               placeholder: (_, __) => Icon(cat.icon, color: cat.color, size: 24),
                               errorWidget: (_, __, ___) => Icon(cat.icon, color: cat.color, size: 24),

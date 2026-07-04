@@ -158,8 +158,8 @@ class _HomeScreenState extends State<HomeScreen> {
                                   child: Text('See All',
                                       style: GoogleFonts.poppins(
                                           fontSize: 13,
-                                          fontWeight: FontWeight.w500,
-                                          color: AppColors.primary)),
+                                          fontWeight: FontWeight.w600,
+                                          color: AppColors.tertiary)),
                                 ),
                               ],
                             ),

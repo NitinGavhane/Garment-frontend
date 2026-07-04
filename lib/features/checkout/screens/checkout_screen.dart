@@ -143,10 +143,12 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
     } catch (e) {
       setState(() => _error = 'Payment failed. Please try again.');
     } finally {
-      if (mounted) setState(() {
+      if (mounted) {
+        setState(() {
         _isPlacing = false;
         _isProcessing = false;
       });
+      }
     }
   }
 
@@ -362,7 +364,7 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
                 _summaryRow('Subtotal', '₹${subtotal.toStringAsFixed(2)}'),
                 _summaryRow('Shipping',
                     shipping == 0 ? 'FREE' : '₹${shipping.toStringAsFixed(2)}'),
-                const Divider(),
+                const Divider(color: AppColors.festiveGold, thickness: 1),
                 _summaryRow('Total', '₹${total.toStringAsFixed(2)}',
                     isTotal: true),
               ],
@@ -504,7 +506,7 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
           Text(value,
               style: isTotal
                   ? AppTextStyles.headline3.copyWith(
-                      color: AppColors.secondary, fontSize: 18)
+                      color: AppColors.tertiary, fontSize: 18)
                   : AppTextStyles.body),
         ],
       ),
@@ -629,7 +631,7 @@ class _NewAddressScreenState extends State<_NewAddressScreen> {
               if (provider.error != null)
                 Padding(
                   padding: const EdgeInsets.only(top: 8),
-                  child: Text(provider.error!, style: TextStyle(color: AppColors.error)),
+                  child: Text(provider.error!, style: const TextStyle(color: AppColors.error)),
                 ),
             ],
           ),

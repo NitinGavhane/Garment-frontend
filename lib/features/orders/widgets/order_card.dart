@@ -118,7 +118,7 @@ class OrderCard extends StatelessWidget {
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 Text(
-                  '${dateFormat.format(order.createdAt)}',
+                  dateFormat.format(order.createdAt),
                   style: AppTextStyles.caption,
                 ),
                 Text(

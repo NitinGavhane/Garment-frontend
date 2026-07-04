@@ -22,7 +22,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
   final _emailController = TextEditingController();
   final _phoneController = TextEditingController();
   String? _avatarUrl;
-  bool _obscure = true;
+  final bool _obscure = true;
 
   @override
   void initState() {

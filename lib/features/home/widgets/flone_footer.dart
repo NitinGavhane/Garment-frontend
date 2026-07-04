@@ -25,17 +25,17 @@ class FloneFooter extends StatelessWidget {
                     children: [
                       _LogoColumn(),
                       const SizedBox(height: 32),
-                      _FooterColumn(
+                      const _FooterColumn(
                         title: 'ABOUT US',
                         links: ['About us', 'Store location', 'Contact', 'Orders tracking'],
                       ),
                       const SizedBox(height: 24),
-                      _FooterColumn(
+                      const _FooterColumn(
                         title: 'USEFUL LINKS',
                         links: ['Returns', 'Support Policy', 'Size guide', 'FAQs'],
                       ),
                       const SizedBox(height: 24),
-                      _FooterColumn(
+                      const _FooterColumn(
                         title: 'FOLLOW US',
                         links: ['Facebook', 'Twitter', 'Instagram', 'Youtube'],
                       ),
@@ -53,14 +53,14 @@ class FloneFooter extends StatelessWidget {
                         children: [
                           Expanded(flex: 2, child: _LogoColumn()),
                           const SizedBox(width: 24),
-                          Expanded(
+                          const Expanded(
                             child: _FooterColumn(
                               title: 'ABOUT US',
                               links: ['About us', 'Store location', 'Contact', 'Orders tracking'],
                             ),
                           ),
                           const SizedBox(width: 24),
-                          Expanded(
+                          const Expanded(
                             child: _FooterColumn(
                               title: 'USEFUL LINKS',
                               links: ['Returns', 'Support Policy', 'Size guide', 'FAQs'],
@@ -72,7 +72,7 @@ class FloneFooter extends StatelessWidget {
                       Row(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          Expanded(
+                          const Expanded(
                             child: _FooterColumn(
                               title: 'FOLLOW US',
                               links: ['Facebook', 'Twitter', 'Instagram', 'Youtube'],
@@ -91,21 +91,21 @@ class FloneFooter extends StatelessWidget {
                   children: [
                     Expanded(flex: 2, child: _LogoColumn()),
                     const SizedBox(width: 24),
-                    Expanded(
+                    const Expanded(
                       child: _FooterColumn(
                         title: 'ABOUT US',
                         links: ['About us', 'Store location', 'Contact', 'Orders tracking'],
                       ),
                     ),
                     const SizedBox(width: 24),
-                    Expanded(
+                    const Expanded(
                       child: _FooterColumn(
                         title: 'USEFUL LINKS',
                         links: ['Returns', 'Support Policy', 'Size guide', 'FAQs'],
                       ),
                     ),
                     const SizedBox(width: 24),
-                    Expanded(
+                    const Expanded(
                       child: _FooterColumn(
                         title: 'FOLLOW US',
                         links: ['Facebook', 'Twitter', 'Instagram', 'Youtube'],
@@ -119,7 +119,7 @@ class FloneFooter extends StatelessWidget {
             ),
           ),
           const SizedBox(height: 40),
-          Divider(color: AppColors.border, thickness: 1),
+          const Divider(color: AppColors.border, thickness: 1),
           const SizedBox(height: 20),
           Text(
             '© 2026 Flone. All rights reserved.',
@@ -207,7 +207,7 @@ class _SubscribeColumnState extends State<_SubscribeColumn> {
         ),
         const SizedBox(height: 16),
         Container(
-          decoration: BoxDecoration(
+          decoration: const BoxDecoration(
             border: Border(
               bottom: BorderSide(color: AppColors.border, width: 1),
             ),

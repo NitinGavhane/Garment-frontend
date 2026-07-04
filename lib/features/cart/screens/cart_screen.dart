@@ -132,7 +132,7 @@ class _CartScreenState extends State<CartScreen> {
                         Text(
                           '₹${total.toStringAsFixed(2)}',
                           style: AppTextStyles.headline3.copyWith(
-                            color: AppColors.secondary,
+                            color: AppColors.tertiary,
                           ),
                         ),
                       ],

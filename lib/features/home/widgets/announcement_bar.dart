@@ -19,20 +19,20 @@ class AnnouncementBar extends StatelessWidget {
           return Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              Row(
+              const Row(
                 children: [
                   _TopBarItem(
                     text: 'English',
                     icon: Icons.language,
                     showDropdown: true,
                   ),
-                  const SizedBox(width: 20),
+                  SizedBox(width: 20),
                   _TopBarItem(
                     text: 'INR',
                     icon: Icons.attach_money,
                     showDropdown: true,
                   ),
-                  const SizedBox(width: 20),
+                  SizedBox(width: 20),
                   _TopBarItem(
                     text: '+1 (555) 123-4567',
                     icon: Icons.phone,
