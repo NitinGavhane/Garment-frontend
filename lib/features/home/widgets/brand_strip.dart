@@ -28,7 +28,7 @@ class _PrimaryStrip extends StatelessWidget {
       height: 44,
       decoration: const BoxDecoration(
         gradient: LinearGradient(
-          colors: [Color(0xFF1A2A80), Color(0xFF243AA0)],
+          colors: [AppColors.primary, AppColors.primaryContainer],
           begin: Alignment.centerLeft,
           end: Alignment.centerRight,
         ),

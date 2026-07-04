@@ -191,7 +191,7 @@ class _HeroCopy extends StatelessWidget {
           child: Text(
             'Discover premium ladies wear, men\'s wear, kids wear and ethnic '
             'collections crafted with perfection, comfort and elegance.',
-            style: WebTokens.sans(16, color: const Color(0xFFC6CCE8), height: 1.7),
+            style: WebTokens.sans(16, color: WebTokens.onDarkMuted, height: 1.7),
           ),
         ),
         const SizedBox(height: 34),
@@ -683,7 +683,7 @@ class _BrandStory extends StatelessWidget {
                     'Every piece in our collection is thoughtfully designed and crafted with '
                     'premium fabrics — blending timeless elegance with modern comfort, so you '
                     'always look and feel your best.',
-                    style: WebTokens.sans(15, color: const Color(0xFFC6CCE8), height: 1.8),
+                    style: WebTokens.sans(15, color: WebTokens.onDarkMuted, height: 1.8),
                   ),
                   const SizedBox(height: 28),
                   const Row(

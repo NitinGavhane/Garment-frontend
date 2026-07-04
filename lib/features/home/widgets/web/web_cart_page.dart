@@ -304,7 +304,7 @@ class _Summary extends StatelessWidget {
         Text(label, style: WebTokens.sans(14, color: WebTokens.body)),
         Text(value,
             style: WebTokens.sans(14,
-                color: highlight ? const Color(0xFF1E9E5A) : WebTokens.ink, w: FontWeight.w600)),
+                color: highlight ? WebTokens.success : WebTokens.ink, w: FontWeight.w600)),
       ],
     );
   }

@@ -193,7 +193,7 @@ class _OtpVerificationScreenState extends State<OtpVerificationScreen> {
                         decoration: InputDecoration(
                           counterText: '',
                           filled: true,
-                          fillColor: const Color(0xFFF5F5F5),
+                          fillColor: AppColors.surfaceContainerLow,
                           border: OutlineInputBorder(
                             borderRadius: BorderRadius.circular(8),
                             borderSide: BorderSide.none,

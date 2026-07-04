@@ -142,7 +142,7 @@ class _NavLinkState extends State<_NavLink> {
                       ? AppColors.textPrimary
                       : _isHovered
                           ? AppColors.textPrimary
-                          : const Color(0xFF333333),
+                          : AppColors.textSecondary,
                   fontWeight: widget.isActive ? FontWeight.w600 : FontWeight.w500,
                 ),
               ),

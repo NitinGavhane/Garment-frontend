@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 
+import '../constants/app_colors.dart';
+
 class SlideFadeRoute extends PageRouteBuilder {
   final Widget page;
 
@@ -161,8 +163,8 @@ class AnimatedNavIcon extends StatelessWidget {
             key: ValueKey(isActive),
             size: 22,
             color: isActive
-                ? const Color(0xFF1A2A80)
-                : const Color(0xFF5f5e5e),
+                ? AppColors.primary
+                : AppColors.grayText,
           ),
         ),
         if (badgeCount != null && badgeCount! > 0)
@@ -173,7 +175,7 @@ class AnimatedNavIcon extends StatelessWidget {
               width: 16,
               height: 16,
               decoration: const BoxDecoration(
-                color: Color(0xFF1A2A80),
+                color: AppColors.primary,
                 shape: BoxShape.circle,
               ),
               alignment: Alignment.center,
@@ -209,9 +211,9 @@ class AnimatedTabBar extends StatelessWidget {
     return Container(
       height: 60,
       decoration: const BoxDecoration(
-        color: Color(0xFFFBFBFE),
+        color: AppColors.surface,
         border: Border(
-          top: BorderSide(color: Color(0xFFE0E0E0), width: 0.5),
+          top: BorderSide(color: AppColors.grayDivider, width: 0.5),
         ),
       ),
       child: Row(
@@ -241,8 +243,8 @@ class AnimatedTabBar extends StatelessWidget {
                             ? FontWeight.w700
                             : FontWeight.w600,
                         color: i == selectedIndex
-                            ? const Color(0xFF1A2A80)
-                            : const Color(0xFF5f5e5e),
+                            ? AppColors.primary
+                            : AppColors.grayText,
                       ),
                       child: Text(tab.label),
                     ),

@@ -25,9 +25,9 @@ class _BannerCarouselState extends State<BannerCarousel> {
   @override
   Widget build(BuildContext context) {
     final gradients = [
-      [const Color(0xFF1A2A80), const Color(0xFF10195E)],
-      [const Color(0xFF243AA0), const Color(0xFF1A2A80)],
-      [const Color(0xFFC9A227), const Color(0xFFB8901F)],
+      [AppColors.primary, AppColors.primaryDark],
+      [AppColors.primaryContainer, AppColors.primary],
+      [AppColors.brandGold, AppColors.tertiary],
     ];
 
     return Column(

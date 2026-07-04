@@ -78,12 +78,12 @@ class _TopBarItem extends StatelessWidget {
     return Row(
       mainAxisSize: MainAxisSize.min,
       children: [
-        Icon(icon, size: 14, color: const Color(0xFF555555)),
+        Icon(icon, size: 14, color: AppColors.grayText),
         const SizedBox(width: 4),
         Text(text, style: AppTextStyles.topBar),
         if (showDropdown) ...[
           const SizedBox(width: 2),
-          const Icon(Icons.keyboard_arrow_down, size: 14, color: Color(0xFF555555)),
+          const Icon(Icons.keyboard_arrow_down, size: 14, color: AppColors.grayText),
         ],
       ],
     );

@@ -80,7 +80,7 @@ class _LuxeScreenState extends State<LuxeScreen> {
                       child: Container(
                         height: 42,
                         decoration: BoxDecoration(
-                          color: const Color(0xFF1A1A1A),
+                          color: AppColors.brandDark,
                           borderRadius: BorderRadius.circular(AppDimensions.radiusFull),
                           border: Border.all(color: Colors.white.withValues(alpha: 0.1)),
                         ),

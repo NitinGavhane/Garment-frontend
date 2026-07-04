@@ -1,13 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
+import '../../../core/constants/app_colors.dart';
+
 class NykaaFooter extends StatelessWidget {
   const NykaaFooter({super.key});
 
   @override
   Widget build(BuildContext context) {
     return Container(
-      color: const Color(0xFF10195E),
+      color: AppColors.primaryDark,
       padding: const EdgeInsets.symmetric(vertical: 32, horizontal: 16),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,

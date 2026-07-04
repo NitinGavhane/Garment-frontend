@@ -15,7 +15,7 @@ class WebFooter extends StatelessWidget {
         gradient: LinearGradient(
           begin: Alignment.topCenter,
           end: Alignment.bottomCenter,
-          colors: [WebTokens.blueDeep, Color(0xFF08103A)],
+          colors: [WebTokens.blueDeep, WebTokens.blueAbyss],
         ),
       ),
       child: Column(

@@ -146,7 +146,7 @@ class _WebProductDetailPageState extends State<WebProductDetailPage> {
             const SizedBox(width: 16),
             Text(_stock > 0 ? 'In Stock' : 'Out of Stock',
                 style: WebTokens.sans(13,
-                    color: _stock > 0 ? const Color(0xFF1E9E5A) : const Color(0xFFE04B4B),
+                    color: _stock > 0 ? WebTokens.success : WebTokens.dangerBright,
                     w: FontWeight.w600)),
           ],
         ),

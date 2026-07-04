@@ -47,7 +47,7 @@ class _WebAuthPageState extends State<WebAuthPage> {
     ScaffoldMessenger.of(context).showSnackBar(SnackBar(
       content: Text(msg),
       behavior: SnackBarBehavior.floating,
-      backgroundColor: error ? const Color(0xFFC0392B) : WebTokens.blueDeep,
+      backgroundColor: error ? WebTokens.danger : WebTokens.blueDeep,
     ));
   }
 
@@ -321,7 +321,7 @@ class _BrandPanel extends StatelessWidget {
               width: 400,
               child: Text(
                 'Sign in to track orders, save your wishlist, check out faster and unlock member-only offers.',
-                style: WebTokens.sans(16, color: const Color(0xFFC6CCE8), height: 1.8),
+                style: WebTokens.sans(16, color: WebTokens.onDarkMuted, height: 1.8),
               ),
             ),
             const SizedBox(height: 40),

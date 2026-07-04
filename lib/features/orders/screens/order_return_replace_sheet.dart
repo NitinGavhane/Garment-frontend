@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../../../core/constants/app_colors.dart';
 import '../../../core/services/api_client.dart';
 import '../models/order_return_replace_form.dart';
 import '../models/order_return_replace_request.dart';
@@ -84,20 +85,20 @@ class _OrderReturnReplaceSheetState extends State<OrderReturnReplaceSheet> {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           content: Text('${req.label} request submitted successfully'),
-          backgroundColor: Colors.green,
+          backgroundColor: AppColors.success,
         ),
       );
     } on ApiException catch (e) {
       if (!mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text(e.message), backgroundColor: Colors.red),
+        SnackBar(content: Text(e.message), backgroundColor: AppColors.error),
       );
     } catch (e) {
       if (!mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
           content: Text('Failed to submit request. Please try again.'),
-          backgroundColor: Colors.red,
+          backgroundColor: AppColors.error,
         ),
       );
     } finally {

@@ -110,7 +110,7 @@ class _ProfileCard extends StatelessWidget {
                 if (context.mounted) WebNav.goHome(context);
               },
               style: OutlinedButton.styleFrom(
-                foregroundColor: const Color(0xFFC0392B),
+                foregroundColor: WebTokens.danger,
                 side: const BorderSide(color: Color(0x33C0392B)),
                 shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
               ),

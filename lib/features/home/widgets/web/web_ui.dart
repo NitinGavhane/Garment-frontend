@@ -11,6 +11,7 @@ class WebTokens {
   // Brand
   static const Color blue = Color(0xFF1A2A80);
   static const Color blueDeep = Color(0xFF0C1547);
+  static const Color blueAbyss = Color(0xFF08103A); // darkest blue, footer gradient tail
   static const Color blueMid = Color(0xFF243AA0);
   static const Color gold = Color(0xFFC9A227);
   static const Color goldBright = Color(0xFFD9AF4E);
@@ -23,6 +24,12 @@ class WebTokens {
   static const Color surface = Color(0xFFFFFFFF);
   static const Color surfaceAlt = Color(0xFFF7F8FD);
   static const Color cream = Color(0xFFFAF6EC);
+  static const Color onDarkMuted = Color(0xFFC6CCE8); // muted text on blue footer/hero
+
+  // Semantic
+  static const Color success = Color(0xFF1E9E5A);
+  static const Color danger = Color(0xFFC0392B);
+  static const Color dangerBright = Color(0xFFE04B4B);
 
   // Layout
   static const double maxWidth = 1240;

@@ -126,15 +126,15 @@ class _BlogCard extends StatelessWidget {
                   placeholder: (_, __) => Container(
                     height: 200,
                     color: AppColors.surface,
-                    child: Center(
-                      child: Icon(Icons.image, size: 48, color: Colors.grey[300]),
+                    child: const Center(
+                      child: Icon(Icons.image, size: 48, color: AppColors.surfaceContainerHighest),
                     ),
                   ),
                   errorWidget: (_, __, ___) => Container(
                     height: 200,
                     color: AppColors.surface,
-                    child: Center(
-                      child: Icon(Icons.image, size: 48, color: Colors.grey[300]),
+                    child: const Center(
+                      child: Icon(Icons.image, size: 48, color: AppColors.surfaceContainerHighest),
                     ),
                   ),
                 ),
