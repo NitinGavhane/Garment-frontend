@@ -321,7 +321,11 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
                     ),
                     const SizedBox(height: AppDimensions.md),
                     Text(
-                      'Includes GST',
+                      product.gstPercentage > 0
+                          ? 'Incl. GST ${product.gstPercentage.toStringAsFixed(product.gstPercentage % 1 == 0 ? 0 : 2)}% '
+                              '(CGST ${product.cgstPercentage.toStringAsFixed(product.cgstPercentage % 1 == 0 ? 0 : 2)}% '
+                              '+ SGST ${product.sgstPercentage.toStringAsFixed(product.sgstPercentage % 1 == 0 ? 0 : 2)}%)'
+                          : 'Includes GST',
                       style: AppTextStyles.caption.copyWith(
                         color: AppColors.success,
                       ),

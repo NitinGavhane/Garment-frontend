@@ -78,6 +78,9 @@ class Order {
   final double shipping;
   final double discount;
   final double gst;
+  final double cgst;
+  final double sgst;
+  final double igst;
   final double total;
   final OrderStatus status;
   final Address address;
@@ -95,6 +98,9 @@ class Order {
     this.shipping = 0,
     this.discount = 0,
     this.gst = 0,
+    this.cgst = 0,
+    this.sgst = 0,
+    this.igst = 0,
     required this.total,
     required this.status,
     required this.address,

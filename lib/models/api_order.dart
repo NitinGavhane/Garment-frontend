@@ -33,6 +33,9 @@ class ApiOrder {
   final String orderNumber;
   final double subtotal;
   final double gstAmount;
+  final double cgstAmount;
+  final double sgstAmount;
+  final double igstAmount;
   final double discountAmount;
   final double finalAmount;
   final String orderStatus;
@@ -48,6 +51,9 @@ class ApiOrder {
     required this.orderNumber,
     required this.subtotal,
     this.gstAmount = 0,
+    this.cgstAmount = 0,
+    this.sgstAmount = 0,
+    this.igstAmount = 0,
     this.discountAmount = 0,
     required this.finalAmount,
     this.orderStatus = 'placed',
@@ -65,6 +71,9 @@ class ApiOrder {
       orderNumber: json['order_number'] as String,
       subtotal: (json['subtotal'] as num).toDouble(),
       gstAmount: (json['gst_amount'] as num?)?.toDouble() ?? 0,
+      cgstAmount: (json['cgst_amount'] as num?)?.toDouble() ?? ((json['gst_amount'] as num?)?.toDouble() ?? 0) / 2,
+      sgstAmount: (json['sgst_amount'] as num?)?.toDouble() ?? ((json['gst_amount'] as num?)?.toDouble() ?? 0) / 2,
+      igstAmount: (json['igst_amount'] as num?)?.toDouble() ?? ((json['gst_amount'] as num?)?.toDouble() ?? 0),
       discountAmount: (json['discount_amount'] as num?)?.toDouble() ?? 0,
       finalAmount: (json['final_amount'] as num).toDouble(),
       orderStatus: json['order_status'] as String? ?? 'placed',

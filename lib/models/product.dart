@@ -25,6 +25,7 @@ class Product {
   final int stock;
   final String imageUrl;
   final String gender;
+  final double gstPercentage;
 
   const Product({
     required this.id,
@@ -49,7 +50,13 @@ class Product {
     this.stock = 50,
     this.imageUrl = '',
     this.gender = '',
+    this.gstPercentage = 18.0,
   });
+
+  // GST breakup derived from the total rate (intra-state CGST + SGST split).
+  double get cgstPercentage => gstPercentage / 2;
+  double get sgstPercentage => gstPercentage / 2;
+  double get igstPercentage => gstPercentage;
 
   factory Product.fromApiProduct(ApiProduct apiProduct) {
     return Product(
@@ -75,6 +82,7 @@ class Product {
       stock: apiProduct.stock,
       imageUrl: apiProduct.primaryImage ?? '',
       gender: apiProduct.gender,
+      gstPercentage: apiProduct.gstPercentage,
     );
   }
 
@@ -122,6 +130,7 @@ class Product {
     int? stock,
     String? imageUrl,
     String? gender,
+    double? gstPercentage,
   }) {
     return Product(
       id: id ?? this.id,
@@ -146,6 +155,7 @@ class Product {
       stock: stock ?? this.stock,
       imageUrl: imageUrl ?? this.imageUrl,
       gender: gender ?? this.gender,
+      gstPercentage: gstPercentage ?? this.gstPercentage,
     );
   }
 }
@@ -220,6 +230,12 @@ class ApiProduct {
   final List<ApiProductImage> images;
   final List<String>? _flatSizes;
   final List<String>? _flatColors;
+
+  // GST breakup derived from the single total GST rate: intra-state sales
+  // split equally into CGST + SGST, IGST equals the full total.
+  double get cgstPercentage => gstPercentage / 2;
+  double get sgstPercentage => gstPercentage / 2;
+  double get igstPercentage => gstPercentage;
 
   const ApiProduct({
     required this.id,

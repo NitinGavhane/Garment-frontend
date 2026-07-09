@@ -233,9 +233,12 @@ child: OrderReturnReplaceSheet(
                       'Discount', '-₹${order.discount.toStringAsFixed(2)}'),
                 _summaryRow('Shipping',
                     order.shipping == 0 ? 'Free' : '₹${order.shipping.toStringAsFixed(2)}'),
-                if (order.gst > 0)
-                  _summaryRow('GST',
-                      '₹${order.gst.toStringAsFixed(2)}'),
+                if (order.gst > 0) ...[
+                  _summaryRow('CGST',
+                      '₹${(order.cgst > 0 ? order.cgst : order.gst / 2).toStringAsFixed(2)}'),
+                  _summaryRow('SGST',
+                      '₹${(order.sgst > 0 ? order.sgst : order.gst / 2).toStringAsFixed(2)}'),
+                ],
                 const Divider(),
                 _summaryRow('Total',
                     '₹${order.total.toStringAsFixed(2)}',
