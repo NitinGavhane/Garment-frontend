@@ -233,11 +233,18 @@ child: OrderReturnReplaceSheet(
                       'Discount', '-₹${order.discount.toStringAsFixed(2)}'),
                 _summaryRow('Shipping',
                     order.shipping == 0 ? 'Free' : '₹${order.shipping.toStringAsFixed(2)}'),
+                // Inter-state orders carry IGST; intra-state orders split into
+                // CGST + SGST (legacy orders fall back to an even CGST/SGST split).
                 if (order.gst > 0) ...[
-                  _summaryRow('CGST',
-                      '₹${(order.cgst > 0 ? order.cgst : order.gst / 2).toStringAsFixed(2)}'),
-                  _summaryRow('SGST',
-                      '₹${(order.sgst > 0 ? order.sgst : order.gst / 2).toStringAsFixed(2)}'),
+                  if (order.igst > 0)
+                    _summaryRow('IGST',
+                        '₹${order.igst.toStringAsFixed(2)}')
+                  else ...[
+                    _summaryRow('CGST',
+                        '₹${(order.cgst > 0 ? order.cgst : order.gst / 2).toStringAsFixed(2)}'),
+                    _summaryRow('SGST',
+                        '₹${(order.sgst > 0 ? order.sgst : order.gst / 2).toStringAsFixed(2)}'),
+                  ],
                 ],
                 const Divider(),
                 _summaryRow('Total',

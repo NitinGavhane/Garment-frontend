@@ -115,6 +115,7 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
 
       final orderResult = await OrderApiService.createOrder(
         shippingAddress: _selectedAddress?.toString() ?? '',
+        shippingState: _selectedAddress?.state,
         items: items,
       );
 

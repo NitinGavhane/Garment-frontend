@@ -73,7 +73,7 @@ class ApiOrder {
       gstAmount: (json['gst_amount'] as num?)?.toDouble() ?? 0,
       cgstAmount: (json['cgst_amount'] as num?)?.toDouble() ?? ((json['gst_amount'] as num?)?.toDouble() ?? 0) / 2,
       sgstAmount: (json['sgst_amount'] as num?)?.toDouble() ?? ((json['gst_amount'] as num?)?.toDouble() ?? 0) / 2,
-      igstAmount: (json['igst_amount'] as num?)?.toDouble() ?? ((json['gst_amount'] as num?)?.toDouble() ?? 0),
+      igstAmount: (json['igst_amount'] as num?)?.toDouble() ?? 0,
       discountAmount: (json['discount_amount'] as num?)?.toDouble() ?? 0,
       finalAmount: (json['final_amount'] as num).toDouble(),
       orderStatus: json['order_status'] as String? ?? 'placed',

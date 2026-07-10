@@ -25,7 +25,9 @@ class Product {
   final int stock;
   final String imageUrl;
   final String gender;
-  final double gstPercentage;
+  final double cgstPercentage;
+  final double sgstPercentage;
+  final double igstPercentage;
 
   const Product({
     required this.id,
@@ -50,13 +52,13 @@ class Product {
     this.stock = 50,
     this.imageUrl = '',
     this.gender = '',
-    this.gstPercentage = 18.0,
+    this.cgstPercentage = 9.0,
+    this.sgstPercentage = 9.0,
+    this.igstPercentage = 18.0,
   });
 
-  // GST breakup derived from the total rate (intra-state CGST + SGST split).
-  double get cgstPercentage => gstPercentage / 2;
-  double get sgstPercentage => gstPercentage / 2;
-  double get igstPercentage => gstPercentage;
+  // Intra-state sales apply CGST + SGST; this is the total GST buyers pay.
+  double get gstPercentage => cgstPercentage + sgstPercentage;
 
   factory Product.fromApiProduct(ApiProduct apiProduct) {
     return Product(
@@ -82,7 +84,9 @@ class Product {
       stock: apiProduct.stock,
       imageUrl: apiProduct.primaryImage ?? '',
       gender: apiProduct.gender,
-      gstPercentage: apiProduct.gstPercentage,
+      cgstPercentage: apiProduct.cgstPercentage,
+      sgstPercentage: apiProduct.sgstPercentage,
+      igstPercentage: apiProduct.igstPercentage,
     );
   }
 
@@ -130,7 +134,9 @@ class Product {
     int? stock,
     String? imageUrl,
     String? gender,
-    double? gstPercentage,
+    double? cgstPercentage,
+    double? sgstPercentage,
+    double? igstPercentage,
   }) {
     return Product(
       id: id ?? this.id,
@@ -155,7 +161,9 @@ class Product {
       stock: stock ?? this.stock,
       imageUrl: imageUrl ?? this.imageUrl,
       gender: gender ?? this.gender,
-      gstPercentage: gstPercentage ?? this.gstPercentage,
+      cgstPercentage: cgstPercentage ?? this.cgstPercentage,
+      sgstPercentage: sgstPercentage ?? this.sgstPercentage,
+      igstPercentage: igstPercentage ?? this.igstPercentage,
     );
   }
 }
@@ -215,7 +223,9 @@ class ApiProduct {
   final String sku;
   final double price;
   final double? discountPrice;
-  final double gstPercentage;
+  final double cgstPercentage;
+  final double sgstPercentage;
+  final double igstPercentage;
   final int stock;
   final bool featured;
   final bool isActive;
@@ -231,11 +241,8 @@ class ApiProduct {
   final List<String>? _flatSizes;
   final List<String>? _flatColors;
 
-  // GST breakup derived from the single total GST rate: intra-state sales
-  // split equally into CGST + SGST, IGST equals the full total.
-  double get cgstPercentage => gstPercentage / 2;
-  double get sgstPercentage => gstPercentage / 2;
-  double get igstPercentage => gstPercentage;
+  // Intra-state sales apply CGST + SGST; this is the total GST buyers pay.
+  double get gstPercentage => cgstPercentage + sgstPercentage;
 
   const ApiProduct({
     required this.id,
@@ -246,7 +253,9 @@ class ApiProduct {
     required this.sku,
     required this.price,
     this.discountPrice,
-    this.gstPercentage = 18.0,
+    this.cgstPercentage = 9.0,
+    this.sgstPercentage = 9.0,
+    this.igstPercentage = 18.0,
     required this.stock,
     this.featured = false,
     this.isActive = true,
@@ -304,7 +313,9 @@ class ApiProduct {
       sku: json['sku'] as String? ?? '',
       price: (json['price'] as num?)?.toDouble() ?? 0.0,
       discountPrice: (json['discount_price'] as num?)?.toDouble(),
-      gstPercentage: (json['gst_percentage'] as num?)?.toDouble() ?? 18.0,
+      cgstPercentage: (json['cgst_percentage'] as num?)?.toDouble() ?? 9.0,
+      sgstPercentage: (json['sgst_percentage'] as num?)?.toDouble() ?? 9.0,
+      igstPercentage: (json['igst_percentage'] as num?)?.toDouble() ?? 18.0,
       stock: json['stock'] as int? ?? 0,
       featured: json['featured'] as bool? ?? json['is_featured'] as bool? ?? false,
       isActive: json['is_active'] as bool? ?? true,
