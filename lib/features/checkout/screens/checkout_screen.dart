@@ -220,8 +220,10 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
   Widget build(BuildContext context) {
     final cart = context.watch<CartProvider>();
     final subtotal = cart.subtotal;
-    final shipping = subtotal > 100 ? 0.0 : 9.99;
-    final total = subtotal + shipping;
+    // Flat 18% GST, no shipping — matches the backend's final_amount so the
+    // "Pay ₹…" button shows exactly what the order will be charged.
+    final gst = subtotal * 0.18;
+    final total = subtotal + gst;
     final addresses = context.watch<AddressProvider>().addresses;
 
     return Scaffold(
@@ -363,8 +365,7 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
                     }),
                 const Divider(),
                 _summaryRow('Subtotal', '₹${subtotal.toStringAsFixed(2)}'),
-                _summaryRow('Shipping',
-                    shipping == 0 ? 'FREE' : '₹${shipping.toStringAsFixed(2)}'),
+                _summaryRow('GST (18%)', '₹${gst.toStringAsFixed(2)}'),
                 const Divider(color: AppColors.festiveGold, thickness: 1),
                 _summaryRow('Total', '₹${total.toStringAsFixed(2)}',
                     isTotal: true),

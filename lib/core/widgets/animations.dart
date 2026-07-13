@@ -209,14 +209,19 @@ class AnimatedTabBar extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      height: 60,
       decoration: const BoxDecoration(
         color: AppColors.surface,
         border: Border(
           top: BorderSide(color: AppColors.grayDivider, width: 0.5),
         ),
       ),
-      child: Row(
+      // Keep the tab row clear of the Android system navigation bar / gesture
+      // area, which otherwise overlays the bottom tabs.
+      child: SafeArea(
+        top: false,
+        child: SizedBox(
+          height: 60,
+          child: Row(
         children: List.generate(tabs.length, (i) {
           final tab = tabs[i];
           return Expanded(
@@ -254,6 +259,8 @@ class AnimatedTabBar extends StatelessWidget {
             ),
           );
         }),
+          ),
+        ),
       ),
     );
   }

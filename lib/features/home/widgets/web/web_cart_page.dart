@@ -227,8 +227,9 @@ class _Summary extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final subtotal = cart.subtotal;
-    final shipping = subtotal >= 999 || subtotal == 0 ? 0.0 : 79.0;
-    final total = subtotal + shipping;
+    // Flat 18% GST, no shipping — matches the backend's final_amount.
+    final gst = subtotal * 0.18;
+    final total = subtotal + gst;
     return Container(
       padding: const EdgeInsets.all(28),
       decoration: BoxDecoration(
@@ -243,13 +244,7 @@ class _Summary extends StatelessWidget {
           const SizedBox(height: 22),
           _row('Subtotal (${cart.count} item${cart.count == 1 ? '' : 's'})', '₹${subtotal.toStringAsFixed(0)}'),
           const SizedBox(height: 12),
-          _row('Shipping', shipping == 0 ? 'FREE' : '₹${shipping.toStringAsFixed(0)}',
-              highlight: shipping == 0),
-          if (shipping > 0) ...[
-            const SizedBox(height: 8),
-            Text('Add ₹${(999 - subtotal).toStringAsFixed(0)} more for free shipping',
-                style: WebTokens.sans(12, color: WebTokens.gold, w: FontWeight.w500)),
-          ],
+          _row('GST (18%)', '₹${gst.toStringAsFixed(0)}'),
           const Padding(
             padding: EdgeInsets.symmetric(vertical: 18),
             child: Divider(height: 1, color: WebTokens.line),

@@ -22,8 +22,11 @@ class _CartScreenState extends State<CartScreen> {
     final cart = context.watch<CartProvider>();
     final items = cart.items;
     final subtotal = cart.subtotal;
-    final shipping = subtotal > 100 ? 0 : 9.99;
-    final total = subtotal + shipping;
+    // GST is a flat 18% of the subtotal (CGST+SGST or IGST, decided server-side
+    // by place of supply). No shipping is charged. Keep this in lockstep with
+    // the backend's final_amount so the displayed total matches what is charged.
+    final gst = subtotal * 0.18;
+    final total = subtotal + gst;
 
     final screenSize = MediaQuery.of(context).size;
     return ConstrainedBox(
@@ -111,15 +114,11 @@ class _CartScreenState extends State<CartScreen> {
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
-                        Text('Shipping', style: AppTextStyles.bodySmall),
+                        Text('GST (18%)', style: AppTextStyles.bodySmall),
                         Text(
-                          shipping == 0
-                              ? 'FREE'
-                              : '₹${shipping.toStringAsFixed(2)}',
+                          '₹${gst.toStringAsFixed(2)}',
                           style: AppTextStyles.bodySmall.copyWith(
-                            color: shipping == 0
-                                ? AppColors.success
-                                : AppColors.textSecondary,
+                            color: AppColors.textSecondary,
                           ),
                         ),
                       ],
