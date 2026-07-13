@@ -98,7 +98,9 @@ class _MainShellState extends State<MainShell> {
     final cartCount = context.watch<CartProvider>().count;
     // Website (wide) viewports navigate via the top navbar, so the app's
     // bottom tab bar is hidden. The mobile app keeps its bottom navigation.
-    final isWebsite = MediaQuery.of(context).size.width >= 1000;
+    // Kept in sync with the HomeScreen web/mobile breakpoint (900px) so the
+    // bottom bar disappears exactly when the website layout takes over.
+    final isWebsite = MediaQuery.of(context).size.width >= 900;
     return PopScope(
       canPop: false,
       onPopInvokedWithResult: (didPop, _) {

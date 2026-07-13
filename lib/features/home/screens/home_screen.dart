@@ -56,8 +56,10 @@ class _HomeScreenState extends State<HomeScreen> {
     final featuredProducts = genderFilteredProducts.where((p) => p.isFeatured).toList();
 
     // Wide viewports (the website on desktop) get the premium landing layout.
-    // Narrow viewports (the mobile app) fall through to the unchanged layout below.
-    if (MediaQuery.of(context).size.width >= 1000) {
+    // Narrow viewports (the mobile app) fall through to the unchanged layout
+    // below. 900px catches desktop browsers and mobile "Desktop site" mode
+    // (~980px) while keeping phones (portrait & landscape) on the app layout.
+    if (MediaQuery.of(context).size.width >= 900) {
       return _buildWeb(
         context,
         cartCount: cartCount,
