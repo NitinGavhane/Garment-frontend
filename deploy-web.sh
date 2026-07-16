@@ -1,0 +1,24 @@
+#!/usr/bin/env bash
+# Redeploy the USER (shop) web app to AWS (build -> S3 -> clear CloudFront cache).
+# Run:  bash apps/mobile/deploy-web.sh
+# For the phone APK instead, run:  flutter build apk --release  (then share the .apk)
+set -euo pipefail
+
+AWS="/c/Program Files/Amazon/AWSCLIV2/aws.exe"   # aws CLI is not on PATH in Git Bash
+BUCKET="dristi-shop-web-078525505229"
+DIST_ID="E21DI09WL10QOU"
+REGION="ap-south-1"
+
+DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+cd "$DIR"
+
+echo "==> Building shop web..."
+flutter build web --release --no-tree-shake-icons
+
+echo "==> Uploading to S3..."
+"$AWS" s3 sync build/web "s3://$BUCKET" --delete --only-show-errors --region "$REGION"
+
+echo "==> Invalidating CloudFront cache (so users get the new version)..."
+"$AWS" cloudfront create-invalidation --distribution-id "$DIST_ID" --paths "/*" --query "Invalidation.Status" --output text
+
+echo "==> Done. Live at https://da6i5bomtji8s.cloudfront.net (cache clears in ~1-2 min)"

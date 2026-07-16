@@ -3,7 +3,7 @@ import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
 
 class ApiClient {
-  static const String _defaultBaseUrl = 'https://backend-nine-orpin-39.vercel.app';
+  static const String _defaultBaseUrl = 'https://d100c6f2kgsym4.cloudfront.net';
   static String _baseUrl = _defaultBaseUrl;
 
   static String? _accessToken;

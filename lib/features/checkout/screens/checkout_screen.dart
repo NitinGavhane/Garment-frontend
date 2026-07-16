@@ -7,10 +7,9 @@ import '../../../core/constants/app_text_styles.dart';
 import '../../../core/widgets/app_button.dart';
 import '../../../core/widgets/app_text_field.dart';
 import '../../../core/services/order_api_service.dart';
-import '../../../core/services/cart_api_service.dart';
 import '../../../core/services/payment_api_service.dart';
 import '../../../core/services/api_client.dart';
-import '../../../core/services/payment_methods_api_service.dart';
+import '../../../core/services/razorpay/razorpay_checkout.dart';
 import '../../../providers/cart_provider.dart';
 import '../../../providers/auth_provider.dart';
 import '../../../providers/address_provider.dart';
@@ -25,16 +24,21 @@ class CheckoutScreen extends StatefulWidget {
 
 class _CheckoutScreenState extends State<CheckoutScreen> {
   Address? _selectedAddress;
-  String _selectedPayment = 'Google Pay';
   bool _isPlacing = false;
   bool _isProcessing = false;
   String? _error;
-  List<Map<String, dynamic>> _paymentMethods = [];
+  final RazorpayCheckout _razorpay = RazorpayCheckout();
 
   @override
   void initState() {
     super.initState();
     _loadData();
+  }
+
+  @override
+  void dispose() {
+    _razorpay.dispose();
+    super.dispose();
   }
 
   Future<void> _loadData() async {
@@ -45,54 +49,11 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
         _selectedAddress = addrProvider.defaultAddress;
       });
     }
-
-    try {
-      final methods = await PaymentMethodsApiService.listPaymentMethods();
-      if (mounted) {
-        setState(() {
-          _paymentMethods = methods.cast<Map<String, dynamic>>();
-          _enrichPaymentMethods();
-          if (_paymentMethods.isNotEmpty) {
-            _selectedPayment = _paymentMethods.first['name'] as String;
-          }
-        });
-      }
-    } catch (_) {
-      if (mounted) {
-        setState(() {
-          _paymentMethods = [
-            {'name': 'Google Pay', 'code': 'gpay', 'is_active': true, 'isPopular': true},
-            {'name': 'PhonePe', 'code': 'phonepe', 'is_active': true, 'isPopular': true},
-            {'name': 'Paytm', 'code': 'paytm', 'is_active': true, 'isPopular': true},
-            {'name': 'Credit Card', 'code': 'card', 'is_active': true, 'isPopular': false},
-            {'name': 'Debit Card', 'code': 'debit', 'is_active': true, 'isPopular': false},
-            {'name': 'Net Banking', 'code': 'netbanking', 'is_active': true, 'isPopular': false},
-            {'name': 'Cash on Delivery', 'code': 'cod', 'is_active': true, 'isPopular': false},
-          ];
-        });
-      }
-    }
   }
 
-  void _enrichPaymentMethods() {
-    for (final pm in _paymentMethods) {
-      final code = pm['code'] as String? ?? '';
-      pm['isPopular'] = ['gpay', 'phonepe', 'paytm'].contains(code);
-    }
-  }
-
-  IconData _iconForPayment(String code) {
-    switch (code) {
-      case 'gpay': return Icons.g_mobiledata;
-      case 'phonepe': return Icons.phone_android;
-      case 'paytm': return Icons.account_balance_wallet;
-      case 'card': return Icons.credit_card;
-      case 'debit': return Icons.credit_card_outlined;
-      case 'netbanking': return Icons.account_balance;
-      default: return Icons.money;
-    }
-  }
-
+  // Create the order, open the Razorpay order on the backend, then launch the
+  // Razorpay checkout. Verification happens in _onPaymentSuccess after the user
+  // completes payment; there is no client-generated transaction id.
   Future<void> _placeOrder() async {
     final auth = context.read<AuthProvider>();
     if (!auth.isLoggedIn) {
@@ -122,35 +83,99 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
       final orderId = orderResult['id'] as String;
       final amount = (orderResult['final_amount'] as num).toDouble();
 
+      final payment = await PaymentApiService.createPayment(orderId: orderId);
+      final rzpOrderId = payment['razorpay_order_id'] as String?;
+      final keyId = payment['razorpay_key_id'] as String?;
+      final amountPaise =
+          (payment['amount_paise'] as num?)?.toInt() ?? (amount * 100).round();
+      final currency = payment['currency'] as String? ?? 'INR';
+
       if (!mounted) return;
+
+      if (rzpOrderId == null || keyId == null || keyId.isEmpty) {
+        setState(() {
+          _error = 'Payment gateway is not available right now. Please try again later.';
+          _isPlacing = false;
+          _isProcessing = false;
+        });
+        return;
+      }
 
       setState(() {
         _isPlacing = false;
         _isProcessing = true;
       });
 
-      await PaymentApiService.createPayment(orderId: orderId);
-      final txnId = 'TXN${DateTime.now().millisecondsSinceEpoch}';
-      await PaymentApiService.verifyPayment(
-        orderId: orderId,
-        transactionId: txnId,
-        paymentMethod: _selectedPayment,
+      final user = auth.user;
+      _razorpay.open(
+        RazorpayOptions(
+          keyId: keyId,
+          orderId: rzpOrderId,
+          amountPaise: amountPaise,
+          currency: currency,
+          name: 'Dristi Fashions',
+          description: 'Order payment',
+          email: user?.email,
+          contact: user?.phone,
+        ),
+        onSuccess: (result) => _onPaymentSuccess(orderId, amount, result),
+        onError: _onPaymentError,
       );
-
-      if (!mounted) return;
-      _showSuccessDialog(orderId: orderId, amount: amount);
     } on ApiException catch (e) {
-      setState(() => _error = e.message);
-    } catch (e) {
-      setState(() => _error = 'Payment failed. Please try again.');
-    } finally {
       if (mounted) {
         setState(() {
-        _isPlacing = false;
-        _isProcessing = false;
-      });
+          _error = e.message;
+          _isPlacing = false;
+          _isProcessing = false;
+        });
+      }
+    } catch (e) {
+      if (mounted) {
+        setState(() {
+          _error = 'Could not start payment. Please try again.';
+          _isPlacing = false;
+          _isProcessing = false;
+        });
       }
     }
+  }
+
+  Future<void> _onPaymentSuccess(
+      String orderId, double amount, RazorpaySuccess result) async {
+    try {
+      await PaymentApiService.verifyPayment(
+        orderId: orderId,
+        razorpayOrderId: result.orderId,
+        razorpayPaymentId: result.paymentId,
+        razorpaySignature: result.signature,
+      );
+      if (!mounted) return;
+      setState(() => _isProcessing = false);
+      _showSuccessDialog(orderId: orderId, amount: amount);
+    } on ApiException catch (e) {
+      if (mounted) {
+        setState(() {
+          _error = e.message;
+          _isProcessing = false;
+        });
+      }
+    } catch (_) {
+      if (mounted) {
+        setState(() {
+          _error = 'Payment verification failed. If you were charged, contact support.';
+          _isProcessing = false;
+        });
+      }
+    }
+  }
+
+  void _onPaymentError(String message) {
+    if (!mounted) return;
+    setState(() {
+      _isPlacing = false;
+      _isProcessing = false;
+      _error = message;
+    });
   }
 
   void _showSuccessDialog({required String orderId, required double amount}) {
@@ -183,7 +208,7 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
               Text('Payment Successful!', style: AppTextStyles.headline3),
               const SizedBox(height: AppDimensions.sm),
               Text(
-                '₹${amount.toStringAsFixed(2)} paid via $_selectedPayment',
+                '₹${amount.toStringAsFixed(2)} paid via Razorpay',
                 style: AppTextStyles.bodySmall,
                 textAlign: TextAlign.center,
               ),
@@ -285,13 +310,33 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
           const SizedBox(height: AppDimensions.lg),
           _sectionHeader('Payment Method', Iconsax.wallet),
           const SizedBox(height: AppDimensions.sm),
-          ..._paymentMethods.map((pm) => _PaymentMethodTile(
-                name: pm['name'] as String,
-                code: pm['code'] as String? ?? '',
-                isSelected: _selectedPayment == pm['name'],
-                isPopular: pm['isPopular'] as bool? ?? false,
-                onTap: () => setState(() => _selectedPayment = pm['name'] as String),
-              )),
+          Container(
+            padding: const EdgeInsets.all(14),
+            decoration: BoxDecoration(
+              color: AppColors.primary.withValues(alpha: 0.05),
+              borderRadius: BorderRadius.circular(AppDimensions.radiusMd),
+              border: Border.all(color: AppColors.primary, width: 1.5),
+            ),
+            child: Row(
+              children: [
+                const Icon(Iconsax.card, size: 24, color: AppColors.primary),
+                const SizedBox(width: 12),
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text('Razorpay',
+                          style: AppTextStyles.body.copyWith(fontWeight: FontWeight.w600)),
+                      const SizedBox(height: 2),
+                      Text('UPI, Cards, Net Banking & Wallets',
+                          style: AppTextStyles.caption),
+                    ],
+                  ),
+                ),
+                const Icon(Icons.check_circle, size: 20, color: AppColors.primary),
+              ],
+            ),
+          ),
           const SizedBox(height: AppDimensions.lg),
           _sectionHeader('Order Summary', Iconsax.receipt),
           const SizedBox(height: AppDimensions.sm),
@@ -643,73 +688,3 @@ class _NewAddressScreenState extends State<_NewAddressScreen> {
   }
 }
 
-class _PaymentMethodTile extends StatelessWidget {
-  final String name;
-  final String code;
-  final bool isSelected;
-  final bool isPopular;
-  final VoidCallback onTap;
-
-  const _PaymentMethodTile({
-    required this.name, required this.code,
-    required this.isSelected, this.isPopular = false,
-    required this.onTap,
-  });
-
-  IconData _iconFor(String code) {
-    switch (code) {
-      case 'gpay': return Icons.g_mobiledata;
-      case 'phonepe': return Icons.phone_android;
-      case 'paytm': return Icons.account_balance_wallet;
-      case 'card': return Icons.credit_card;
-      case 'netbanking': return Icons.account_balance;
-      default: return Icons.money;
-    }
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return GestureDetector(
-      onTap: onTap,
-      child: Container(
-        margin: const EdgeInsets.only(bottom: 8),
-        padding: const EdgeInsets.all(14),
-        decoration: BoxDecoration(
-          color: isSelected
-              ? AppColors.primary.withValues(alpha: 0.05)
-              : AppColors.surface,
-          borderRadius: BorderRadius.circular(AppDimensions.radiusMd),
-          border: Border.all(
-            color: isSelected ? AppColors.primary : AppColors.border,
-            width: isSelected ? 1.5 : 1,
-          ),
-        ),
-        child: Row(
-          children: [
-            Icon(_iconFor(code), size: 24,
-                color: isSelected ? AppColors.primary : AppColors.textHint),
-            const SizedBox(width: 12),
-            Expanded(child: Text(name, style: AppTextStyles.body)),
-            if (isPopular)
-              Container(
-                margin: const EdgeInsets.only(right: 8),
-                padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
-                decoration: BoxDecoration(
-                  color: AppColors.success.withValues(alpha: 0.1),
-                  borderRadius: BorderRadius.circular(6),
-                ),
-                child: Text('Popular',
-                    style: AppTextStyles.caption.copyWith(
-                        color: AppColors.success, fontSize: 9)),
-              ),
-            Icon(
-              isSelected ? Icons.radio_button_checked : Icons.radio_button_off,
-              size: 20,
-              color: isSelected ? AppColors.primary : AppColors.textHint,
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-}

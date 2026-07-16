@@ -9,6 +9,7 @@ import '../../../providers/auth_provider.dart';
 import '../../../providers/cart_provider.dart';
 import '../../../providers/category_provider.dart';
 import '../../../providers/product_provider.dart';
+import '../../../providers/banner_provider.dart';
 import '../widgets/top_bar.dart';
 import '../widgets/gender_filter_tabs.dart';
 import '../widgets/category_chips.dart';
@@ -42,6 +43,7 @@ class _HomeScreenState extends State<HomeScreen> {
     WidgetsBinding.instance.addPostFrameCallback((_) {
       context.read<CategoryProvider>().fetchCategories();
       context.read<ProductProvider>().fetchProducts();
+      context.read<BannerProvider>().fetchBanners();
     });
   }
 

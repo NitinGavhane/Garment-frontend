@@ -1,7 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:provider/provider.dart';
+import 'package:cached_network_image/cached_network_image.dart';
 import '../../../models/product.dart';
 import '../../../models/category.dart' as models;
+import '../../../providers/banner_provider.dart';
 import 'web/web_ui.dart';
 import 'web/web_product_card.dart';
 import 'web/web_footer.dart';
@@ -265,9 +268,24 @@ class _HeroImage extends StatelessWidget {
       ),
       child: ClipRRect(
         borderRadius: BorderRadius.circular(22),
-        child: Image.asset('assets/logo.jpg', fit: BoxFit.cover),
+        child: _heroImageContent(context),
       ),
     );
+  }
+
+  // Show the first admin-managed hero banner when available, otherwise the
+  // bundled logo. Banners are fetched centrally in HomeScreen.
+  Widget _heroImageContent(BuildContext context) {
+    final banners = context.watch<BannerProvider>().heroBanners;
+    if (banners.isNotEmpty) {
+      return CachedNetworkImage(
+        imageUrl: banners.first.imageUrl,
+        fit: BoxFit.cover,
+        placeholder: (_, __) => Image.asset('assets/logo.jpg', fit: BoxFit.cover),
+        errorWidget: (_, __, ___) => Image.asset('assets/logo.jpg', fit: BoxFit.cover),
+      );
+    }
+    return Image.asset('assets/logo.jpg', fit: BoxFit.cover);
   }
 }
 
