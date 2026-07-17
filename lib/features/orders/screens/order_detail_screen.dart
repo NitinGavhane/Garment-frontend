@@ -1,8 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'package:printing/printing.dart';
 import '../../../core/constants/app_colors.dart';
 import '../../../core/constants/app_dimensions.dart';
 import '../../../core/constants/app_text_styles.dart';
+import '../../../core/services/api_client.dart';
+import '../../../core/services/order_api_service.dart';
 import '../../../models/order.dart';
 import '../widgets/tracking_timeline.dart';
 import 'order_return_replace_sheet.dart';
@@ -253,6 +256,10 @@ child: OrderReturnReplaceSheet(
               ],
             ),
           ),
+          if (order.paymentStatus == 'paid') ...[
+            const SizedBox(height: AppDimensions.md),
+            _InvoiceDownloadButton(order: order),
+          ],
           const SizedBox(height: AppDimensions.xxl),
         ],
       ),
@@ -295,6 +302,71 @@ child: OrderReturnReplaceSheet(
                 : AppTextStyles.body,
           ),
         ],
+      ),
+    );
+  }
+}
+
+/// Downloads the order's GST invoice PDF from the backend and hands it to the
+/// platform: on Android the system save/share sheet, on web a file download.
+class _InvoiceDownloadButton extends StatefulWidget {
+  final Order order;
+
+  const _InvoiceDownloadButton({required this.order});
+
+  @override
+  State<_InvoiceDownloadButton> createState() => _InvoiceDownloadButtonState();
+}
+
+class _InvoiceDownloadButtonState extends State<_InvoiceDownloadButton> {
+  bool _busy = false;
+
+  Future<void> _download() async {
+    setState(() => _busy = true);
+    try {
+      final bytes = await OrderApiService.downloadInvoice(widget.order.id);
+      // sharePdf opens the OS save/share sheet on mobile and triggers a
+      // download in the browser on web, so one call covers both platforms.
+      await Printing.sharePdf(
+        bytes: bytes,
+        filename: 'Invoice-${widget.order.orderNumber}.pdf',
+      );
+    } on ApiException catch (e) {
+      _showMessage(e.message);
+    } catch (_) {
+      _showMessage('Could not download the invoice. Please try again.');
+    } finally {
+      if (mounted) setState(() => _busy = false);
+    }
+  }
+
+  void _showMessage(String message) {
+    if (!mounted) return;
+    ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(message)));
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return SizedBox(
+      width: double.infinity,
+      child: OutlinedButton.icon(
+        onPressed: _busy ? null : _download,
+        icon: _busy
+            ? const SizedBox(
+                width: 18,
+                height: 18,
+                child: CircularProgressIndicator(strokeWidth: 2),
+              )
+            : const Icon(Icons.download_rounded, size: 20),
+        label: Text(_busy ? 'Preparing invoice…' : 'Download Invoice'),
+        style: OutlinedButton.styleFrom(
+          foregroundColor: AppColors.primary,
+          side: const BorderSide(color: AppColors.primary),
+          padding: const EdgeInsets.symmetric(vertical: 14),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(AppDimensions.radiusMd),
+          ),
+        ),
       ),
     );
   }

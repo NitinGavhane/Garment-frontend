@@ -31,6 +31,17 @@ class RazorpayCheckout {
     prefill['contact'] = (options.contact ?? '').toJS;
     if (options.method != null) prefill['method'] = options.method!.toJS;
 
+    // If the buyer already chose a recognised method on our screen, only enable
+    // that one so the sheet opens directly on it rather than the full menu.
+    final chosen = options.method;
+    JSObject? methodRestriction;
+    if (chosen != null && kRazorpayMethodKeys.contains(chosen)) {
+      methodRestriction = JSObject();
+      for (final key in kRazorpayMethodKeys) {
+        methodRestriction[key] = (key == chosen).toJS;
+      }
+    }
+
     final modal = JSObject();
     modal['ondismiss'] = (() {
       if (!done) onError('Payment cancelled');
@@ -44,6 +55,7 @@ class RazorpayCheckout {
     config['name'] = options.name.toJS;
     config['description'] = (options.description ?? '').toJS;
     config['prefill'] = prefill;
+    if (methodRestriction != null) config['method'] = methodRestriction;
     config['modal'] = modal;
     config['handler'] = ((JSObject resp) {
       done = true;

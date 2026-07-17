@@ -85,6 +85,9 @@ class Order {
   final OrderStatus status;
   final Address address;
   final String paymentMethod;
+  /// Backend payment_status ('pending' | 'paid' | 'failed' | 'refunded').
+  /// The invoice is only offered once this is 'paid'.
+  final String paymentStatus;
   final DateTime createdAt;
   final DateTime estimatedDelivery;
   final String? trackingId;
@@ -105,6 +108,7 @@ class Order {
     required this.status,
     required this.address,
     required this.paymentMethod,
+    this.paymentStatus = 'pending',
     required this.createdAt,
     required this.estimatedDelivery,
     this.trackingId,

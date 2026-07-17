@@ -64,6 +64,7 @@ class _OrderListScreenState extends State<OrderListScreen> {
       status: _parseOrderStatus(api.orderStatus),
       address: const Address(id: '', fullName: '', phone: '', street: '', city: '', state: '', pincode: ''),
       paymentMethod: api.paymentStatus,
+      paymentStatus: api.paymentStatus,
       createdAt: api.createdAt,
       estimatedDelivery: api.estimatedDelivery ?? api.createdAt,
     )).toList();

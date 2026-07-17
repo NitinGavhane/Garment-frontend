@@ -1,3 +1,5 @@
+import 'dart:typed_data';
+
 import 'api_client.dart';
 
 class OrderApiService {
@@ -21,5 +23,11 @@ class OrderApiService {
 
   static Future<Map<String, dynamic>> getOrder(String orderId) async {
     return ApiClient.get('/api/v1/orders/$orderId');
+  }
+
+  /// The order's GST tax invoice as PDF bytes. The backend only serves it for
+  /// paid orders, otherwise it throws an ApiException the caller can show.
+  static Future<Uint8List> downloadInvoice(String orderId) async {
+    return ApiClient.getBytes('/api/v1/orders/$orderId/invoice');
   }
 }

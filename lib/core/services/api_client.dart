@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:typed_data';
 import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -72,6 +73,28 @@ class ApiClient {
         .replace(queryParameters: queryParams);
     final response = await http.get(uri, headers: _headers);
     return _handleListResponse(response);
+  }
+
+  /// Fetch a binary payload (e.g. a PDF) with the auth header attached. On a
+  /// non-2xx the body is JSON like the other endpoints, so we surface its
+  /// `detail` as an ApiException rather than returning bytes of an error page.
+  static Future<Uint8List> getBytes(String path,
+      {Map<String, String>? queryParams}) async {
+    final uri = Uri.parse('$baseUrl$path').replace(queryParameters: queryParams);
+    final response = await http.get(uri, headers: _headers);
+    if (response.statusCode >= 200 && response.statusCode < 300) {
+      return response.bodyBytes;
+    }
+    String message = 'Something went wrong';
+    try {
+      final decoded = jsonDecode(response.body);
+      if (decoded is Map<String, dynamic>) {
+        message = decoded['detail'] as String? ?? message;
+      }
+    } catch (_) {
+      // Non-JSON error body; keep the generic message.
+    }
+    throw ApiException(statusCode: response.statusCode, message: message);
   }
 
   static Future<Map<String, dynamic>> post(String path,

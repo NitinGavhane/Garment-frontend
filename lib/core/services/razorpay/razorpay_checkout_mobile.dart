@@ -23,6 +23,11 @@ class RazorpayCheckout {
     _rzp!.on(Razorpay.EVENT_PAYMENT_ERROR, _handleError);
     _rzp!.on(Razorpay.EVENT_EXTERNAL_WALLET, _handleWallet);
 
+    // If the buyer already chose a recognised method on our screen, only enable
+    // that one so the sheet opens directly on it rather than the full menu.
+    final chosen = options.method;
+    final restrict = chosen != null && kRazorpayMethodKeys.contains(chosen);
+
     _rzp!.open({
       'key': options.keyId,
       'order_id': options.orderId,
@@ -35,6 +40,10 @@ class RazorpayCheckout {
         'contact': options.contact ?? '',
         if (options.method != null) 'method': options.method,
       },
+      if (restrict)
+        'method': {
+          for (final key in kRazorpayMethodKeys) key: key == chosen,
+        },
     });
   }
 
