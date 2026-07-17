@@ -33,6 +33,7 @@ class RazorpayCheckout {
       'prefill': {
         'email': options.email ?? '',
         'contact': options.contact ?? '',
+        if (options.method != null) 'method': options.method,
       },
     });
   }

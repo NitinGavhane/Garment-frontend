@@ -8,12 +8,14 @@ import '../../../core/widgets/app_button.dart';
 import '../../../core/widgets/app_text_field.dart';
 import '../../../core/services/order_api_service.dart';
 import '../../../core/services/payment_api_service.dart';
+import '../../../core/services/payment_methods_api_service.dart';
 import '../../../core/services/api_client.dart';
 import '../../../core/services/razorpay/razorpay_checkout.dart';
 import '../../../providers/cart_provider.dart';
 import '../../../providers/auth_provider.dart';
 import '../../../providers/address_provider.dart';
 import '../../../models/address.dart';
+import '../../../models/payment_method.dart';
 
 class CheckoutScreen extends StatefulWidget {
   const CheckoutScreen({super.key});
@@ -28,6 +30,11 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
   bool _isProcessing = false;
   String? _error;
   final RazorpayCheckout _razorpay = RazorpayCheckout();
+
+  List<PaymentMethod> _methods = [];
+  PaymentMethod? _selectedMethod;
+  bool _loadingMethods = true;
+  String? _methodsError;
 
   @override
   void initState() {
@@ -44,20 +51,68 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
   Future<void> _loadData() async {
     final addrProvider = context.read<AddressProvider>();
     await addrProvider.fetchAddresses();
-    if (mounted) {
+    if (!mounted) return;
+    setState(() {
+      _selectedAddress = addrProvider.defaultAddress;
+    });
+    await _loadPaymentMethods();
+  }
+
+  /// Payment methods depend on where the order is going, so they are reloaded
+  /// whenever the delivery address changes.
+  Future<void> _loadPaymentMethods() async {
+    setState(() {
+      _loadingMethods = true;
+      _methodsError = null;
+    });
+    try {
+      final region = _selectedAddress?.country ?? 'IN';
+      final methods = await PaymentMethodsApiService.listPaymentMethods(region: region);
+      if (!mounted) return;
+      // Keep the buyer's choice if it is still offered here, else fall back to
+      // the first (the Admin app's sort_order decides what that is).
+      PaymentMethod? stillOffered;
+      for (final m in methods) {
+        if (m.code == _selectedMethod?.code) {
+          stillOffered = m;
+          break;
+        }
+      }
       setState(() {
-        _selectedAddress = addrProvider.defaultAddress;
+        _methods = methods;
+        _selectedMethod = stillOffered ?? (methods.isNotEmpty ? methods.first : null);
+        _loadingMethods = false;
+      });
+    } catch (_) {
+      if (!mounted) return;
+      setState(() {
+        _methods = [];
+        _selectedMethod = null;
+        _loadingMethods = false;
+        _methodsError = 'Could not load payment methods. Please retry.';
       });
     }
   }
 
-  // Create the order, open the Razorpay order on the backend, then launch the
-  // Razorpay checkout. Verification happens in _onPaymentSuccess after the user
-  // completes payment; there is no client-generated transaction id.
+  void _onAddressChanged(Address address) {
+    final regionChanged = address.country != _selectedAddress?.country;
+    setState(() => _selectedAddress = address);
+    if (regionChanged) _loadPaymentMethods();
+  }
+
+  // Create the order, open a gateway order on the backend, then launch the
+  // gateway checkout on the method the buyer picked. Verification happens in
+  // _onPaymentSuccess; there is no client-generated transaction id.
   Future<void> _placeOrder() async {
     final auth = context.read<AuthProvider>();
     if (!auth.isLoggedIn) {
       Navigator.pushNamed(context, '/login');
+      return;
+    }
+
+    final method = _selectedMethod;
+    if (method == null) {
+      setState(() => _error = 'Please choose a payment method.');
       return;
     }
 
@@ -83,7 +138,10 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
       final orderId = orderResult['id'] as String;
       final amount = (orderResult['final_amount'] as num).toDouble();
 
-      final payment = await PaymentApiService.createPayment(orderId: orderId);
+      final payment = await PaymentApiService.createPayment(
+        orderId: orderId,
+        paymentMethod: method.code,
+      );
       final rzpOrderId = payment['razorpay_order_id'] as String?;
       final keyId = payment['razorpay_key_id'] as String?;
       final amountPaise =
@@ -117,6 +175,7 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
           description: 'Order payment',
           email: user?.email,
           contact: user?.phone,
+          method: method.code,
         ),
         onSuccess: (result) => _onPaymentSuccess(orderId, amount, result),
         onError: _onPaymentError,
@@ -140,10 +199,21 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
     }
   }
 
+  /// Display name for a method code, using the configured names we already
+  /// fetched. Falls back to the raw code so a method the buyer switched to
+  /// inside the gateway sheet still reads sensibly.
+  String _methodLabel(String? code) {
+    if (code == null || code.isEmpty) return 'your payment method';
+    for (final m in _methods) {
+      if (m.code == code) return m.name;
+    }
+    return code.toUpperCase();
+  }
+
   Future<void> _onPaymentSuccess(
       String orderId, double amount, RazorpaySuccess result) async {
     try {
-      await PaymentApiService.verifyPayment(
+      final verified = await PaymentApiService.verifyPayment(
         orderId: orderId,
         razorpayOrderId: result.orderId,
         razorpayPaymentId: result.paymentId,
@@ -151,7 +221,13 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
       );
       if (!mounted) return;
       setState(() => _isProcessing = false);
-      _showSuccessDialog(orderId: orderId, amount: amount);
+      // The backend reports the method actually used, which can differ from the
+      // one picked here if the buyer switched inside the gateway sheet.
+      _showSuccessDialog(
+        orderId: orderId,
+        amount: amount,
+        methodLabel: _methodLabel(verified['payment_method'] as String?),
+      );
     } on ApiException catch (e) {
       if (mounted) {
         setState(() {
@@ -178,7 +254,11 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
     });
   }
 
-  void _showSuccessDialog({required String orderId, required double amount}) {
+  void _showSuccessDialog({
+    required String orderId,
+    required double amount,
+    required String methodLabel,
+  }) {
     final cart = context.read<CartProvider>();
     cart.clear();
     showModalBottomSheet(
@@ -208,7 +288,7 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
               Text('Payment Successful!', style: AppTextStyles.headline3),
               const SizedBox(height: AppDimensions.sm),
               Text(
-                '₹${amount.toStringAsFixed(2)} paid via Razorpay',
+                '₹${amount.toStringAsFixed(2)} paid via $methodLabel',
                 style: AppTextStyles.bodySmall,
                 textAlign: TextAlign.center,
               ),
@@ -239,6 +319,122 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
         ),
       ),
     );
+  }
+
+  /// The payment methods the buyer can choose from, as configured in the Admin
+  /// app and filtered to their delivery region. Which gateway settles any of
+  /// them is never surfaced here.
+  Widget _paymentMethods() {
+    if (_loadingMethods) {
+      return Container(
+        padding: const EdgeInsets.all(24),
+        decoration: BoxDecoration(
+          color: AppColors.surface,
+          borderRadius: BorderRadius.circular(AppDimensions.radiusMd),
+        ),
+        child: const Center(
+          child: SizedBox(
+            width: 20, height: 20,
+            child: CircularProgressIndicator(strokeWidth: 2),
+          ),
+        ),
+      );
+    }
+
+    if (_methodsError != null || _methods.isEmpty) {
+      return Container(
+        padding: const EdgeInsets.all(16),
+        decoration: BoxDecoration(
+          color: AppColors.surface,
+          borderRadius: BorderRadius.circular(AppDimensions.radiusMd),
+        ),
+        child: Row(
+          children: [
+            const Icon(Iconsax.info_circle, size: 20, color: AppColors.textSecondary),
+            const SizedBox(width: 12),
+            Expanded(
+              child: Text(
+                _methodsError ??
+                    'No payment methods are available for this delivery address.',
+                style: AppTextStyles.caption.copyWith(color: AppColors.textSecondary),
+              ),
+            ),
+            if (_methodsError != null)
+              TextButton(onPressed: _loadPaymentMethods, child: const Text('Retry')),
+          ],
+        ),
+      );
+    }
+
+    return Column(
+      children: [
+        for (final method in _methods) ...[
+          _paymentMethodTile(method),
+          if (method != _methods.last) const SizedBox(height: AppDimensions.sm),
+        ],
+      ],
+    );
+  }
+
+  Widget _paymentMethodTile(PaymentMethod method) {
+    final selected = _selectedMethod?.code == method.code;
+    return InkWell(
+      onTap: () => setState(() => _selectedMethod = method),
+      borderRadius: BorderRadius.circular(AppDimensions.radiusMd),
+      child: Container(
+        padding: const EdgeInsets.all(14),
+        decoration: BoxDecoration(
+          color: selected
+              ? AppColors.primary.withValues(alpha: 0.05)
+              : AppColors.surface,
+          borderRadius: BorderRadius.circular(AppDimensions.radiusMd),
+          border: Border.all(
+            color: selected ? AppColors.primary : AppColors.surface,
+            width: 1.5,
+          ),
+        ),
+        child: Row(
+          children: [
+            _methodIcon(method, selected),
+            const SizedBox(width: 12),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    method.name,
+                    style: AppTextStyles.body.copyWith(fontWeight: FontWeight.w600),
+                  ),
+                  if (method.description != null && method.description!.isNotEmpty) ...[
+                    const SizedBox(height: 2),
+                    Text(method.description!, style: AppTextStyles.caption),
+                  ],
+                ],
+              ),
+            ),
+            Icon(
+              selected ? Icons.check_circle : Icons.circle_outlined,
+              size: 20,
+              color: selected ? AppColors.primary : AppColors.textHint,
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _methodIcon(PaymentMethod method, bool selected) {
+    final color = selected ? AppColors.primary : AppColors.textSecondary;
+    final url = method.iconUrl;
+    if (url != null && url.isNotEmpty) {
+      // An admin-supplied icon; fall back to the built-in one if it won't load.
+      return Image.network(
+        url,
+        width: 24, height: 24,
+        errorBuilder: (_, __, ___) => Icon(method.fallbackIcon, size: 24, color: color),
+      );
+    }
+    return Icon(method.fallbackIcon, size: 24, color: color);
   }
 
   @override
@@ -308,35 +504,9 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
               ),
             ),
           const SizedBox(height: AppDimensions.lg),
-          _sectionHeader('Payment Method', Iconsax.wallet),
+          _sectionHeader('Payment Methods', Iconsax.wallet),
           const SizedBox(height: AppDimensions.sm),
-          Container(
-            padding: const EdgeInsets.all(14),
-            decoration: BoxDecoration(
-              color: AppColors.primary.withValues(alpha: 0.05),
-              borderRadius: BorderRadius.circular(AppDimensions.radiusMd),
-              border: Border.all(color: AppColors.primary, width: 1.5),
-            ),
-            child: Row(
-              children: [
-                const Icon(Iconsax.card, size: 24, color: AppColors.primary),
-                const SizedBox(width: 12),
-                Expanded(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text('Razorpay',
-                          style: AppTextStyles.body.copyWith(fontWeight: FontWeight.w600)),
-                      const SizedBox(height: 2),
-                      Text('UPI, Cards, Net Banking & Wallets',
-                          style: AppTextStyles.caption),
-                    ],
-                  ),
-                ),
-                const Icon(Icons.check_circle, size: 20, color: AppColors.primary),
-              ],
-            ),
-          ),
+          _paymentMethods(),
           const SizedBox(height: AppDimensions.lg),
           _sectionHeader('Order Summary', Iconsax.receipt),
           const SizedBox(height: AppDimensions.sm),
@@ -494,7 +664,7 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
                       value: a,
                       groupValue: _selectedAddress,
                       onChanged: (v) {
-                        setState(() => _selectedAddress = v!);
+                        _onAddressChanged(v!);
                         Navigator.pop(ctx);
                       },
                       title: Text('${a.fullName} • ${a.type}',

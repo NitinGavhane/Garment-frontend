@@ -29,6 +29,7 @@ class RazorpayCheckout {
     final prefill = JSObject();
     prefill['email'] = (options.email ?? '').toJS;
     prefill['contact'] = (options.contact ?? '').toJS;
+    if (options.method != null) prefill['method'] = options.method!.toJS;
 
     final modal = JSObject();
     modal['ondismiss'] = (() {

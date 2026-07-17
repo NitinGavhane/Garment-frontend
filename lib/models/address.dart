@@ -5,6 +5,8 @@ class Address {
   final String street;
   final String city;
   final String state;
+  /// ISO-3166-1 alpha-2. Decides which payment methods checkout offers.
+  final String country;
   final String pincode;
   final bool isDefault;
   final String type;
@@ -16,6 +18,7 @@ class Address {
     required this.street,
     required this.city,
     required this.state,
+    this.country = 'IN',
     required this.pincode,
     this.isDefault = false,
     this.type = 'Home',
@@ -29,6 +32,7 @@ class Address {
       street: json['street'] as String,
       city: json['city'] as String,
       state: json['state'] as String,
+      country: (json['country'] as String?) ?? 'IN',
       pincode: json['pincode'] as String,
       isDefault: json['is_default'] as bool? ?? false,
       type: json['type'] as String? ?? 'Home',

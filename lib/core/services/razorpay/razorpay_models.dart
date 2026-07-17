@@ -10,6 +10,12 @@ class RazorpayOptions {
   final String? email;
   final String? contact;
 
+  /// The method the buyer chose on our screen (upi/card/netbanking/wallet),
+  /// used to open the gateway sheet on that method instead of its menu. The
+  /// buyer can still switch inside the sheet, which is why the backend re-reads
+  /// the real method when verifying.
+  final String? method;
+
   const RazorpayOptions({
     required this.keyId,
     required this.orderId,
@@ -19,6 +25,7 @@ class RazorpayOptions {
     this.description,
     this.email,
     this.contact,
+    this.method,
   });
 }
 
