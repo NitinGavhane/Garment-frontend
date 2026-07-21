@@ -26,15 +26,21 @@ class _OrderReturnReplaceSheetState extends State<OrderReturnReplaceSheet> {
   @override
   Widget build(BuildContext context) {
     return SafeArea(
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          OrderReturnReplaceForm(
-            key: _formKey,
-            order: widget.order,
-            type: widget.type,
-          ),
-          const SizedBox(height: 12),
+      child: Padding(
+        padding: EdgeInsets.only(bottom: MediaQuery.of(context).viewInsets.bottom),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Flexible(
+              child: SingleChildScrollView(
+                child: OrderReturnReplaceForm(
+                  key: _formKey,
+                  order: widget.order,
+                  type: widget.type,
+                ),
+              ),
+            ),
+            const SizedBox(height: 12),
           SizedBox(
             width: double.infinity,
             child: ElevatedButton.icon(
@@ -49,7 +55,8 @@ class _OrderReturnReplaceSheetState extends State<OrderReturnReplaceSheet> {
             ),
           ),
           const SizedBox(height: 8),
-        ],
+          ],
+        ),
       ),
     );
   }

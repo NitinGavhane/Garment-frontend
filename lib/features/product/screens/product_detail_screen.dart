@@ -8,6 +8,8 @@ import '../../../core/constants/app_dimensions.dart';
 import '../../../core/constants/app_text_styles.dart';
 import '../../../core/widgets/app_button.dart';
 import '../../../models/product.dart';
+import '../../../models/delivery_settings.dart';
+import '../../../core/services/delivery_api_service.dart';
 import '../../../providers/auth_provider.dart';
 import '../../../providers/cart_provider.dart';
 import '../../../providers/product_provider.dart';
@@ -29,6 +31,7 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
   String _selectedSize = '';
   String _selectedColor = '';
   final int _quantity = 1;
+  DeliverySettings? _delivery;
 
   Product get _product => _fullProduct ?? widget.product;
 
@@ -41,6 +44,27 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
     _selectedSize = widget.product.sizes.isNotEmpty ? widget.product.sizes.first : '';
     _selectedColor = widget.product.colors.isNotEmpty ? widget.product.colors.first : '';
     _fetchDetail();
+    _fetchDelivery();
+  }
+
+  Future<void> _fetchDelivery() async {
+    try {
+      final settings = await DeliveryApiService.getSettings();
+      if (mounted) setState(() => _delivery = settings);
+    } catch (_) {
+      // Leave null; the delivery chip falls back to a neutral label.
+    }
+  }
+
+  /// Delivery chip text reflecting the store's actual policy, rather than a
+  /// hardcoded "Free Delivery".
+  String get _deliveryLabel {
+    final d = _delivery;
+    if (d == null || d.isAlwaysFree) return 'Free Delivery';
+    if (d.freeAbove != null) {
+      return 'Free Delivery over ₹${d.freeAbove!.toStringAsFixed(0)}';
+    }
+    return 'Delivery ₹${d.fee.toStringAsFixed(0)}';
   }
 
   Future<void> _fetchDetail() async {
@@ -205,24 +229,37 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
                         end: Alignment.bottomRight,
                       ),
                     ),
-                    child: Stack(
-                      fit: StackFit.expand,
-                      children: [
-                        CachedNetworkImage(
-                          imageUrl: product.imageUrl,
-                          fit: BoxFit.cover,
-                          placeholder: (_, __) => const SizedBox(),
-                          errorWidget: (_, __, ___) => const SizedBox(),
-                        ),
-                        Center(
-                          child: Icon(
-                            Icons.checkroom_rounded,
-                            size: 160,
-                            color: AppColors.white.withValues(alpha: 0.3),
+                    // Show the real product photo when there is one; the
+                    // clothing icon is only a fallback for a missing/broken
+                    // image, not an overlay drawn on top of every photo.
+                    child: product.imageUrl.isEmpty
+                        ? Center(
+                            child: Icon(
+                              Icons.checkroom_rounded,
+                              size: 160,
+                              color: AppColors.white.withValues(alpha: 0.3),
+                            ),
+                          )
+                        : CachedNetworkImage(
+                            imageUrl: product.imageUrl,
+                            fit: BoxFit.cover,
+                            width: double.infinity,
+                            height: double.infinity,
+                            placeholder: (_, __) => Center(
+                              child: Icon(
+                                Icons.checkroom_rounded,
+                                size: 160,
+                                color: AppColors.white.withValues(alpha: 0.3),
+                              ),
+                            ),
+                            errorWidget: (_, __, ___) => Center(
+                              child: Icon(
+                                Icons.checkroom_rounded,
+                                size: 160,
+                                color: AppColors.white.withValues(alpha: 0.3),
+                              ),
+                            ),
                           ),
-                        ),
-                      ],
-                    ),
                   ),
                 ),
               ),
@@ -461,7 +498,7 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
                         if (product.sku.trim().isNotEmpty)
                           _infoChip(Iconsax.box, 'SKU: ${product.sku}'),
                         _infoChip(Iconsax.verify, '100% Original'),
-                        _infoChip(Iconsax.clock, 'Free Delivery'),
+                        _infoChip(Iconsax.clock, _deliveryLabel),
                         if (product.isReturnable)
                           _infoChip(Iconsax.refresh_circle, '7-day Returns'),
                         if (product.isReplaceable)

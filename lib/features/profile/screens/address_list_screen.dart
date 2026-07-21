@@ -86,11 +86,15 @@ class _AddressListScreenState extends State<AddressListScreen> {
                                   color: AppColors.primary,
                                 ),
                                 const SizedBox(width: 8),
-                                Text(
-                                  '${addr.fullName} • ${addr.type}',
-                                  style: AppTextStyles.bodySmall.copyWith(fontWeight: FontWeight.w600),
+                                Expanded(
+                                  child: Text(
+                                    '${addr.fullName} • ${addr.type}',
+                                    maxLines: 1,
+                                    overflow: TextOverflow.ellipsis,
+                                    style: AppTextStyles.bodySmall.copyWith(fontWeight: FontWeight.w600),
+                                  ),
                                 ),
-                                const Spacer(),
+                                const SizedBox(width: 8),
                                 if (addr.isDefault)
                                   Container(
                                     padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),

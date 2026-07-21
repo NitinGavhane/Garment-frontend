@@ -237,13 +237,14 @@ class _CartItemCard extends StatelessWidget {
               ),
             ),
             Column(
+              mainAxisSize: MainAxisSize.min,
               children: [
                 GestureDetector(
                   onTap: onRemove,
                   child: const Icon(Iconsax.trash,
                       size: 18, color: AppColors.textHint),
                 ),
-                const Spacer(),
+                const SizedBox(height: 24),
                 Container(
                   decoration: BoxDecoration(
                     border: Border.all(color: AppColors.border),

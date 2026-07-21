@@ -9,6 +9,7 @@ import '../../../core/widgets/app_text_field.dart';
 import '../../../core/services/order_api_service.dart';
 import '../../../core/services/payment_api_service.dart';
 import '../../../core/services/payment_methods_api_service.dart';
+import '../../../core/services/delivery_api_service.dart';
 import '../../../core/services/api_client.dart';
 import '../../../core/services/razorpay/razorpay_checkout.dart';
 import '../../../providers/cart_provider.dart';
@@ -16,6 +17,7 @@ import '../../../providers/auth_provider.dart';
 import '../../../providers/address_provider.dart';
 import '../../../models/address.dart';
 import '../../../models/payment_method.dart';
+import '../../../models/delivery_settings.dart';
 
 class CheckoutScreen extends StatefulWidget {
   const CheckoutScreen({super.key});
@@ -36,6 +38,8 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
   bool _loadingMethods = true;
   String? _methodsError;
 
+  DeliverySettings _delivery = const DeliverySettings();
+
   @override
   void initState() {
     super.initState();
@@ -55,7 +59,18 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
     setState(() {
       _selectedAddress = addrProvider.defaultAddress;
     });
+    await _loadDeliverySettings();
     await _loadPaymentMethods();
+  }
+
+  Future<void> _loadDeliverySettings() async {
+    try {
+      final settings = await DeliveryApiService.getSettings();
+      if (mounted) setState(() => _delivery = settings);
+    } catch (_) {
+      // Fall back to free delivery if the policy can't be loaded; the backend
+      // stays authoritative for the amount actually charged.
+    }
   }
 
   /// Payment methods depend on where the order is going, so they are reloaded
@@ -441,10 +456,12 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
   Widget build(BuildContext context) {
     final cart = context.watch<CartProvider>();
     final subtotal = cart.subtotal;
-    // Flat 18% GST, no shipping — matches the backend's final_amount so the
-    // "Pay ₹…" button shows exactly what the order will be charged.
+    // Flat 18% GST plus the configured delivery fee — matches the backend's
+    // final_amount so the "Pay ₹…" button shows exactly what the order will be
+    // charged.
     final gst = subtotal * 0.18;
-    final total = subtotal + gst;
+    final deliveryFee = _delivery.feeFor(subtotal);
+    final total = subtotal + gst + deliveryFee;
     final addresses = context.watch<AddressProvider>().addresses;
 
     return Scaffold(
@@ -581,6 +598,8 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
                 const Divider(),
                 _summaryRow('Subtotal', '₹${subtotal.toStringAsFixed(2)}'),
                 _summaryRow('GST (18%)', '₹${gst.toStringAsFixed(2)}'),
+                _summaryRow('Delivery',
+                    deliveryFee > 0 ? '₹${deliveryFee.toStringAsFixed(2)}' : 'FREE'),
                 const Divider(color: AppColors.festiveGold, thickness: 1),
                 _summaryRow('Total', '₹${total.toStringAsFixed(2)}',
                     isTotal: true),
@@ -659,22 +678,30 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
           children: [
             Text('Select Address', style: AppTextStyles.title),
             const SizedBox(height: AppDimensions.md),
-            ...addresses
-                .map((a) => RadioListTile<Address>(
-                      value: a,
-                      groupValue: _selectedAddress,
-                      onChanged: (v) {
-                        _onAddressChanged(v!);
-                        Navigator.pop(ctx);
-                      },
-                      title: Text('${a.fullName} • ${a.type}',
-                          style: AppTextStyles.subtitle),
-                      subtitle: Text(
-                          '${a.street}, ${a.city} - ${a.pincode}',
-                          style: AppTextStyles.caption),
-                      activeColor: AppColors.primary,
-                      contentPadding: EdgeInsets.zero,
-                    )),
+            Flexible(
+              child: SingleChildScrollView(
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: addresses
+                      .map((a) => RadioListTile<Address>(
+                            value: a,
+                            groupValue: _selectedAddress,
+                            onChanged: (v) {
+                              _onAddressChanged(v!);
+                              Navigator.pop(ctx);
+                            },
+                            title: Text('${a.fullName} • ${a.type}',
+                                style: AppTextStyles.subtitle),
+                            subtitle: Text(
+                                '${a.street}, ${a.city} - ${a.pincode}',
+                                style: AppTextStyles.caption),
+                            activeColor: AppColors.primary,
+                            contentPadding: EdgeInsets.zero,
+                          ))
+                      .toList(),
+                ),
+              ),
+            ),
             const SizedBox(height: AppDimensions.md),
             OutlinedButton.icon(
               onPressed: () {

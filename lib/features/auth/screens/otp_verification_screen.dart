@@ -176,10 +176,12 @@ class _OtpVerificationScreenState extends State<OtpVerificationScreen> {
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                   children: List.generate(6, (index) {
-                    return SizedBox(
-                      width: 48,
-                      height: 56,
-                      child: TextField(
+                    return Expanded(
+                      child: Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 3),
+                        child: SizedBox(
+                          height: 56,
+                          child: TextField(
                         controller: _otpControllers[index],
                         focusNode: _focusNodes[index],
                         keyboardType: TextInputType.number,
@@ -209,7 +211,7 @@ class _OtpVerificationScreenState extends State<OtpVerificationScreen> {
                         ),
                         onChanged: (v) => _onOtpChange(index, v),
                       ),
-                    );
+                    )));
                   }),
                 ),
               ),
