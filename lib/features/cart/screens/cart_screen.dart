@@ -7,6 +7,7 @@ import '../../../core/constants/app_text_styles.dart';
 import '../../../core/widgets/app_button.dart';
 import '../../../models/cart_item.dart';
 import '../../../providers/cart_provider.dart';
+import '../../../providers/delivery_provider.dart';
 import '../../checkout/screens/checkout_screen.dart';
 
 class CartScreen extends StatefulWidget {
@@ -23,10 +24,12 @@ class _CartScreenState extends State<CartScreen> {
     final items = cart.items;
     final subtotal = cart.subtotal;
     // GST is a flat 18% of the subtotal (CGST+SGST or IGST, decided server-side
-    // by place of supply). No shipping is charged. Keep this in lockstep with
-    // the backend's final_amount so the displayed total matches what is charged.
+    // by place of supply), plus the store's configured delivery fee. Keep this
+    // in lockstep with the backend's final_amount so the displayed total
+    // matches what is charged.
     final gst = subtotal * 0.18;
-    final total = subtotal + gst;
+    final deliveryFee = context.watch<DeliveryProvider>().feeFor(subtotal);
+    final total = subtotal + gst + deliveryFee;
 
     final screenSize = MediaQuery.of(context).size;
     return ConstrainedBox(
@@ -119,6 +122,23 @@ class _CartScreenState extends State<CartScreen> {
                           '₹${gst.toStringAsFixed(2)}',
                           style: AppTextStyles.bodySmall.copyWith(
                             color: AppColors.textSecondary,
+                          ),
+                        ),
+                      ],
+                    ),
+                    const SizedBox(height: 6),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Text('Delivery', style: AppTextStyles.bodySmall),
+                        Text(
+                          deliveryFee > 0
+                              ? '₹${deliveryFee.toStringAsFixed(2)}'
+                              : 'FREE',
+                          style: AppTextStyles.bodySmall.copyWith(
+                            color: deliveryFee > 0
+                                ? AppColors.textSecondary
+                                : AppColors.success,
                           ),
                         ),
                       ],

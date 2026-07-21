@@ -41,12 +41,16 @@ class PremiumProductCard extends StatelessWidget {
               child: ClipRRect(
                 borderRadius: const BorderRadius.vertical(top: Radius.circular(AppDimensions.radiusLg)),
                 child: Stack(
+                  fit: StackFit.expand,
                   children: [
+                    // See ProductCard — contain so mixed-ratio seller photos
+                    // are never cropped.
+                    Container(color: AppColors.surfaceContainerLowest),
                     CachedNetworkImage(
                       imageUrl: product.imageUrl,
                       width: double.infinity,
                       height: double.infinity,
-                      fit: BoxFit.cover,
+                      fit: BoxFit.contain,
                       placeholder: (_, __) => Container(
                         color: AppColors.primaryLight,
                         child: const Center(

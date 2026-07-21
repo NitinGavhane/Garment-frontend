@@ -5,6 +5,7 @@ import 'package:provider/provider.dart';
 import '../../../../models/product.dart';
 import '../../../../providers/auth_provider.dart';
 import '../../../../providers/cart_provider.dart';
+import '../../../../providers/delivery_provider.dart';
 import '../../../../providers/wishlist_provider.dart';
 import 'web_ui.dart';
 import 'web_footer.dart';
@@ -289,13 +290,16 @@ class WebAnnouncementBar extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    // The delivery line comes from the store's configured policy, so the bar
+    // never promises free shipping once a delivery charge is set up.
+    final delivery = context.watch<DeliveryProvider>().settings;
     return Container(
       height: 38,
       width: double.infinity,
       color: WebTokens.blueDeep,
       alignment: Alignment.center,
       child: Text(
-        'FREE SHIPPING ON ORDERS OVER ₹999   •   EASY 7-DAY RETURNS   •   NEW ETHNIC COLLECTION NOW LIVE',
+        '${delivery.promoLine}   •   EASY 7-DAY RETURNS   •   NEW ETHNIC COLLECTION NOW LIVE',
         style: GoogleFonts.poppins(
             fontSize: 12,
             fontWeight: FontWeight.w500,

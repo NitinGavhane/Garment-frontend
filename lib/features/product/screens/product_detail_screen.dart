@@ -8,10 +8,9 @@ import '../../../core/constants/app_dimensions.dart';
 import '../../../core/constants/app_text_styles.dart';
 import '../../../core/widgets/app_button.dart';
 import '../../../models/product.dart';
-import '../../../models/delivery_settings.dart';
-import '../../../core/services/delivery_api_service.dart';
 import '../../../providers/auth_provider.dart';
 import '../../../providers/cart_provider.dart';
+import '../../../providers/delivery_provider.dart';
 import '../../../providers/product_provider.dart';
 import '../../../providers/wishlist_provider.dart';
 import '../../checkout/screens/checkout_screen.dart';
@@ -31,9 +30,13 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
   String _selectedSize = '';
   String _selectedColor = '';
   final int _quantity = 1;
-  DeliverySettings? _delivery;
 
   Product get _product => _fullProduct ?? widget.product;
+
+  /// Delivery chip text reflecting the store's actual policy, rather than a
+  /// hardcoded "Free Delivery".
+  String get _deliveryLabel =>
+      context.watch<DeliveryProvider>().settings.chipLabel;
 
   bool get _isWishlisted =>
       context.watch<WishlistProvider>().isWishlisted(_product.id);
@@ -44,27 +47,6 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
     _selectedSize = widget.product.sizes.isNotEmpty ? widget.product.sizes.first : '';
     _selectedColor = widget.product.colors.isNotEmpty ? widget.product.colors.first : '';
     _fetchDetail();
-    _fetchDelivery();
-  }
-
-  Future<void> _fetchDelivery() async {
-    try {
-      final settings = await DeliveryApiService.getSettings();
-      if (mounted) setState(() => _delivery = settings);
-    } catch (_) {
-      // Leave null; the delivery chip falls back to a neutral label.
-    }
-  }
-
-  /// Delivery chip text reflecting the store's actual policy, rather than a
-  /// hardcoded "Free Delivery".
-  String get _deliveryLabel {
-    final d = _delivery;
-    if (d == null || d.isAlwaysFree) return 'Free Delivery';
-    if (d.freeAbove != null) {
-      return 'Free Delivery over ₹${d.freeAbove!.toStringAsFixed(0)}';
-    }
-    return 'Delivery ₹${d.fee.toStringAsFixed(0)}';
   }
 
   Future<void> _fetchDetail() async {
@@ -242,7 +224,11 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
                           )
                         : CachedNetworkImage(
                             imageUrl: product.imageUrl,
-                            fit: BoxFit.cover,
+                            // Contain, not cover: the photo's aspect ratio is
+                            // whatever the seller uploaded, and cropping it to
+                            // this header cut the top and bottom off the
+                            // garment. The gradient fills the margins.
+                            fit: BoxFit.contain,
                             width: double.infinity,
                             height: double.infinity,
                             placeholder: (_, __) => Center(

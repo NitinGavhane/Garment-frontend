@@ -4,6 +4,7 @@ import 'package:provider/provider.dart';
 
 import '../../../../core/services/product_api_service.dart';
 import '../../../../models/product.dart';
+import '../../../../providers/delivery_provider.dart';
 import '../../../../providers/product_provider.dart';
 import '../../../../providers/wishlist_provider.dart';
 import 'web_chrome.dart';
@@ -372,12 +373,16 @@ class _Gallery extends StatelessWidget {
             borderRadius: BorderRadius.circular(18),
             child: Container(
               decoration: BoxDecoration(
+                color: Colors.white,
                 border: Border.all(color: WebTokens.line),
                 borderRadius: BorderRadius.circular(18),
               ),
+              // Contain, not cover: sellers upload photos in whatever aspect
+              // ratio they have (square, portrait, landscape) and the whole
+              // garment must stay visible instead of being cropped to fit.
               child: images.isEmpty
                   ? const WebImage(url: '')
-                  : WebImage(url: images[safeIndex], fit: BoxFit.cover),
+                  : WebImage(url: images[safeIndex], fit: BoxFit.contain),
             ),
           ),
         ),
@@ -398,6 +403,7 @@ class _Gallery extends StatelessWidget {
                     child: Container(
                       width: 70,
                       decoration: BoxDecoration(
+                        color: Colors.white,
                         borderRadius: BorderRadius.circular(10),
                         border: Border.all(
                             color: active ? WebTokens.gold : WebTokens.line,
@@ -405,7 +411,7 @@ class _Gallery extends StatelessWidget {
                       ),
                       child: ClipRRect(
                         borderRadius: BorderRadius.circular(9),
-                        child: WebImage(url: images[i]),
+                        child: WebImage(url: images[i], fit: BoxFit.contain),
                       ),
                     ),
                   ),
@@ -508,14 +514,16 @@ class _QtyStepper extends StatelessWidget {
 class _AssuranceRow extends StatelessWidget {
   const _AssuranceRow();
 
-  static const List<(IconData, String)> _items = [
-    (Icons.local_shipping_outlined, 'Free shipping over ₹999'),
-    (Icons.autorenew, '7-day easy returns'),
-    (Icons.verified_user_outlined, 'Secure checkout'),
-  ];
-
   @override
   Widget build(BuildContext context) {
+    // The delivery promise mirrors the store's configured policy rather than a
+    // fixed "free shipping" claim.
+    final delivery = context.watch<DeliveryProvider>().settings;
+    final items = <(IconData, String)>[
+      (Icons.local_shipping_outlined, delivery.promoSentence),
+      (Icons.autorenew, '7-day easy returns'),
+      (Icons.verified_user_outlined, 'Secure checkout'),
+    ];
     return Container(
       padding: const EdgeInsets.all(20),
       decoration: BoxDecoration(
@@ -524,19 +532,19 @@ class _AssuranceRow extends StatelessWidget {
       ),
       child: Row(
         children: [
-          for (int i = 0; i < _items.length; i++) ...[
+          for (int i = 0; i < items.length; i++) ...[
             Expanded(
               child: Column(
                 children: [
-                  Icon(_items[i].$1, size: 24, color: WebTokens.gold),
+                  Icon(items[i].$1, size: 24, color: WebTokens.gold),
                   const SizedBox(height: 8),
-                  Text(_items[i].$2,
+                  Text(items[i].$2,
                       textAlign: TextAlign.center,
                       style: WebTokens.sans(12, color: WebTokens.body, w: FontWeight.w500)),
                 ],
               ),
             ),
-            if (i != _items.length - 1)
+            if (i != items.length - 1)
               Container(width: 1, height: 40, color: WebTokens.gold.withValues(alpha: 0.25)),
           ],
         ],

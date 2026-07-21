@@ -4,6 +4,7 @@ import 'package:provider/provider.dart';
 
 import '../../../../models/cart_item.dart';
 import '../../../../providers/cart_provider.dart';
+import '../../../../providers/delivery_provider.dart';
 import '../../../checkout/screens/checkout_screen.dart';
 import 'web_chrome.dart';
 import 'web_ui.dart';
@@ -123,10 +124,11 @@ class _CartRow extends StatelessWidget {
         children: [
           ClipRRect(
             borderRadius: BorderRadius.circular(12),
-            child: SizedBox(
+            child: Container(
               width: 96,
               height: 120,
-              child: WebImage(url: p.imageUrl),
+              color: Colors.white,
+              child: WebImage(url: p.imageUrl, fit: BoxFit.contain),
             ),
           ),
           const SizedBox(width: 20),
@@ -227,9 +229,11 @@ class _Summary extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final subtotal = cart.subtotal;
-    // Flat 18% GST, no shipping — matches the backend's final_amount.
+    // Flat 18% GST plus the store's configured delivery fee — matches the
+    // backend's final_amount.
     final gst = subtotal * 0.18;
-    final total = subtotal + gst;
+    final deliveryFee = context.watch<DeliveryProvider>().feeFor(subtotal);
+    final total = subtotal + gst + deliveryFee;
     return Container(
       padding: const EdgeInsets.all(28),
       decoration: BoxDecoration(
@@ -245,6 +249,9 @@ class _Summary extends StatelessWidget {
           _row('Subtotal (${cart.count} item${cart.count == 1 ? '' : 's'})', '₹${subtotal.toStringAsFixed(0)}'),
           const SizedBox(height: 12),
           _row('GST (18%)', '₹${gst.toStringAsFixed(0)}'),
+          const SizedBox(height: 12),
+          _row('Delivery', deliveryFee > 0 ? '₹${deliveryFee.toStringAsFixed(0)}' : 'FREE',
+              highlight: deliveryFee <= 0),
           const Padding(
             padding: EdgeInsets.symmetric(vertical: 18),
             child: Divider(height: 1, color: WebTokens.line),

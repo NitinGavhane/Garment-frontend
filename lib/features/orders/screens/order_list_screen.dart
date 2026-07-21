@@ -54,7 +54,9 @@ class _OrderListScreenState extends State<OrderListScreen> {
         color: '',
       )).toList(),
       subtotal: api.subtotal,
-      shipping: 0,
+      // What was actually charged for delivery on this order, so past orders
+      // keep showing the fee that applied when they were placed.
+      shipping: api.deliveryFee,
       discount: api.discountAmount,
       gst: api.gstAmount,
       cgst: api.cgstAmount,

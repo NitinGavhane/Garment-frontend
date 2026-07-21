@@ -12,6 +12,7 @@ import 'providers/banner_provider.dart';
 import 'providers/location_provider.dart';
 import 'providers/order_provider.dart';
 import 'providers/address_provider.dart';
+import 'providers/delivery_provider.dart';
 import 'routes/app_routes.dart';
 import 'features/splash/splash_screen.dart';
 
@@ -94,6 +95,7 @@ class _GarmentEcommerceAppState extends State<GarmentEcommerceApp> {
         ChangeNotifierProvider(create: (_) => BannerProvider()),
         ChangeNotifierProvider(create: (_) => OrderProvider()),
         ChangeNotifierProvider(create: (_) => AddressProvider()),
+        ChangeNotifierProvider(create: (_) => DeliveryProvider()..load()),
       ],
       child: MaterialApp(
         title: 'Dristi Fashions',

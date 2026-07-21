@@ -132,10 +132,15 @@ class _WebProductCardState extends State<WebProductCard> {
         child: Stack(
           fit: StackFit.expand,
           children: [
+            // White backdrop + contain: product photos arrive in any aspect
+            // ratio (the 3:4 in the admin form is a recommendation, not a
+            // rule), so the card letterboxes them instead of cropping the
+            // garment.
+            Container(color: Colors.white),
             AnimatedScale(
               scale: _hover ? 1.06 : 1.0,
               duration: const Duration(milliseconds: 300),
-              child: WebImage(url: p.imageUrl),
+              child: WebImage(url: p.imageUrl, fit: BoxFit.contain),
             ),
             // Badges
             Positioned(

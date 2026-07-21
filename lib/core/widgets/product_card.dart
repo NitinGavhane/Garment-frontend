@@ -42,11 +42,15 @@ class ProductCard extends StatelessWidget {
               child: ClipRRect(
                 borderRadius: const BorderRadius.vertical(top: Radius.circular(AppDimensions.radiusLg)),
                 child: Stack(
+                  fit: StackFit.expand,
                   children: [
+                    // Contain on a plain backdrop: seller photos come in mixed
+                    // aspect ratios, and cropping them cut the garment off.
+                    Container(color: AppColors.surfaceContainerLowest),
                     CachedNetworkImage(
                       imageUrl: product.imageUrl,
                       width: double.infinity,
-                      fit: BoxFit.cover,
+                      fit: BoxFit.contain,
                       placeholder: (_, __) => Container(
                         color: AppColors.primaryLight,
                         child: const Center(
