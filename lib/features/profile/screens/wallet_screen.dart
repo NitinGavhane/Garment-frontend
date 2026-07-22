@@ -67,11 +67,12 @@ class _WalletScreenState extends State<WalletScreen> {
       return const SizedBox.shrink();
     }
 
-    final referralCode = _referralStats?['referral_code'] as String? ?? user.referralCode ?? '';
+    final referralCode = _referralStats?['referral_code'] as String? ?? user.referralCode;
     final totalEarnings = (_referralStats?['total_earnings'] as num?)?.toDouble() ?? 0;
+    final pendingEarnings = (_referralStats?['pending_earnings'] as num?)?.toDouble() ?? 0;
     final successfulReferrals = _referralStats?['successful_referrals'] as int? ?? 0;
     final pendingReferrals = _referralStats?['pending_referrals'] as int? ?? 0;
-    final totalReferrals = _referralStats?['total_referrals'] as int? ?? successfulReferrals;
+    final totalReferrals = successfulReferrals + pendingReferrals;
 
     return Scaffold(
       appBar: AppBar(
@@ -87,7 +88,7 @@ class _WalletScreenState extends State<WalletScreen> {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    _walletBalanceCard(),
+                    _walletBalanceCard(pendingEarnings),
                     const SizedBox(height: AppDimensions.lg),
                     _referralCard(referralCode),
                     const SizedBox(height: AppDimensions.lg),
@@ -103,7 +104,7 @@ class _WalletScreenState extends State<WalletScreen> {
     );
   }
 
-  Widget _walletBalanceCard() {
+  Widget _walletBalanceCard(double pendingEarnings) {
     return Container(
       width: double.infinity,
       padding: const EdgeInsets.all(24),
@@ -131,29 +132,34 @@ class _WalletScreenState extends State<WalletScreen> {
           Text('₹${_balance.toStringAsFixed(2)}',
               style: AppTextStyles.displayLarge.copyWith(
                   color: AppColors.white)),
-          const SizedBox(height: 16),
-          Row(
-            children: [
-              _walletButton(Iconsax.add, 'Add Money'),
-              const SizedBox(width: 12),
-              _walletButton(Iconsax.send_sqaure_2, 'Send'),
-            ],
+          const SizedBox(height: 14),
+          // Honest status instead of the old "Add Money" / "Send" buttons,
+          // which did nothing: this wallet only receives referral commission
+          // approved by the store.
+          Container(
+            width: double.infinity,
+            padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
+            decoration: BoxDecoration(
+              color: AppColors.white.withValues(alpha: 0.15),
+              borderRadius: BorderRadius.circular(12),
+            ),
+            child: Row(
+              children: [
+                const Icon(Iconsax.clock, color: AppColors.white, size: 18),
+                const SizedBox(width: 10),
+                Expanded(
+                  child: Text(
+                    pendingEarnings > 0
+                        ? '₹${pendingEarnings.toStringAsFixed(2)} awaiting store approval'
+                        : 'Referral commission is added here once approved',
+                    style: AppTextStyles.caption.copyWith(
+                        color: AppColors.white.withValues(alpha: 0.95)),
+                  ),
+                ),
+              ],
+            ),
           ),
         ],
-      ),
-    );
-  }
-
-  Widget _walletButton(IconData icon, String label) {
-    return OutlinedButton.icon(
-      onPressed: () {},
-      icon: Icon(icon, size: 18),
-      label: Text(label, style: const TextStyle(fontSize: 13)),
-      style: OutlinedButton.styleFrom(
-        foregroundColor: AppColors.white,
-        side: BorderSide(color: AppColors.white.withValues(alpha: 0.3)),
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
-        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
       ),
     );
   }

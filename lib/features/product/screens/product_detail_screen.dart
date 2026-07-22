@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:iconsax/iconsax.dart';
 import 'package:provider/provider.dart';
@@ -7,6 +8,7 @@ import '../../../core/constants/app_colors.dart';
 import '../../../core/constants/app_dimensions.dart';
 import '../../../core/constants/app_text_styles.dart';
 import '../../../core/widgets/app_button.dart';
+import '../../../core/services/referral_link_service.dart';
 import '../../../models/product.dart';
 import '../../../providers/auth_provider.dart';
 import '../../../providers/cart_provider.dart';
@@ -69,6 +71,35 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
         });
       }
     }
+  }
+
+  /// The link to hand out for this product. A logged-in shopper's own referral
+  /// code rides along, so anything they share can earn them commission.
+  String get _shareUrl => ReferralLink.productUrl(
+        _product.id,
+        referralCode: context.read<AuthProvider>().user?.referralCode,
+      );
+
+  String get _shareMessage =>
+      'Check out ${_product.title} at ₹${_product.price.toStringAsFixed(2)} on Dristi Fashions\n$_shareUrl';
+
+  void _shareProduct() {
+    Share.share(_shareMessage, subject: _product.title);
+  }
+
+  Future<void> _copyLink() async {
+    final url = _shareUrl;
+    await Clipboard.setData(ClipboardData(text: url));
+    if (!mounted) return;
+    final earns = context.read<AuthProvider>().user?.referralCode != null;
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text(earns
+            ? 'Link copied — you earn when a friend buys through it'
+            : 'Product link copied'),
+        duration: const Duration(seconds: 2),
+      ),
+    );
   }
 
   void _addToCart() {
@@ -190,13 +221,19 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
                     ),
                     child: const Icon(Iconsax.share, size: 18),
                   ),
-                  onPressed: () {
-                    final auth = context.read<AuthProvider>();
-                    final refCode = auth.user?.referralCode ?? '';
-                    final url = '/product/${_product.id}?ref=$refCode';
-                    final text = 'Check out ${_product.title} at ₹${_product.price.toStringAsFixed(2)}! $url';
-                    Share.share(text);
-                  },
+                  onPressed: () => _shareProduct(),
+                ),
+                IconButton(
+                  tooltip: 'Copy link',
+                  icon: Container(
+                    padding: const EdgeInsets.all(8),
+                    decoration: BoxDecoration(
+                      color: AppColors.white.withValues(alpha: 0.9),
+                      shape: BoxShape.circle,
+                    ),
+                    child: const Icon(Iconsax.copy, size: 18),
+                  ),
+                  onPressed: _copyLink,
                 ),
                 const SizedBox(width: 8),
               ],

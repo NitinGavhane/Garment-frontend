@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
 import 'core/services/api_client.dart';
+import 'core/services/referral_link_service.dart';
 import 'core/theme/app_theme.dart';
 import 'providers/auth_provider.dart';
 import 'providers/cart_provider.dart';
@@ -19,19 +20,35 @@ import 'features/splash/splash_screen.dart';
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await ApiClient.init();
+  // A shared link is opened as a plain URL on the website, so read `?ref=` (and
+  // any /product/<id>) from the address bar before the first frame. On
+  // Android/iOS Uri.base is inert and the deep-link handler below does this.
+  await ReferralLink.restore();
+  final launchProductId = await ReferralLink.capture(Uri.base);
   final wishlistProvider = WishlistProvider();
   await wishlistProvider.init();
   SystemChrome.setPreferredOrientations([
     DeviceOrientation.portraitUp,
     DeviceOrientation.portraitDown,
   ]);
-  runApp(GarmentEcommerceApp(wishlistProvider: wishlistProvider));
+  runApp(GarmentEcommerceApp(
+    wishlistProvider: wishlistProvider,
+    launchProductId: launchProductId,
+  ));
 }
 
 class GarmentEcommerceApp extends StatefulWidget {
   final WishlistProvider wishlistProvider;
 
-  const GarmentEcommerceApp({super.key, required this.wishlistProvider});
+  /// Product to open straight away, when the app was launched from a shared
+  /// product link.
+  final String? launchProductId;
+
+  const GarmentEcommerceApp({
+    super.key,
+    required this.wishlistProvider,
+    this.launchProductId,
+  });
 
   @override
   State<GarmentEcommerceApp> createState() => _GarmentEcommerceAppState();
@@ -45,7 +62,7 @@ class _GarmentEcommerceAppState extends State<GarmentEcommerceApp> {
     try {
       final initialUri = await _getInitialUri();
       if (initialUri != null) {
-        _parseAndNavigate(initialUri);
+        await _parseAndNavigate(initialUri);
       }
     } catch (_) {}
   }
@@ -62,23 +79,24 @@ class _GarmentEcommerceAppState extends State<GarmentEcommerceApp> {
     }
   }
 
-  void _parseAndNavigate(String uri) {
+  Future<void> _parseAndNavigate(String uri) async {
     final uriParsed = Uri.tryParse(uri);
     if (uriParsed == null) return;
-    final segments = uriParsed.pathSegments;
-    if (segments.length >= 2 && segments[0] == 'product') {
-      final productId = segments[1];
-      final refCode = uriParsed.queryParameters['ref'];
-      setState(() {
-        _pendingProductId = productId;
-        _pendingRefCode = refCode;
-      });
-    }
+    // Remembers `?ref=` so it can be attached to a later registration, and
+    // returns the shared product id.
+    final productId = await ReferralLink.capture(uriParsed);
+    if (productId == null || !mounted) return;
+    setState(() {
+      _pendingProductId = productId;
+      _pendingRefCode = ReferralLink.pendingCode;
+    });
   }
 
   @override
   void initState() {
     super.initState();
+    _pendingProductId = widget.launchProductId;
+    _pendingRefCode = ReferralLink.pendingCode;
     _handleDeepLink();
   }
 

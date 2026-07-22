@@ -45,7 +45,8 @@ class AppRoutes {
       case productDetail:
         final args = settings.arguments as Map<String, dynamic>?;
         final productId = args?['product_id'] as String? ?? '';
-        final refCode = args?['ref'] as String?;
+        // The 'ref' argument is informational here — ReferralLink has already
+        // stored the code from the launch URL and attaches it at registration.
         final product = Product(
           id: productId,
           title: args?['title'] as String? ?? '',

@@ -5,6 +5,8 @@ import 'package:provider/provider.dart';
 import '../../../../providers/auth_provider.dart';
 import '../../../orders/screens/order_list_screen.dart';
 import '../../../profile/screens/address_list_screen.dart';
+import '../../../profile/screens/referral_screen.dart';
+import '../../../profile/screens/wallet_screen.dart';
 import 'web_chrome.dart';
 import 'web_ui.dart';
 
@@ -159,6 +161,10 @@ class _Links extends StatelessWidget {
       (Icons.shopping_bag_outlined, 'Shopping Bag', 'Review items in your bag', () => WebNav.goCart(context)),
       (Icons.location_on_outlined, 'Addresses', 'Manage delivery addresses',
           () => Navigator.push(context, MaterialPageRoute(builder: (_) => const AddressListScreen()))),
+      (Icons.share_outlined, 'Refer & Earn', 'Share products, earn commission',
+          () => Navigator.push(context, MaterialPageRoute(builder: (_) => const ReferralScreen()))),
+      (Icons.account_balance_wallet_outlined, 'Wallet', 'Your referral earnings',
+          () => Navigator.push(context, MaterialPageRoute(builder: (_) => const WalletScreen()))),
     ];
     return GridView.count(
       crossAxisCount: 2,

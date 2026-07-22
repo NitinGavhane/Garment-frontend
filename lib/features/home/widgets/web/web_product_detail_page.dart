@@ -1,9 +1,13 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
+import 'package:share_plus/share_plus.dart';
 
 import '../../../../core/services/product_api_service.dart';
+import '../../../../core/services/referral_link_service.dart';
 import '../../../../models/product.dart';
+import '../../../../providers/auth_provider.dart';
 import '../../../../providers/delivery_provider.dart';
 import '../../../../providers/product_provider.dart';
 import '../../../../providers/wishlist_provider.dart';
@@ -276,6 +280,16 @@ class _WebProductDetailPageState extends State<WebProductDetailPage> {
             ),
           ],
         ),
+        const SizedBox(height: 20),
+        _ShareRow(
+          shareUrl: ReferralLink.productUrl(
+            p.id,
+            referralCode: context.watch<AuthProvider>().user?.referralCode,
+          ),
+          title: p.title,
+          price: _price,
+          earnsCommission: context.watch<AuthProvider>().user != null,
+        ),
         const SizedBox(height: 32),
         const _AssuranceRow(),
         const SizedBox(height: 32),
@@ -505,6 +519,85 @@ class _QtyStepper extends StatelessWidget {
           height: 46,
           alignment: Alignment.center,
           child: Icon(icon, size: 18, color: onTap == null ? WebTokens.muted : WebTokens.ink),
+        ),
+      ),
+    );
+  }
+}
+
+/// Share / copy-link bar. The link carries the signed-in shopper's referral
+/// code, so passing a product on to a friend is how they earn commission.
+class _ShareRow extends StatelessWidget {
+  final String shareUrl;
+  final String title;
+  final double price;
+  final bool earnsCommission;
+
+  const _ShareRow({
+    required this.shareUrl,
+    required this.title,
+    required this.price,
+    required this.earnsCommission,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Row(
+          children: [
+            _action(
+              icon: Icons.share_outlined,
+              label: 'Share',
+              onTap: () => Share.share('$title — ₹${price.toStringAsFixed(0)}\n$shareUrl',
+                  subject: title),
+            ),
+            const SizedBox(width: 12),
+            _action(
+              icon: Icons.link,
+              label: 'Copy link',
+              onTap: () async {
+                await Clipboard.setData(ClipboardData(text: shareUrl));
+                if (!context.mounted) return;
+                ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                  content: Text(earnsCommission
+                      ? 'Link copied — you earn when a friend buys through it'
+                      : 'Link copied'),
+                  duration: const Duration(seconds: 2),
+                ));
+              },
+            ),
+          ],
+        ),
+        if (earnsCommission) ...[
+          const SizedBox(height: 10),
+          Text('Your referral code is included in this link.',
+              style: WebTokens.sans(12, color: WebTokens.muted)),
+        ],
+      ],
+    );
+  }
+
+  Widget _action({required IconData icon, required String label, required VoidCallback onTap}) {
+    return MouseRegion(
+      cursor: SystemMouseCursors.click,
+      child: GestureDetector(
+        onTap: onTap,
+        child: Container(
+          padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 12),
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(10),
+            border: Border.all(color: WebTokens.line, width: 1.4),
+          ),
+          child: Row(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Icon(icon, size: 17, color: WebTokens.body),
+              const SizedBox(width: 8),
+              Text(label, style: WebTokens.sans(13, color: WebTokens.ink, w: FontWeight.w600)),
+            ],
+          ),
         ),
       ),
     );

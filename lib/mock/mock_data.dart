@@ -885,6 +885,7 @@ class MockData {
     {'title': 'My Orders', 'icon': Icons.receipt_long, 'count': ''},
     {'title': 'Wishlist', 'icon': Icons.favorite_outline, 'count': ''},
     {'title': 'Rewards', 'icon': Icons.card_giftcard, 'count': ''},
+    {'title': 'Refer & Earn', 'icon': Icons.share_outlined, 'count': ''},
     {'title': 'Payments', 'icon': Icons.payment_outlined, 'count': ''},
     {'title': 'Manage Account', 'icon': Icons.person_outline, 'count': ''},
     {'title': 'Help', 'icon': Icons.headset_mic, 'count': ''},

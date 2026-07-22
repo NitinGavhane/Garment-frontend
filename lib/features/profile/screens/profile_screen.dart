@@ -14,6 +14,7 @@ import '../../orders/screens/order_list_screen.dart';
 import '../../wishlist/screens/wishlist_screen.dart';
 import 'payments_screen.dart';
 import 'wallet_screen.dart';
+import 'referral_screen.dart';
 import 'edit_profile_screen.dart';
 import 'help_screen.dart';
 import 'settings_screen.dart';
@@ -218,6 +219,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
                             screen = const WishlistScreen(); break;
                           case 'Rewards':
                             screen = const WalletScreen(); break;
+                          case 'Refer & Earn':
+                            screen = const ReferralScreen(); break;
                           case 'Payments':
                             screen = const PaymentsScreen(); break;
                           case 'Manage Account':

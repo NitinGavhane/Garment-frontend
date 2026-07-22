@@ -2,10 +2,12 @@ import 'package:flutter/material.dart';
 import 'package:iconsax/iconsax.dart';
 import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
+import 'package:share_plus/share_plus.dart';
 import '../../../core/constants/app_colors.dart';
 import '../../../core/constants/app_dimensions.dart';
 import '../../../core/constants/app_text_styles.dart';
 import '../../../core/services/referral_api_service.dart';
+import '../../../core/services/referral_link_service.dart';
 import '../../../core/services/api_client.dart';
 import '../../../providers/auth_provider.dart';
 import '../../../core/widgets/app_button.dart';
@@ -56,11 +58,13 @@ class _ReferralScreenState extends State<ReferralScreen> {
       return const SizedBox.shrink();
     }
 
-    final referralCode = _stats?['referral_code'] as String? ?? user.referralCode ?? '';
+    final referralCode = _stats?['referral_code'] as String? ?? user.referralCode;
     final totalEarnings = (_stats?['total_earnings'] as num?)?.toDouble() ?? 0;
+    final pendingEarnings = (_stats?['pending_earnings'] as num?)?.toDouble() ?? 0;
     final successfulReferrals = _stats?['successful_referrals'] as int? ?? 0;
     final pendingReferrals = _stats?['pending_referrals'] as int? ?? 0;
     final totalClicks = _stats?['total_clicks'] as int? ?? 0;
+    final commission = (_stats?['commission_percentage'] as num?)?.toDouble() ?? 0;
 
     return Scaffold(
       appBar: AppBar(
@@ -96,7 +100,11 @@ class _ReferralScreenState extends State<ReferralScreen> {
                               style: AppTextStyles.headline2.copyWith(
                                   color: AppColors.white)),
                           const SizedBox(height: 4),
-                          Text('Share your code & earn rewards',
+                          Text(
+                              commission > 0
+                                  ? 'Earn ${_trim(commission)}% when a friend\'s first order is approved'
+                                  : 'Share your code & earn rewards',
+                              textAlign: TextAlign.center,
                               style: AppTextStyles.bodySmall.copyWith(
                                   color: AppColors.white.withValues(alpha: 0.9))),
                           const SizedBox(height: 16),
@@ -148,11 +156,20 @@ class _ReferralScreenState extends State<ReferralScreen> {
                     const SizedBox(height: AppDimensions.sm),
                     Row(
                       children: [
-                        _referralStat('Earnings',
+                        _referralStat('Paid to wallet',
                             '₹${totalEarnings.toStringAsFixed(2)}'),
                         const SizedBox(width: 12),
-                        _referralStat('Total Clicks',
-                            '$totalClicks'),
+                        _referralStat('Awaiting approval',
+                            '₹${pendingEarnings.toStringAsFixed(2)}'),
+                      ],
+                    ),
+                    const SizedBox(height: AppDimensions.sm),
+                    Row(
+                      children: [
+                        _referralStat('Link clicks', '$totalClicks'),
+                        const SizedBox(width: 12),
+                        _referralStat('Commission',
+                            commission > 0 ? '${_trim(commission)}%' : '—'),
                       ],
                     ),
                     const SizedBox(height: AppDimensions.lg),
@@ -165,15 +182,23 @@ class _ReferralScreenState extends State<ReferralScreen> {
                     Text('How it works', style: AppTextStyles.subtitle),
                     const SizedBox(height: AppDimensions.sm),
                     _stepTile('1',
-                        'Share your referral code with friends'),
+                        'Share your link or code with friends'),
                     _stepTile('2',
                         'They sign up and place their first order'),
-                    _stepTile('3', 'You earn referral commission'),
+                    _stepTile('3',
+                        'Once approved, your commission lands in your wallet'),
                     const SizedBox(height: AppDimensions.lg),
                     AppButton(
-                      label: 'Share Now',
-                      onPressed: () {},
+                      label: 'Share My Link',
+                      onPressed: () => _shareInvite(referralCode, commission),
                       icon: Iconsax.share,
+                    ),
+                    const SizedBox(height: AppDimensions.sm),
+                    AppButton(
+                      label: 'Copy Link',
+                      isOutline: true,
+                      onPressed: () => _copyInvite(referralCode),
+                      icon: Iconsax.copy,
                     ),
                     if (_error != null)
                       Padding(
@@ -186,6 +211,30 @@ class _ReferralScreenState extends State<ReferralScreen> {
                 ),
               ),
       ),
+    );
+  }
+
+  /// "5" not "5.0", "2.5" kept as-is.
+  static String _trim(double value) => value == value.roundToDouble()
+      ? value.toStringAsFixed(0)
+      : value.toStringAsFixed(2);
+
+  String _inviteMessage(String code, double commission) {
+    final url = ReferralLink.inviteUrl(code);
+    return 'Shop with me on Dristi Fashions — use my code $code\n$url';
+  }
+
+  void _shareInvite(String code, double commission) {
+    if (code.isEmpty) return;
+    Share.share(_inviteMessage(code, commission), subject: 'Dristi Fashions');
+  }
+
+  Future<void> _copyInvite(String code) async {
+    if (code.isEmpty) return;
+    await Clipboard.setData(ClipboardData(text: ReferralLink.inviteUrl(code)));
+    if (!mounted) return;
+    ScaffoldMessenger.of(context).showSnackBar(
+      const SnackBar(content: Text('Your referral link is copied')),
     );
   }
 

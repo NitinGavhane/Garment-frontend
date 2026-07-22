@@ -3,6 +3,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:iconsax/iconsax.dart';
 import 'package:provider/provider.dart';
 import '../../../core/constants/app_colors.dart';
+import '../../../core/services/referral_link_service.dart';
 import '../../../core/widgets/app_text_field.dart';
 import '../../../core/widgets/app_button.dart';
 import '../../../providers/auth_provider.dart';
@@ -41,7 +42,11 @@ class _RegisterScreenState extends State<RegisterScreen> {
       email: _emailController.text.trim(),
       phone: _phoneController.text.trim(),
       password: _passwordController.text,
+      // Whoever's link brought this customer here gets credited on their first
+      // order. Without this the code was captured and then thrown away.
+      referralCode: ReferralLink.pendingCode,
     );
+    if (success) await ReferralLink.clear();
 
     if (success && mounted) {
       Navigator.push(

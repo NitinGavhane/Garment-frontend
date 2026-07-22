@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
 
+import '../../../../core/services/referral_link_service.dart';
 import '../../../../providers/auth_provider.dart';
 import 'web_ui.dart';
 
@@ -81,7 +82,10 @@ class _WebAuthPageState extends State<WebAuthPage> {
       email: _email.text.trim(),
       phone: _phone.text.trim(),
       password: _password.text,
+      // See RegisterScreen — carries the referrer's code from the shared link.
+      referralCode: ReferralLink.pendingCode,
     );
+    if (ok) await ReferralLink.clear();
     if (!mounted) return;
     if (ok) {
       _snack('Verification code sent to ${_email.text.trim()}');
