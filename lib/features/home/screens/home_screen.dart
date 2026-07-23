@@ -18,10 +18,6 @@ import '../widgets/brand_strip.dart';
 import '../widgets/promo_grid.dart';
 import '../widgets/banner_section.dart';
 import '../widgets/blog_section.dart';
-import '../widgets/web_home_view.dart';
-import '../widgets/web/web_chrome.dart';
-import '../../../models/product.dart';
-import '../../../models/category.dart';
 import '../../cart/screens/cart_screen.dart';
 import '../../search/screens/search_screen.dart';
 import '../../product/screens/product_list_screen.dart';
@@ -56,21 +52,6 @@ class _HomeScreenState extends State<HomeScreen> {
     final selectedGender = categoryProvider.selectedGender;
     final genderFilteredProducts = productProvider.filterByGender(selectedGender);
     final featuredProducts = genderFilteredProducts.where((p) => p.isFeatured).toList();
-
-    // Wide viewports (the website on desktop) get the premium landing layout.
-    // Narrow viewports (the mobile app) fall through to the unchanged layout
-    // below. 900px catches desktop browsers and mobile "Desktop site" mode
-    // (~980px) while keeping phones (portrait & landscape) on the app layout.
-    if (MediaQuery.of(context).size.width >= 900) {
-      return _buildWeb(
-        context,
-        cartCount: cartCount,
-        selectedGender: selectedGender,
-        featuredProducts: featuredProducts,
-        allProducts: genderFilteredProducts,
-        categories: categories,
-      );
-    }
 
     return Scaffold(
       backgroundColor: AppColors.surface,
@@ -265,37 +246,4 @@ class _HomeScreenState extends State<HomeScreen> {
     );
   }
 
-  // ─── Website (desktop) layout ──────────────────────────────────────────────
-  //
-  // All website navigation, cart and wishlist actions route through [WebNav]
-  // so the destination pages (Shop, Product Detail, Collections, About/Contact)
-  // share one consistent design system and behaviour.
-
-  Widget _buildWeb(
-    BuildContext context, {
-    required int cartCount,
-    required String selectedGender,
-    required List<Product> featuredProducts,
-    required List<Product> allProducts,
-    required List<Category> categories,
-  }) {
-    return WebHomeView(
-      cartCount: cartCount,
-      products: allProducts,
-      categories: categories,
-      onCategoryOpen: (cat) =>
-          WebNav.goShop(context, title: cat.name, initialCategoryId: cat.id),
-      onSearchTap: () => WebNav.goSearch(context),
-      onWishlistTap: () => WebNav.goWishlist(context),
-      onCartTap: () => WebNav.goCart(context),
-      onProfileTap: () => WebNav.goProfile(context),
-      onShopNow: () => WebNav.goShop(context, initialGender: selectedGender),
-      onExplore: () => WebNav.goCollections(context),
-      onCategoryTap: (label) => WebNav.goShopByCategoryLabel(context, label),
-      onNavTap: (label) => WebNav.handleNav(context, label),
-      onProductTap: (p) => WebNav.goProduct(context, p),
-      onAddToBag: (p) => WebNav.addToBag(context, p),
-      onWishlistProduct: (p) => WebNav.toggleWishlist(context, p),
-    );
-  }
 }

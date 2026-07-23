@@ -5,6 +5,7 @@ import '../../../core/constants/app_colors.dart';
 import '../../../core/constants/app_dimensions.dart';
 import '../../../core/constants/app_text_styles.dart';
 import '../../../core/widgets/app_button.dart';
+import '../../../core/widgets/web_content_frame.dart';
 import '../../../core/widgets/app_text_field.dart';
 import '../../../core/services/order_api_service.dart';
 import '../../../core/services/payment_api_service.dart';
@@ -468,7 +469,8 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
       appBar: AppBar(
         title: Text('Checkout', style: AppTextStyles.title),
       ),
-      body: ListView(
+      body: WebContentFrame(
+        child: ListView(
         padding: const EdgeInsets.all(AppDimensions.md),
         children: [
           _sectionHeader('Delivery Address', Iconsax.location),
@@ -660,6 +662,7 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
           ),
           const SizedBox(height: AppDimensions.lg),
         ],
+        ),
       ),
     );
   }

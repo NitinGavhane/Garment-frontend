@@ -58,7 +58,9 @@ class AppRoutes {
           originalPrice: (args?['original_price'] as num?)?.toDouble() ?? 0,
           imageUrl: args?['image_url'] as String? ?? '',
         );
-        return SlideFadeRoute(page: ProductDetailScreen(product: product));
+        return SlideFadeRoute(
+          page: ProductDetailScreen(product: product),
+        );
       case main:
         return SlideFadeRoute(page: const MainShell());
       default:
@@ -97,11 +99,6 @@ class _MainShellState extends State<MainShell> {
   @override
   Widget build(BuildContext context) {
     final cartCount = context.watch<CartProvider>().count;
-    // Website (wide) viewports navigate via the top navbar, so the app's
-    // bottom tab bar is hidden. The mobile app keeps its bottom navigation.
-    // Kept in sync with the HomeScreen web/mobile breakpoint (900px) so the
-    // bottom bar disappears exactly when the website layout takes over.
-    final isWebsite = MediaQuery.of(context).size.width >= 900;
     return PopScope(
       canPop: false,
       onPopInvokedWithResult: (didPop, _) {
@@ -131,32 +128,30 @@ class _MainShellState extends State<MainShell> {
           child: _screens[_currentIndex],
         ),
       ),
-      bottomNavigationBar: isWebsite
-          ? null
-          : AnimatedTabBar(
-              tabs: [
-                const AnimatedTabData(icon: Icons.home, label: 'Home'),
-                const AnimatedTabData(icon: Icons.sell_outlined, label: 'Under 999'),
-                const AnimatedTabData(icon: Icons.bolt, label: 'Now'),
-                const AnimatedTabData(icon: Icons.diamond_outlined, label: 'Luxe'),
-                AnimatedTabData(
-                  icon: Icons.shopping_cart_outlined,
-                  label: 'Bag',
-                  badgeCount: cartCount,
-                ),
-              ],
-              selectedIndex: _currentIndex,
-              onTap: (i) {
-                if (i == 4) {
-                  final auth = context.read<AuthProvider>();
-                  if (!auth.isLoggedIn) {
-                    Navigator.pushNamed(context, '/login');
-                    return;
-                  }
-                }
-                setState(() => _currentIndex = i);
-              },
-            ),
+      bottomNavigationBar: AnimatedTabBar(
+        tabs: [
+          const AnimatedTabData(icon: Icons.home, label: 'Home'),
+          const AnimatedTabData(icon: Icons.sell_outlined, label: 'Under 999'),
+          const AnimatedTabData(icon: Icons.bolt, label: 'Now'),
+          const AnimatedTabData(icon: Icons.diamond_outlined, label: 'Luxe'),
+          AnimatedTabData(
+            icon: Icons.shopping_cart_outlined,
+            label: 'Bag',
+            badgeCount: cartCount,
+          ),
+        ],
+        selectedIndex: _currentIndex,
+        onTap: (i) {
+          if (i == 4) {
+            final auth = context.read<AuthProvider>();
+            if (!auth.isLoggedIn) {
+              Navigator.pushNamed(context, '/login');
+              return;
+            }
+          }
+          setState(() => _currentIndex = i);
+        },
+      ),
       ),
     );
   }

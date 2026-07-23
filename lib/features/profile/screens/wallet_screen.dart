@@ -9,6 +9,7 @@ import '../../../core/services/wallet_api_service.dart';
 import '../../../core/services/referral_api_service.dart';
 import '../../../core/services/api_client.dart';
 import '../../../core/widgets/app_button.dart';
+import '../../../core/widgets/web_content_frame.dart';
 import '../../../providers/auth_provider.dart';
 
 class WalletScreen extends StatefulWidget {
@@ -78,7 +79,8 @@ class _WalletScreenState extends State<WalletScreen> {
       appBar: AppBar(
         title: Text('Rewards & Wallet', style: AppTextStyles.title),
       ),
-      body: RefreshIndicator(
+      body: WebContentFrame(
+        child: RefreshIndicator(
         onRefresh: _loadData,
         child: _isLoading
             ? const Center(child: CircularProgressIndicator())
@@ -100,6 +102,7 @@ class _WalletScreenState extends State<WalletScreen> {
                   ],
                 ),
               ),
+      ),
       ),
     );
   }

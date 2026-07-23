@@ -8,6 +8,7 @@ import '../../../core/constants/app_dimensions.dart';
 import '../../../core/constants/app_text_styles.dart';
 import '../../../core/services/referral_api_service.dart';
 import '../../../core/services/referral_link_service.dart';
+import '../../../core/widgets/web_content_frame.dart';
 import '../../../core/services/api_client.dart';
 import '../../../providers/auth_provider.dart';
 import '../../../core/widgets/app_button.dart';
@@ -70,7 +71,8 @@ class _ReferralScreenState extends State<ReferralScreen> {
       appBar: AppBar(
         title: Text('My Referrals', style: AppTextStyles.title),
       ),
-      body: RefreshIndicator(
+      body: WebContentFrame(
+        child: RefreshIndicator(
         onRefresh: _loadReferral,
         child: _isLoading
             ? const Center(child: CircularProgressIndicator())
@@ -210,6 +212,7 @@ class _ReferralScreenState extends State<ReferralScreen> {
                   ],
                 ),
               ),
+      ),
       ),
     );
   }

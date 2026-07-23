@@ -2,4 +2,7 @@
 <resources>
     <!-- Dristi Fashions brand — royal blue -->
     <color name="brand_royal_blue">#10195E</color>
+    <!-- Adaptive launcher icon background; matches the logo's royal-blue field
+         so the 16% inset border blends with the foreground. -->
+    <color name="ic_launcher_background">#10195E</color>
 </resources>

@@ -4,6 +4,7 @@ import 'package:provider/provider.dart';
 import '../../../core/constants/app_colors.dart';
 import '../../../core/constants/app_dimensions.dart';
 import '../../../core/constants/app_text_styles.dart';
+import '../../../core/widgets/web_content_frame.dart';
 import '../../../providers/address_provider.dart';
 import 'add_address_screen.dart';
 
@@ -53,7 +54,8 @@ class _AddressListScreenState extends State<AddressListScreen> {
           appBar: AppBar(
             title: Text('My Addresses', style: AppTextStyles.title),
           ),
-          body: RefreshIndicator(
+          body: WebContentFrame(
+            child: RefreshIndicator(
             onRefresh: () => provider.fetchAddresses(),
             child: addresses.isEmpty && !provider.isLoading
                 ? Center(
@@ -139,6 +141,7 @@ class _AddressListScreenState extends State<AddressListScreen> {
                       );
                     },
                   ),
+          ),
           ),
           floatingActionButton: FloatingActionButton.extended(
             onPressed: () => Navigator.push(

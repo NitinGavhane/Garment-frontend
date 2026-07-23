@@ -9,6 +9,7 @@ import '../../../models/address.dart';
 import '../../../providers/order_provider.dart';
 import '../widgets/order_card.dart';
 import 'order_detail_screen.dart';
+import '../../../core/widgets/web_content_frame.dart';
 import 'order_return_replace_sheet.dart';
 import '../models/order_return_replace_request.dart';
 
@@ -124,7 +125,8 @@ class _OrderListScreenState extends State<OrderListScreen> {
       appBar: AppBar(
         title: Text('My Orders', style: AppTextStyles.title),
       ),
-      body: Consumer<OrderProvider>(
+      body: WebContentFrame(
+        child: Consumer<OrderProvider>(
         builder: (_, provider, __) {
           final orders = _orders;
 
@@ -214,6 +216,7 @@ class _OrderListScreenState extends State<OrderListScreen> {
             ],
           );
         },
+      ),
       ),
     );
   }
