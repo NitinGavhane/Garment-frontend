@@ -297,7 +297,6 @@ class _LoginScreenState extends State<LoginScreen> {
                     onTap: _timerSeconds <= 0
                         ? () {
                             _clearOtpFields();
-                            _startTimer();
                             _sendOtp();
                           }
                         : null,

@@ -22,10 +22,17 @@ class AuthApiService {
     required String email,
     required String otp,
   }) async {
-    return ApiClient.post('/api/v1/auth/verify-otp', body: {
+    final result = await ApiClient.post('/api/v1/auth/verify-otp', body: {
       'email': email,
       'otp': otp,
     });
+    if (result['access_token'] != null && result['refresh_token'] != null) {
+      await ApiClient.setTokens(
+        result['access_token'] as String,
+        result['refresh_token'] as String,
+      );
+    }
+    return result;
   }
 
   static Future<Map<String, dynamic>> login({

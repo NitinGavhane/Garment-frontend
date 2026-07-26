@@ -175,7 +175,16 @@ class AuthProvider extends ChangeNotifier {
     notifyListeners();
 
     try {
-      await AuthApiService.verifyOtp(email: email, otp: otp);
+      final result = await AuthApiService.verifyOtp(email: email, otp: otp);
+      if (result.containsKey('user') && result['user'] != null) {
+        _user = User.fromJson(result['user'] as Map<String, dynamic>);
+      } else if (await ApiClient.hasToken()) {
+        final profile = await AuthApiService.getProfile();
+        _user = User.fromJson(profile);
+      }
+      if (_user != null) {
+        await _cacheUser(_user!);
+      }
       _isLoading = false;
       notifyListeners();
       return true;

@@ -89,8 +89,13 @@ class _OtpVerificationScreenState extends State<OtpVerificationScreen> {
     if (!mounted) return;
 
     if (success) {
-      _showSnack('Verification successful! Please sign in.');
-      Navigator.pushNamedAndRemoveUntil(context, '/login', (_) => false);
+      if (auth.isLoggedIn) {
+        _showSnack('Verification successful! Welcome.');
+        Navigator.pushNamedAndRemoveUntil(context, '/main', (_) => false);
+      } else {
+        _showSnack('Verification successful! Please sign in.');
+        Navigator.pushNamedAndRemoveUntil(context, '/login', (_) => false);
+      }
     } else {
       _showSnack(auth.error ?? 'Invalid OTP. Please try again.');
       for (var c in _otpControllers) {
