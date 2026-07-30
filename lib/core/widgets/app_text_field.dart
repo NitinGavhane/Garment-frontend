@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
 import '../constants/app_colors.dart';
 
 class AppTextField extends StatelessWidget {
@@ -43,8 +44,7 @@ class AppTextField extends StatelessWidget {
       maxLines: maxLines,
       maxLength: maxLength,
       onChanged: onChanged,
-      style: const TextStyle(
-        fontFamily: 'Poppins',
+      style: GoogleFonts.plusJakartaSans(
         fontSize: 14,
         color: AppColors.textPrimary,
       ),

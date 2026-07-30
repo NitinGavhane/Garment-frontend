@@ -151,7 +151,7 @@ class PremiumProductCard extends StatelessWidget {
                         Text(
                           '\u20B9${product.price.toStringAsFixed(0)}',
                           style: AppTextStyles.priceSmall.copyWith(
-                            color: AppColors.tertiary,
+                            color: AppColors.brandGold,
                             fontWeight: FontWeight.w700,
                             fontSize: 13,
                           ),

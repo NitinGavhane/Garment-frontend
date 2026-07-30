@@ -47,10 +47,10 @@ class _CategoriesScreenState extends State<CategoriesScreen> {
               const Icon(Icons.cloud_off, size: 64, color: AppColors.textHint),
               const SizedBox(height: 16),
               Text('Failed to load categories',
-                  style: GoogleFonts.poppins(fontSize: 16, color: AppColors.textHint)),
+                  style: GoogleFonts.plusJakartaSans(fontSize: 16, color: AppColors.textHint)),
               const SizedBox(height: 8),
               Text(categoryProvider.error!,
-                  style: GoogleFonts.poppins(fontSize: 12, color: AppColors.textMuted)),
+                  style: GoogleFonts.plusJakartaSans(fontSize: 12, color: AppColors.textMuted)),
               const SizedBox(height: 24),
               ElevatedButton(
                 onPressed: () => categoryProvider.fetchCategories(),
@@ -77,7 +77,7 @@ class _CategoriesScreenState extends State<CategoriesScreen> {
 
     return Scaffold(
       appBar: AppBar(
-        title: Text('Categories', style: GoogleFonts.poppins(fontWeight: FontWeight.w600)),
+        title: Text('Categories', style: GoogleFonts.plusJakartaSans(fontWeight: FontWeight.w600)),
       ),
       body: ListView.separated(
         padding: const EdgeInsets.symmetric(vertical: 8),
@@ -124,7 +124,7 @@ class _CategorySectionCard extends StatelessWidget {
           color: section.color.withValues(alpha: 0.08),
           child: Text(
             section.title,
-            style: GoogleFonts.poppins(
+            style: GoogleFonts.plusJakartaSans(
               fontSize: 14,
               fontWeight: FontWeight.w700,
               color: section.color,
@@ -143,7 +143,7 @@ class _CategorySectionCard extends StatelessWidget {
             child: Icon(cat.icon, color: section.color, size: 20),
           ),
           title: Text(cat.name,
-              style: GoogleFonts.poppins(
+              style: GoogleFonts.plusJakartaSans(
                   fontSize: 14, fontWeight: FontWeight.w500)),
           trailing: const Icon(Icons.chevron_right, size: 20,
               color: AppColors.textHint),

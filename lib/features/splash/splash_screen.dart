@@ -231,7 +231,7 @@ class _SplashScreenState extends State<SplashScreen>
                             borderRadius: BorderRadius.circular(2),
                             child: LinearProgressIndicator(
                               value: _progress.value,
-                              backgroundColor: Colors.white24,
+                              backgroundColor: AppColors.brandGoldLight.withValues(alpha: 0.2),
                               valueColor: const AlwaysStoppedAnimation<Color>(
                                 AppColors.brandGold,
                               ),

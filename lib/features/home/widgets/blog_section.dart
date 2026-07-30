@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import '../../../core/constants/app_colors.dart';
-import '../../../core/constants/app_dimensions.dart';
+
 import '../../../core/constants/app_text_styles.dart';
 import '../../../core/services/blog_api_service.dart';
 import 'section_header.dart';
@@ -43,7 +43,7 @@ class _BlogSectionState extends State<BlogSection> {
 
     return Container(
       padding: const EdgeInsets.symmetric(
-        vertical: AppDimensions.sectionPadding,
+        vertical: 60,
         horizontal: 24,
       ),
       color: AppColors.white,
@@ -147,7 +147,7 @@ class _BlogCard extends StatelessWidget {
                       vertical: 4,
                     ),
                     decoration: BoxDecoration(
-                      color: AppColors.badgeNew,
+                      color: AppColors.primary,
                       borderRadius: BorderRadius.circular(4),
                     ),
                     child: Text(

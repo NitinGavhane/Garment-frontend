@@ -91,7 +91,7 @@ class _LuxeScreenState extends State<LuxeScreen> {
                             const SizedBox(width: AppDimensions.sm),
                             Text(
                               'Search luxury',
-                              style: GoogleFonts.poppins(
+                              style: GoogleFonts.plusJakartaSans(
                                 fontSize: 13,
                                 color: Colors.white.withValues(alpha: 0.4),
                               ),
@@ -103,7 +103,7 @@ class _LuxeScreenState extends State<LuxeScreen> {
                   ),
                   const SizedBox(width: AppDimensions.sm),
                   IconButton(
-                    icon: const Icon(Icons.person_outline, size: 22, color: Colors.white70),
+                    icon: const Icon(Icons.person_outline, size: 22, color: AppColors.brandGoldLight),
                     onPressed: () => Navigator.push(
                       context,
                       MaterialPageRoute(builder: (_) => const ProfileScreen()),
@@ -114,7 +114,7 @@ class _LuxeScreenState extends State<LuxeScreen> {
             ),
             Expanded(
               child: _loading
-                  ? const Center(child: CircularProgressIndicator(color: Colors.white54))
+                  ? const Center(child: CircularProgressIndicator(color: AppColors.brandGoldLight))
                   : SingleChildScrollView(
                       padding: const EdgeInsets.all(AppDimensions.md),
                       child: Column(
@@ -122,7 +122,7 @@ class _LuxeScreenState extends State<LuxeScreen> {
                         children: [
                           Text(
                             'Luxe Edit',
-                            style: GoogleFonts.poppins(
+                            style: GoogleFonts.plusJakartaSans(
                               fontSize: 26,
                               fontWeight: FontWeight.w300,
                               color: Colors.white,
@@ -132,7 +132,7 @@ class _LuxeScreenState extends State<LuxeScreen> {
                           const SizedBox(height: AppDimensions.xs),
                           Text(
                             'Premium selections for the discerning',
-                            style: GoogleFonts.poppins(
+                            style: GoogleFonts.plusJakartaSans(
                               fontSize: 12,
                               color: Colors.white.withValues(alpha: 0.4),
                               letterSpacing: 0.5,

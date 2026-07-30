@@ -1,15 +1,13 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
 import 'package:url_launcher/url_launcher.dart';
 import '../../../core/constants/app_colors.dart';
 import '../../../models/banner.dart';
 import '../../../providers/banner_provider.dart';
 
-/// Home hero slider. Banners are managed from the Admin app and loaded from the
-/// database via [BannerProvider]; when none are configured it falls back to the
-/// default images so the home screen is never empty.
 class HeroBanner extends StatefulWidget {
   const HeroBanner({super.key});
 
@@ -33,12 +31,11 @@ class _HeroBannerState extends State<HeroBanner> {
   void initState() {
     super.initState();
     _startAutoSlide();
-    // Banners are fetched centrally in HomeScreen; this widget just consumes them.
   }
 
   void _startAutoSlide() {
     _timer?.cancel();
-    _timer = Timer.periodic(const Duration(seconds: 4), (_) {
+    _timer = Timer.periodic(const Duration(seconds: 5), (_) {
       if (_pageController.hasClients && _count > 1) {
         final next = (_currentPage + 1) % _count;
         _pageController.animateToPage(
@@ -69,7 +66,6 @@ class _HeroBannerState extends State<HeroBanner> {
   @override
   Widget build(BuildContext context) {
     final heroBanners = context.watch<BannerProvider>().heroBanners;
-    // Use DB banners when available, otherwise the bundled fallbacks.
     final List<BannerItem> items = heroBanners.isNotEmpty
         ? heroBanners
         : _fallbackImages
@@ -78,24 +74,18 @@ class _HeroBannerState extends State<HeroBanner> {
     _count = items.length;
     if (_currentPage >= _count) _currentPage = 0;
 
-    return Container(
-      color: AppColors.surface,
-      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-      child: SizedBox(
-        height: 190,
-        child: PageView.builder(
-          controller: _pageController,
-          onPageChanged: (i) => setState(() => _currentPage = i),
-          itemCount: items.length,
-          itemBuilder: (context, index) {
-            final item = items[index];
-            return GestureDetector(
-              onTap: () => _openLink(item.linkUrl),
-              child: Container(
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(12),
-                ),
-                clipBehavior: Clip.antiAlias,
+    return SizedBox(
+      height: MediaQuery.of(context).size.height * 0.35,
+      child: Stack(
+        children: [
+          PageView.builder(
+            controller: _pageController,
+            onPageChanged: (i) => setState(() => _currentPage = i),
+            itemCount: items.length,
+            itemBuilder: (context, index) {
+              final item = items[index];
+              return GestureDetector(
+                onTap: () => _openLink(item.linkUrl),
                 child: Stack(
                   fit: StackFit.expand,
                   children: [
@@ -103,7 +93,7 @@ class _HeroBannerState extends State<HeroBanner> {
                       imageUrl: item.imageUrl,
                       fit: BoxFit.cover,
                       placeholder: (_, __) => Container(
-                        color: AppColors.surfaceContainerHighest,
+                        color: AppColors.surfaceWarm,
                         child: const Icon(
                           Icons.broken_image_outlined,
                           color: AppColors.onSurfaceVariant,
@@ -111,7 +101,7 @@ class _HeroBannerState extends State<HeroBanner> {
                         ),
                       ),
                       errorWidget: (_, __, ___) => Container(
-                        color: AppColors.surfaceContainerHighest,
+                        color: AppColors.surfaceWarm,
                         child: const Icon(
                           Icons.broken_image_outlined,
                           color: AppColors.onSurfaceVariant,
@@ -124,7 +114,7 @@ class _HeroBannerState extends State<HeroBanner> {
                         gradient: LinearGradient(
                           colors: [
                             Colors.transparent,
-                            AppColors.onSurface.withValues(alpha: 0.6),
+                            AppColors.primary.withValues(alpha: 0.8),
                           ],
                           begin: Alignment.topCenter,
                           end: Alignment.bottomCenter,
@@ -133,9 +123,9 @@ class _HeroBannerState extends State<HeroBanner> {
                     ),
                     if ((item.title ?? '').isNotEmpty || (item.subtitle ?? '').isNotEmpty)
                       Positioned(
-                        left: 20,
-                        right: 20,
-                        bottom: 28,
+                        left: 24,
+                        right: 24,
+                        bottom: 48,
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           mainAxisSize: MainAxisSize.min,
@@ -143,11 +133,11 @@ class _HeroBannerState extends State<HeroBanner> {
                             if ((item.title ?? '').isNotEmpty)
                               Text(
                                 item.title!,
-                                maxLines: 1,
+                                maxLines: 2,
                                 overflow: TextOverflow.ellipsis,
-                                style: const TextStyle(
-                                  color: AppColors.surface,
-                                  fontSize: 18,
+                                style: GoogleFonts.playfairDisplay(
+                                  color: AppColors.white,
+                                  fontSize: 24,
                                   fontWeight: FontWeight.w700,
                                 ),
                               ),
@@ -156,41 +146,43 @@ class _HeroBannerState extends State<HeroBanner> {
                                 item.subtitle!,
                                 maxLines: 1,
                                 overflow: TextOverflow.ellipsis,
-                                style: TextStyle(
-                                  color: AppColors.surface.withValues(alpha: 0.9),
+                                style: GoogleFonts.plusJakartaSans(
+                                  color: AppColors.white.withValues(alpha: 0.9),
                                   fontSize: 13,
                                 ),
                               ),
                           ],
                         ),
                       ),
-                    Positioned(
-                      bottom: 12,
-                      left: 20,
-                      child: Row(
-                        children: List.generate(
-                          items.length,
-                          (i) => AnimatedContainer(
-                            duration: const Duration(milliseconds: 300),
-                            width: _currentPage == i ? 20 : 6,
-                            height: 5,
-                            margin: const EdgeInsets.only(right: 4),
-                            decoration: BoxDecoration(
-                              color: _currentPage == i
-                                  ? AppColors.surface
-                                  : AppColors.surface.withValues(alpha: 0.5),
-                              borderRadius: BorderRadius.circular(999),
-                            ),
-                          ),
-                        ),
-                      ),
-                    ),
                   ],
                 ),
+              );
+            },
+          ),
+          Positioned(
+            bottom: 12,
+            left: 0,
+            right: 0,
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: List.generate(
+                items.length,
+                (i) => AnimatedContainer(
+                  duration: const Duration(milliseconds: 300),
+                  width: _currentPage == i ? 24 : 6,
+                  height: 6,
+                  margin: const EdgeInsets.symmetric(horizontal: 3),
+                  decoration: BoxDecoration(
+                    color: _currentPage == i
+                        ? AppColors.festiveGold
+                        : AppColors.white.withValues(alpha: 0.5),
+                    borderRadius: BorderRadius.circular(999),
+                  ),
+                ),
               ),
-            );
-          },
-        ),
+            ),
+          ),
+        ],
       ),
     );
   }

@@ -46,9 +46,7 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
     if (!mounted) return;
 
     if (success) {
-      setState(() {
-        _step = 2;
-      });
+      setState(() => _step = 2);
       _startTimer();
     } else {
       _showSnack(auth.error ?? 'Failed to send OTP');
@@ -60,9 +58,7 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
     Future.doWhile(() async {
       await Future.delayed(const Duration(seconds: 1));
       if (!mounted) return false;
-      setState(() {
-        _timerSeconds--;
-      });
+      setState(() => _timerSeconds--);
       return _timerSeconds > 0;
     });
   }
@@ -110,6 +106,9 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
     return Scaffold(
       backgroundColor: AppColors.white,
       appBar: AppBar(
+        backgroundColor: Colors.transparent,
+        elevation: 0,
+        foregroundColor: AppColors.primary,
         leading: IconButton(
           icon: const Icon(Icons.arrow_back_ios_new, size: 20),
           onPressed: () {
@@ -120,7 +119,6 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
             }
           },
         ),
-        titleSpacing: 0,
       ),
       body: SafeArea(
         child: SingleChildScrollView(
@@ -131,10 +129,10 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
               const SizedBox(height: 16),
               Text(
                 'Reset Password',
-                style: GoogleFonts.poppins(
+                style: GoogleFonts.playfairDisplay(
                   fontSize: 24,
-                  fontWeight: FontWeight.bold,
-                  color: AppColors.nykaaBlack,
+                  fontWeight: FontWeight.w700,
+                  color: AppColors.primary,
                 ),
               ),
               const SizedBox(height: 8),
@@ -142,7 +140,7 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
                 _step == 1
                     ? 'Enter your registered email address'
                     : 'Enter the OTP sent to\n${_emailController.text.trim()}',
-                style: GoogleFonts.poppins(
+                style: GoogleFonts.plusJakartaSans(
                   fontSize: 14,
                   color: AppColors.textSecondary,
                 ),
@@ -154,14 +152,17 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
                   controller: _emailController,
                   hintText: 'Email Address',
                   keyboardType: TextInputType.emailAddress,
-                  prefixIcon: const Icon(Iconsax.sms, size: 20),
+                  prefixIcon: const Icon(Iconsax.sms, size: 18, color: AppColors.textHint),
                 ),
                 const SizedBox(height: 24),
                 Consumer<AuthProvider>(
-                  builder: (_, auth, __) => AppButton(
-                    label: 'Send OTP',
-                    onPressed: _sendOtp,
-                    isLoading: auth.isLoading,
+                  builder: (_, auth, __) => SizedBox(
+                    width: double.infinity,
+                    child: AppButton(
+                      label: 'SEND OTP',
+                      onPressed: _sendOtp,
+                      isLoading: auth.isLoading,
+                    ),
                   ),
                 ),
               ],
@@ -171,41 +172,43 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
                   controller: _otpController,
                   hintText: 'Enter 6-digit OTP',
                   keyboardType: TextInputType.number,
-                  prefixIcon: const Icon(Iconsax.lock, size: 20),
+                  prefixIcon: const Icon(Iconsax.lock, size: 18, color: AppColors.textHint),
                 ),
                 const SizedBox(height: 8),
                 Text(
                   _timerSeconds > 0
                       ? 'Resend code in ${_timerSeconds}s'
                       : 'Did not receive? Tap Resend',
-                  style: GoogleFonts.poppins(
+                  style: GoogleFonts.plusJakartaSans(
                     fontSize: 13,
                     color: AppColors.textSecondary,
                   ),
                 ),
-                const SizedBox(height: 4),
                 if (_timerSeconds <= 0)
                   GestureDetector(
                     onTap: _sendOtp,
                     child: Text(
                       'Resend OTP',
-                      style: GoogleFonts.poppins(
+                      style: GoogleFonts.plusJakartaSans(
                         fontSize: 13,
                         fontWeight: FontWeight.w600,
-                        color: AppColors.nykaaPink,
+                        color: AppColors.brandGold,
                       ),
                     ),
                   ),
                 const SizedBox(height: 24),
-                AppButton(
-                  label: 'Next',
-                  onPressed: () {
-                    if (_otpController.text.trim().length < 6) {
-                      _showSnack('Please enter the full 6-digit OTP');
-                      return;
-                    }
-                    setState(() => _step = 3);
-                  },
+                SizedBox(
+                  width: double.infinity,
+                  child: AppButton(
+                    label: 'NEXT',
+                    onPressed: () {
+                      if (_otpController.text.trim().length < 6) {
+                        _showSnack('Please enter the full 6-digit OTP');
+                        return;
+                      }
+                      setState(() => _step = 3);
+                    },
+                  ),
                 ),
               ],
 
@@ -215,7 +218,7 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
                   hintText: 'New Password',
                   isPassword: true,
                   obscure: _obscurePassword,
-                  prefixIcon: const Icon(Iconsax.lock, size: 20),
+                  prefixIcon: const Icon(Iconsax.lock, size: 18, color: AppColors.textHint),
                   onTogglePassword: () =>
                       setState(() => _obscurePassword = !_obscurePassword),
                 ),
@@ -225,7 +228,7 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
                   hintText: 'Confirm Password',
                   isPassword: true,
                   obscure: _obscureConfirm,
-                  prefixIcon: const Icon(Iconsax.lock, size: 20),
+                  prefixIcon: const Icon(Iconsax.lock, size: 18, color: AppColors.textHint),
                   onTogglePassword: () =>
                       setState(() => _obscureConfirm = !_obscureConfirm),
                 ),
@@ -237,7 +240,7 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
                         padding: const EdgeInsets.only(bottom: 8),
                         child: Text(
                           auth.error!,
-                          style: GoogleFonts.poppins(
+                          style: GoogleFonts.plusJakartaSans(
                             fontSize: 13,
                             color: AppColors.error,
                           ),
@@ -249,10 +252,13 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
                 ),
                 const SizedBox(height: 24),
                 Consumer<AuthProvider>(
-                  builder: (_, auth, __) => AppButton(
-                    label: 'Reset Password',
-                    onPressed: _resetPassword,
-                    isLoading: auth.isLoading,
+                  builder: (_, auth, __) => SizedBox(
+                    width: double.infinity,
+                    child: AppButton(
+                      label: 'RESET PASSWORD',
+                      onPressed: _resetPassword,
+                      isLoading: auth.isLoading,
+                    ),
                   ),
                 ),
               ],

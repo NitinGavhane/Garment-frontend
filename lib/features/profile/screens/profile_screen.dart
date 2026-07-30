@@ -1,23 +1,21 @@
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:iconsax/iconsax.dart';
 import 'package:provider/provider.dart';
 import '../../../core/constants/app_colors.dart';
 import '../../../core/constants/app_dimensions.dart';
-import '../../../core/constants/app_text_styles.dart';
 import '../../../core/widgets/app_button.dart';
 import '../../../providers/auth_provider.dart';
 import '../../../providers/cart_provider.dart';
 import '../../../providers/order_provider.dart';
 import '../../../providers/wishlist_provider.dart';
-import '../../../mock/mock_data.dart';
 import '../../orders/screens/order_list_screen.dart';
 import '../../wishlist/screens/wishlist_screen.dart';
-import 'payments_screen.dart';
 import 'wallet_screen.dart';
 import 'referral_screen.dart';
-import 'edit_profile_screen.dart';
 import 'help_screen.dart';
 import 'settings_screen.dart';
+import 'change_password_screen.dart';
 import '../../auth/screens/register_screen.dart';
 
 class ProfileScreen extends StatefulWidget {
@@ -44,6 +42,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
         if (user == null) {
           return Scaffold(
+            backgroundColor: AppColors.scaffoldBg,
             body: SafeArea(
               child: Center(
                 child: Padding(
@@ -52,38 +51,42 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
                       Container(
-                        width: 80, height: 80,
+                        width: 80,
+                        height: 80,
                         decoration: const BoxDecoration(
                           color: AppColors.divider,
                           shape: BoxShape.circle,
                         ),
-                        child: const Icon(Iconsax.user,
-                            size: 40, color: AppColors.textHint),
+                        child: const Icon(Iconsax.user, size: 40, color: AppColors.textHint),
                       ),
                       const SizedBox(height: AppDimensions.lg),
                       Text(
                         'Sign in to your account',
-                        style: AppTextStyles.headline3,
+                        style: GoogleFonts.playfairDisplay(
+                          fontSize: 20,
+                          fontWeight: FontWeight.w600,
+                          color: AppColors.primary,
+                        ),
                       ),
                       const SizedBox(height: AppDimensions.sm),
                       Text(
                         'Access your orders, wishlist & more',
-                        style: AppTextStyles.bodySmall,
+                        style: GoogleFonts.plusJakartaSans(
+                          fontSize: 13,
+                          color: AppColors.textSecondary,
+                        ),
                       ),
                       const SizedBox(height: AppDimensions.xxl),
                       AppButton(
-                        label: 'Sign In',
-                        onPressed: () =>
-                            Navigator.pushNamed(context, '/login'),
+                        label: 'SIGN IN',
+                        onPressed: () => Navigator.pushNamed(context, '/login'),
                       ),
                       const SizedBox(height: 12),
                       AppButton(
-                        label: 'Create Account',
+                        label: 'CREATE ACCOUNT',
                         onPressed: () => Navigator.push(
                           context,
-                          MaterialPageRoute(
-                            builder: (_) => const RegisterScreen(),
-                          ),
+                          MaterialPageRoute(builder: (_) => const RegisterScreen()),
                         ),
                         isOutline: true,
                       ),
@@ -96,165 +99,187 @@ class _ProfileScreenState extends State<ProfileScreen> {
         }
 
         return Scaffold(
-          body: SafeArea(
-            child: SingleChildScrollView(
-              padding: const EdgeInsets.all(AppDimensions.md),
-              child: Column(
-                children: [
-                  const SizedBox(height: AppDimensions.sm),
-                  Stack(
+          backgroundColor: AppColors.scaffoldBg,
+          appBar: AppBar(
+            title: Text(
+              'My Account',
+              style: GoogleFonts.playfairDisplay(
+                fontSize: 18,
+                fontWeight: FontWeight.w600,
+                color: AppColors.brandGoldLight,
+              ),
+            ),
+            backgroundColor: AppColors.primary,
+            foregroundColor: AppColors.white,
+            elevation: 0,
+          ),
+          body: SingleChildScrollView(
+            child: Column(
+              children: [
+                Container(
+                  width: double.infinity,
+                  padding: const EdgeInsets.all(AppDimensions.lg),
+                  decoration: const BoxDecoration(
+                    gradient: LinearGradient(
+                      begin: Alignment.topCenter,
+                      end: Alignment.bottomCenter,
+                      colors: [AppColors.primary, AppColors.primaryDark],
+                    ),
+                  ),
+                  child: Column(
                     children: [
                       Container(
-                        width: 88, height: 88,
-                        decoration: const BoxDecoration(
-                          color: AppColors.primary,
+                        width: 80,
+                        height: 80,
+                        decoration: BoxDecoration(
+                          color: AppColors.festiveGold,
                           shape: BoxShape.circle,
+                          border: Border.all(color: AppColors.brandGoldLight, width: 2),
                         ),
                         child: Center(
                           child: Text(
-                            user.fullName.split(' ').map((n) => n[0]).join(),
-                            style: AppTextStyles.headline1.copyWith(
-                              color: AppColors.white, fontSize: 28,
+                            user.fullName.split(' ').map((n) => n[0].toUpperCase()).join(),
+                            style: GoogleFonts.plusJakartaSans(
+                              fontSize: 28,
+                              fontWeight: FontWeight.w700,
+                              color: AppColors.primary,
                             ),
                           ),
                         ),
                       ),
-                      Positioned(
-                        bottom: 0, right: 0,
-                        child: GestureDetector(
-                          onTap: () {
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                builder: (_) => const EditProfileScreen(),
-                              ),
-                            );
-                          },
-                          child: Container(
-                            width: 28, height: 28,
-                            decoration: BoxDecoration(
-                              color: AppColors.secondary,
-                              shape: BoxShape.circle,
-                              border: Border.all(
-                                  color: AppColors.surface, width: 2),
-                            ),
-                            child: const Icon(Icons.edit,
-                                size: 14, color: AppColors.white),
-                          ),
+                      const SizedBox(height: 12),
+                      Text(
+                        user.fullName,
+                        style: GoogleFonts.playfairDisplay(
+                          fontSize: 18,
+                          fontWeight: FontWeight.w600,
+                          color: AppColors.white,
                         ),
                       ),
-                    ],
-                  ),
-                  const SizedBox(height: AppDimensions.md),
-                  Text(user.fullName, style: AppTextStyles.headline3),
-                  const SizedBox(height: 4),
-                  Text(user.email, style: AppTextStyles.bodySmall),
-                  const SizedBox(height: AppDimensions.md),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      _statBadge('Orders', '${context.watch<OrderProvider>().count}'),
-                      const SizedBox(width: AppDimensions.lg),
-                      _statBadge('Wishlist', '${context.watch<WishlistProvider>().count}'),
-                      const SizedBox(width: AppDimensions.lg),
-                      _statBadge('Wallet', '₹${user.walletBalance.toStringAsFixed(0)}'),
-                    ],
-                  ),
-                  const SizedBox(height: AppDimensions.xxl),
-                  ...MockData.profileOptions.map((opt) {
-                    final title = opt['title'] as String;
-                    String? count;
-                    switch (title) {
-                      case 'My Orders':
-                        count = '${context.watch<OrderProvider>().count}';
-                        break;
-                      case 'Wishlist':
-                        count = '${context.watch<WishlistProvider>().count}';
-                        break;
-                      case 'Rewards':
-                        count = user.walletBalance > 0
-                            ? '${user.walletBalance.toStringAsFixed(0)} pts'
-                            : null;
-                        break;
-                    }
-                    return ListTile(
-                      leading: Container(
-                        width: 40, height: 40,
-                        decoration: BoxDecoration(
-                          color: AppColors.tertiaryContainer.withValues(alpha: 0.5),
-                          borderRadius: BorderRadius.circular(10),
-                        ),
-                        child: Icon(
-                          opt['icon'] as IconData,
-                          size: 20, color: AppColors.tertiary,
+                      const SizedBox(height: 4),
+                      Text(
+                        user.email,
+                        style: GoogleFonts.plusJakartaSans(
+                          fontSize: 12,
+                          color: AppColors.brandGoldLight,
                         ),
                       ),
-                      title: Text(
-                        title,
-                        style: AppTextStyles.body,
-                      ),
-                      trailing: Row(
-                        mainAxisSize: MainAxisSize.min,
+                      const SizedBox(height: AppDimensions.md),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
                         children: [
-                          if (count != null)
-                            Text(
-                              count,
-                              style: AppTextStyles.bodySmall.copyWith(
-                                color: AppColors.textHint,
-                              ),
-                            ),
-                          const SizedBox(width: 8),
-                          const Icon(Icons.chevron_right,
-                              color: AppColors.textHint, size: 20),
+                          _statBadge(
+                            '${context.watch<OrderProvider>().count}',
+                            'Orders',
+                          ),
+                          Container(
+                            height: 30,
+                            width: 1,
+                            color: AppColors.brandGoldLight.withValues(alpha: 0.3),
+                            margin: const EdgeInsets.symmetric(horizontal: 24),
+                          ),
+                          _statBadge(
+                            '${context.watch<WishlistProvider>().count}',
+                            'Wishlist',
+                          ),
+                          Container(
+                            height: 30,
+                            width: 1,
+                            color: AppColors.brandGoldLight.withValues(alpha: 0.3),
+                            margin: const EdgeInsets.symmetric(horizontal: 24),
+                          ),
+                          _statBadge(
+                            '₹${user.walletBalance.toStringAsFixed(0)}',
+                            'Wallet',
+                          ),
                         ],
                       ),
-                      contentPadding: const EdgeInsets.symmetric(
-                          horizontal: 4, vertical: 2),
-                      onTap: () {
-                        Widget screen;
-                        switch (title) {
-                          case 'My Orders':
-                            screen = const OrderListScreen(); break;
-                          case 'Wishlist':
-                            screen = const WishlistScreen(); break;
-                          case 'Rewards':
-                            screen = const WalletScreen(); break;
-                          case 'Refer & Earn':
-                            screen = const ReferralScreen(); break;
-                          case 'Payments':
-                            screen = const PaymentsScreen(); break;
-                          case 'Manage Account':
-                            screen = const SettingsScreen(); break;
-                          case 'Help':
-                            screen = const HelpScreen(); break;
-                          case 'Legal & Policies':
-                            _showLegalPolicies(context);
-                            return;
-                          default:
-                            return;
-                        }
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(builder: (_) => screen),
-                        );
-                      },
-                    );
-                  }),
-                  const SizedBox(height: AppDimensions.lg),
-                  AppButton(
-                    label: 'Sign Out',
-                    onPressed: () {
-                      auth.logout();
-                      context.read<CartProvider>().clear();
-                      Navigator.pushReplacementNamed(context, '/main');
-                    },
-                    isOutline: true,
-                    color: AppColors.error,
-                    textColor: AppColors.error,
+                    ],
                   ),
-                  const SizedBox(height: AppDimensions.xxl),
-                ],
-              ),
+                ),
+                Padding(
+                  padding: const EdgeInsets.all(AppDimensions.md),
+                  child: Column(
+                    children: [
+                      _menuItem(
+                        icon: Iconsax.box,
+                        title: 'My Orders',
+                        count: '${context.watch<OrderProvider>().count}',
+                        onTap: () => Navigator.push(
+                          context,
+                          MaterialPageRoute(builder: (_) => const OrderListScreen()),
+                        ),
+                      ),
+                      _menuItem(
+                        icon: Iconsax.heart,
+                        title: 'My Wishlist',
+                        count: '${context.watch<WishlistProvider>().count}',
+                        onTap: () => Navigator.push(
+                          context,
+                          MaterialPageRoute(builder: (_) => const WishlistScreen()),
+                        ),
+                      ),
+                      _menuItem(
+                        icon: Iconsax.location,
+                        title: 'Delivery Addresses',
+                        onTap: () => Navigator.pushNamed(context, '/profile/addresses'),
+                      ),
+                      _menuItem(
+                        icon: Iconsax.wallet,
+                        title: 'Dristhi Wallet',
+                        subtitle: '₹${user.walletBalance.toStringAsFixed(2)}',
+                        onTap: () => Navigator.push(
+                          context,
+                          MaterialPageRoute(builder: (_) => const WalletScreen()),
+                        ),
+                      ),
+                      _menuItem(
+                        icon: Iconsax.profile_2user,
+                        title: 'Refer & Earn',
+                        onTap: () => Navigator.push(
+                          context,
+                          MaterialPageRoute(builder: (_) => const ReferralScreen()),
+                        ),
+                      ),
+                      _menuItem(
+                        icon: Iconsax.setting,
+                        title: 'Settings',
+                        onTap: () => Navigator.push(
+                          context,
+                          MaterialPageRoute(builder: (_) => const SettingsScreen()),
+                        ),
+                      ),
+                      _menuItem(
+                        icon: Iconsax.lock,
+                        title: 'Change Password',
+                        onTap: () => Navigator.push(
+                          context,
+                          MaterialPageRoute(builder: (_) => const ChangePasswordScreen()),
+                        ),
+                      ),
+                      _menuItem(
+                        icon: Iconsax.info_circle,
+                        title: 'Help',
+                        onTap: () => Navigator.push(
+                          context,
+                          MaterialPageRoute(builder: (_) => const HelpScreen()),
+                        ),
+                      ),
+                      const SizedBox(height: AppDimensions.lg),
+                      AppButton(
+                        label: 'SIGN OUT',
+                        onPressed: () {
+                          auth.logout();
+                          context.read<CartProvider>().clear();
+                          Navigator.pushReplacementNamed(context, '/main');
+                        },
+                        isOutline: true,
+                      ),
+                      const SizedBox(height: AppDimensions.xxl),
+                    ],
+                  ),
+                ),
+              ],
             ),
           ),
         );
@@ -262,61 +287,89 @@ class _ProfileScreenState extends State<ProfileScreen> {
     );
   }
 
-  void _showLegalPolicies(BuildContext context) {
-    showModalBottomSheet(
-      context: context,
-      shape: const RoundedRectangleBorder(
-        borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
-      ),
-      builder: (_) => SafeArea(
-        child: Padding(
-          padding: const EdgeInsets.all(AppDimensions.md),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Center(
-                child: Container(
-                  width: 40, height: 4,
-                  decoration: BoxDecoration(
-                    color: AppColors.border,
-                    borderRadius: BorderRadius.circular(2),
-                  ),
-                ),
-              ),
-              const SizedBox(height: AppDimensions.lg),
-              Text('Legal & Policies',
-                  style: AppTextStyles.headline3),
-              const SizedBox(height: AppDimensions.md),
-              _legalItem('Terms of Service'),
-              _legalItem('Privacy Policy'),
-              _legalItem('Return & Refund Policy'),
-              _legalItem('Shipping Policy'),
-              _legalItem('Cancellation Policy'),
-              const SizedBox(height: AppDimensions.md),
-            ],
-          ),
-        ),
-      ),
-    );
-  }
-
-  Widget _legalItem(String title) {
-    return ListTile(
-      title: Text(title, style: AppTextStyles.body),
-      trailing: const Icon(Icons.chevron_right, color: AppColors.textHint),
-      contentPadding: EdgeInsets.zero,
-      onTap: () => Navigator.pop(context),
-    );
-  }
-
-  Widget _statBadge(String label, String value) {
+  Widget _statBadge(String value, String label) {
     return Column(
       children: [
-        Text(value, style: AppTextStyles.headline2.copyWith(
-            color: AppColors.primary)),
-        Text(label, style: AppTextStyles.caption),
+        Text(
+          value,
+          style: GoogleFonts.plusJakartaSans(
+            fontSize: 18,
+            fontWeight: FontWeight.w700,
+            color: AppColors.white,
+          ),
+        ),
+        const SizedBox(height: 2),
+        Text(
+          label,
+          style: GoogleFonts.plusJakartaSans(
+            fontSize: 11,
+            color: AppColors.brandGoldLight,
+          ),
+        ),
       ],
+    );
+  }
+
+  Widget _menuItem({
+    required IconData icon,
+    required String title,
+    String? count,
+    String? subtitle,
+    required VoidCallback onTap,
+  }) {
+    return Container(
+      margin: const EdgeInsets.only(bottom: 8),
+      decoration: BoxDecoration(
+        color: AppColors.white,
+        borderRadius: BorderRadius.circular(8),
+        border: Border.all(color: AppColors.border.withValues(alpha: 0.35)),
+      ),
+      child: ListTile(
+        leading: Container(
+          width: 40,
+          height: 40,
+          decoration: BoxDecoration(
+            color: AppColors.surfaceWarm,
+            borderRadius: BorderRadius.circular(8),
+          ),
+          child: Icon(icon, size: 20, color: AppColors.primary),
+        ),
+        title: Text(
+          title,
+          style: GoogleFonts.plusJakartaSans(
+            fontSize: 13,
+            fontWeight: FontWeight.w500,
+            color: AppColors.textPrimary,
+          ),
+        ),
+        trailing: Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            if (subtitle != null)
+              Text(
+                subtitle,
+                style: GoogleFonts.plusJakartaSans(
+                  fontSize: 11,
+                  fontWeight: FontWeight.w600,
+                  color: AppColors.festiveGold,
+                ),
+              ),
+            if (count != null) ...[
+              Text(
+                count,
+                style: GoogleFonts.plusJakartaSans(
+                  fontSize: 12,
+                  color: AppColors.textMuted,
+                ),
+              ),
+              const SizedBox(width: 4),
+            ],
+            const Icon(Icons.chevron_right, color: AppColors.textHint, size: 20),
+          ],
+        ),
+        contentPadding: const EdgeInsets.symmetric(horizontal: 12, vertical: 2),
+        onTap: onTap,
+      ),
     );
   }
 }

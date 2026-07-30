@@ -19,7 +19,7 @@ class NewArrivalGrid extends StatelessWidget {
 
     return Container(
       padding: const EdgeInsets.symmetric(
-        vertical: AppDimensions.sectionPadding,
+        vertical: 60,
         horizontal: 24,
       ),
       child: LayoutBuilder(

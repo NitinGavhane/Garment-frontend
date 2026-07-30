@@ -59,7 +59,7 @@ class _BrandItem extends StatelessWidget {
         children: [
           Text(
             name,
-            style: GoogleFonts.poppins(
+            style: GoogleFonts.plusJakartaSans(
               fontSize: 18,
               fontWeight: FontWeight.w800,
               color: Colors.white.withValues(alpha: 0.9),
@@ -107,7 +107,7 @@ class _SecondaryBrand extends StatelessWidget {
         children: [
           Text(
             name,
-            style: GoogleFonts.poppins(
+            style: GoogleFonts.plusJakartaSans(
               fontSize: 13,
               fontWeight: FontWeight.w600,
               color: AppColors.onSurfaceVariant,

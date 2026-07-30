@@ -118,7 +118,7 @@ class _ProductListScreenState extends State<ProductListScreen> {
           padding: const EdgeInsets.only(left: 12),
           child: Text(
             widget.title ?? widget.category?.name ?? 'Products',
-            style: GoogleFonts.poppins(
+            style: GoogleFonts.plusJakartaSans(
               fontSize: 18,
               fontWeight: FontWeight.w600,
               color: AppColors.festiveGold,
@@ -155,7 +155,7 @@ class _ProductListScreenState extends State<ProductListScreen> {
                       hintText:
                           'Search in ${widget.title ?? widget.category?.name ?? 'products'}...',
                       prefixIcon: const Icon(Iconsax.search_normal_1,
-                          size: 18, color: AppColors.tertiary),
+                          size: 18, color: AppColors.brandGold),
                       suffixIcon: _search.isEmpty
                           ? null
                           : IconButton(

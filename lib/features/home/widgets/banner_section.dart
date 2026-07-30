@@ -25,10 +25,10 @@ class BannerSection extends StatelessWidget {
         children: [
           Text(
             title,
-            style: GoogleFonts.poppins(
+            style: GoogleFonts.plusJakartaSans(
               fontSize: 18,
               fontWeight: FontWeight.w700,
-              color: AppColors.nykaaBlack,
+              color: AppColors.onSurface,
               letterSpacing: 0.5,
             ),
           ),

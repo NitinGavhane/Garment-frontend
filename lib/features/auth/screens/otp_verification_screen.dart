@@ -22,8 +22,7 @@ class OtpVerificationScreen extends StatefulWidget {
 class _OtpVerificationScreenState extends State<OtpVerificationScreen> {
   final List<TextEditingController> _otpControllers =
       List.generate(6, (_) => TextEditingController());
-  final List<FocusNode> _focusNodes =
-      List.generate(6, (_) => FocusNode());
+  final List<FocusNode> _focusNodes = List.generate(6, (_) => FocusNode());
   final List<String> _prevValues = List.generate(6, (_) => '');
   int _timerSeconds = 30;
   bool _canResend = false;
@@ -138,11 +137,13 @@ class _OtpVerificationScreenState extends State<OtpVerificationScreen> {
     return Scaffold(
       backgroundColor: AppColors.white,
       appBar: AppBar(
+        backgroundColor: Colors.transparent,
+        elevation: 0,
+        foregroundColor: AppColors.primary,
         leading: IconButton(
           icon: const Icon(Icons.arrow_back_ios_new, size: 20),
           onPressed: () => Navigator.pop(context),
         ),
-        titleSpacing: 0,
       ),
       body: SafeArea(
         child: SingleChildScrollView(
@@ -153,16 +154,16 @@ class _OtpVerificationScreenState extends State<OtpVerificationScreen> {
               const SizedBox(height: 16),
               Text(
                 'Verify Email',
-                style: GoogleFonts.poppins(
+                style: GoogleFonts.playfairDisplay(
                   fontSize: 24,
-                  fontWeight: FontWeight.bold,
-                  color: AppColors.nykaaBlack,
+                  fontWeight: FontWeight.w700,
+                  color: AppColors.primary,
                 ),
               ),
               const SizedBox(height: 8),
               Text(
                 'Enter the 6-digit code sent to',
-                style: GoogleFonts.poppins(
+                style: GoogleFonts.plusJakartaSans(
                   fontSize: 14,
                   color: AppColors.textSecondary,
                 ),
@@ -170,10 +171,10 @@ class _OtpVerificationScreenState extends State<OtpVerificationScreen> {
               const SizedBox(height: 4),
               Text(
                 widget.email,
-                style: GoogleFonts.poppins(
+                style: GoogleFonts.plusJakartaSans(
                   fontSize: 14,
                   fontWeight: FontWeight.w600,
-                  color: AppColors.nykaaPink,
+                  color: AppColors.brandGold,
                 ),
               ),
               const SizedBox(height: 40),
@@ -187,36 +188,39 @@ class _OtpVerificationScreenState extends State<OtpVerificationScreen> {
                         child: SizedBox(
                           height: 56,
                           child: TextField(
-                        controller: _otpControllers[index],
-                        focusNode: _focusNodes[index],
-                        keyboardType: TextInputType.number,
-                        textAlign: TextAlign.center,
-                        maxLength: 1,
-                        style: GoogleFonts.poppins(
-                          fontSize: 22,
-                          fontWeight: FontWeight.w600,
-                          color: AppColors.nykaaBlack,
-                        ),
-                        decoration: InputDecoration(
-                          counterText: '',
-                          filled: true,
-                          fillColor: AppColors.surfaceContainerLow,
-                          border: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(8),
-                            borderSide: BorderSide.none,
-                          ),
-                          focusedBorder: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(8),
-                            borderSide: const BorderSide(
-                              color: AppColors.nykaaPink,
-                              width: 1.5,
+                            controller: _otpControllers[index],
+                            focusNode: _focusNodes[index],
+                            keyboardType: TextInputType.number,
+                            textAlign: TextAlign.center,
+                            maxLength: 1,
+                            style: GoogleFonts.plusJakartaSans(
+                              fontSize: 22,
+                              fontWeight: FontWeight.w600,
+                              color: AppColors.textPrimary,
                             ),
+                            decoration: InputDecoration(
+                              counterText: '',
+                              filled: true,
+                              fillColor: AppColors.surfaceContainerLow,
+                              border: OutlineInputBorder(
+                                borderRadius: BorderRadius.circular(4),
+                                borderSide: const BorderSide(color: AppColors.border),
+                              ),
+                              enabledBorder: OutlineInputBorder(
+                                borderRadius: BorderRadius.circular(4),
+                                borderSide: const BorderSide(color: AppColors.border),
+                              ),
+                              focusedBorder: OutlineInputBorder(
+                                borderRadius: BorderRadius.circular(4),
+                                borderSide: const BorderSide(color: AppColors.brandGold, width: 1.5),
+                              ),
+                              contentPadding: EdgeInsets.zero,
+                            ),
+                            onChanged: (v) => _onOtpChange(index, v),
                           ),
-                          contentPadding: EdgeInsets.zero,
                         ),
-                        onChanged: (v) => _onOtpChange(index, v),
                       ),
-                    )));
+                    );
                   }),
                 ),
               ),
@@ -225,7 +229,7 @@ class _OtpVerificationScreenState extends State<OtpVerificationScreen> {
                 builder: (_, auth, __) => SizedBox(
                   width: double.infinity,
                   child: AppButton(
-                    label: 'Verify',
+                    label: 'VERIFY',
                     onPressed: _verifyOtp,
                     isLoading: auth.isLoading,
                   ),
@@ -240,7 +244,7 @@ class _OtpVerificationScreenState extends State<OtpVerificationScreen> {
                       _canResend
                           ? "Didn't receive the code? "
                           : 'Resend code in ${_timerSeconds}s',
-                      style: GoogleFonts.poppins(
+                      style: GoogleFonts.plusJakartaSans(
                         fontSize: 13,
                         color: AppColors.textSecondary,
                       ),
@@ -251,11 +255,11 @@ class _OtpVerificationScreenState extends State<OtpVerificationScreen> {
                           await _resendOtp();
                         },
                         child: Text(
-                          ' Resend',
-                          style: GoogleFonts.poppins(
+                          'Resend',
+                          style: GoogleFonts.plusJakartaSans(
                             fontSize: 13,
                             fontWeight: FontWeight.w600,
-                            color: AppColors.nykaaPink,
+                            color: AppColors.brandGold,
                           ),
                         ),
                       ),

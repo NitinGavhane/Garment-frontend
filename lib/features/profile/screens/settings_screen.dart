@@ -136,7 +136,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
         trailing: Switch(
           value: value,
           onChanged: onChanged,
-          activeThumbColor: AppColors.primary,
+          activeColor: AppColors.primary,
         ),
         contentPadding: const EdgeInsets.symmetric(horizontal: 4),
       ),

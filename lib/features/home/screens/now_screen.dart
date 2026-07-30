@@ -90,7 +90,7 @@ class _NowScreenState extends State<NowScreen> {
                             const SizedBox(width: AppDimensions.sm),
                             Text(
                               'Search trending styles',
-                              style: GoogleFonts.poppins(
+                              style: GoogleFonts.plusJakartaSans(
                                 fontSize: 13,
                                 color: AppColors.textHint,
                               ),
@@ -122,7 +122,7 @@ class _NowScreenState extends State<NowScreen> {
                         children: [
                           Text(
                             'Trending Now',
-                            style: GoogleFonts.poppins(
+                            style: GoogleFonts.plusJakartaSans(
                               fontSize: 22,
                               fontWeight: FontWeight.w700,
                               color: AppColors.onSurface,
@@ -131,7 +131,7 @@ class _NowScreenState extends State<NowScreen> {
                           const SizedBox(height: AppDimensions.xs),
                           Text(
                             'Fresh styles dropping daily',
-                            style: GoogleFonts.poppins(
+                            style: GoogleFonts.plusJakartaSans(
                               fontSize: 13,
                               color: AppColors.textMuted,
                             ),

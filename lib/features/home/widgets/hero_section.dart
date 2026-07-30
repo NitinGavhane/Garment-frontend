@@ -23,7 +23,7 @@ class _HeroSectionState extends State<HeroSection> {
         return SizedBox(
           height: isMobile ? 440 : 500,
           child: Container(
-            color: AppColors.heroBg,
+            color: AppColors.surfaceWarm,
             child: isMobile ? _buildMobile() : _buildDesktop(),
           ),
         );
@@ -41,14 +41,14 @@ class _HeroSectionState extends State<HeroSection> {
               fit: BoxFit.cover,
               height: 500,
               placeholder: (_, __) => Container(
-                color: AppColors.heroBg,
+                color: AppColors.surfaceWarm,
                 height: 500,
                 child: Center(
                   child: Icon(Icons.person, size: 120, color: Colors.grey[300]),
                 ),
               ),
               errorWidget: (_, __, ___) => Container(
-                color: AppColors.heroBg,
+                color: AppColors.surfaceWarm,
                 height: 500,
                 child: Center(
                   child: Icon(Icons.person, size: 120, color: Colors.grey[300]),
@@ -92,8 +92,8 @@ class _HeroSectionState extends State<HeroSection> {
         CachedNetworkImage(
           imageUrl: 'https://ucarecdn.com/fe7cee05-e2d6-4fa4-9f50-f152da9bab79/Tshirts_para_Homem__Massimo_Dutti__PTremovebgpreview.png',
           fit: BoxFit.cover,
-          placeholder: (_, __) => Container(color: AppColors.heroBg),
-          errorWidget: (_, __, ___) => Container(color: AppColors.heroBg),
+          placeholder: (_, __) => Container(color: AppColors.surfaceWarm),
+          errorWidget: (_, __, ___) => Container(color: AppColors.surfaceWarm),
         ),
         Container(
           decoration: BoxDecoration(
@@ -128,7 +128,7 @@ class _HeroSectionState extends State<HeroSection> {
                 '30% off Summer Vacation',
                 style: AppTextStyles.subtitle.copyWith(
                   fontSize: 14,
-                  color: Colors.white70,
+                  color: AppColors.brandGoldLight.withValues(alpha: 0.7),
                 ),
               ),
               const SizedBox(height: 24),

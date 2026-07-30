@@ -16,7 +16,7 @@ class Footer extends StatelessWidget {
         children: [
           Text(
             'DRISTI FASHIONS',
-            style: GoogleFonts.poppins(
+            style: GoogleFonts.plusJakartaSans(
               fontSize: 20,
               fontWeight: FontWeight.bold,
               color: AppColors.brandGold,
@@ -26,9 +26,9 @@ class Footer extends StatelessWidget {
           const SizedBox(height: 4),
           Text(
             'Fashion That Reflects Your Personality',
-            style: GoogleFonts.poppins(
+            style: GoogleFonts.plusJakartaSans(
               fontSize: 12,
-              color: Colors.white54,
+              color: AppColors.brandGoldLight.withValues(alpha: 0.7),
             ),
           ),
           const SizedBox(height: 20),
@@ -49,18 +49,18 @@ class Footer extends StatelessWidget {
           const SizedBox(height: 16),
           Text(
             'For any help, call us at 1800-266-3333',
-            style: GoogleFonts.poppins(fontSize: 11, color: Colors.white54),
+            style: GoogleFonts.plusJakartaSans(fontSize: 11, color: AppColors.brandGoldLight.withValues(alpha: 0.7)),
           ),
           Text(
             'Mon-Sat: 10 AM - 10 PM, Sun: 10 AM - 7 PM',
-            style: GoogleFonts.poppins(fontSize: 10, color: Colors.white38),
+            style: GoogleFonts.plusJakartaSans(fontSize: 10, color: AppColors.brandGoldLight.withValues(alpha: 0.5)),
           ),
           const SizedBox(height: 16),
-          const Divider(color: Colors.white12, height: 1),
+          Divider(color: AppColors.brandGoldLight.withValues(alpha: 0.15), height: 1),
           const SizedBox(height: 12),
           Text(
             '© 2026 Dristi Fashions. All Rights Reserved.',
-            style: GoogleFonts.poppins(fontSize: 10, color: Colors.white38),
+            style: GoogleFonts.plusJakartaSans(fontSize: 10, color: AppColors.brandGoldLight.withValues(alpha: 0.5)),
           ),
         ],
       ),
@@ -81,10 +81,10 @@ class _FooterLinksSection extends StatelessWidget {
       children: [
         Text(
           title,
-          style: GoogleFonts.poppins(
+          style: GoogleFonts.plusJakartaSans(
             fontSize: 12,
             fontWeight: FontWeight.w600,
-            color: Colors.white70,
+            color: AppColors.brandGoldLight,
             letterSpacing: 1,
           ),
         ),
@@ -94,7 +94,7 @@ class _FooterLinksSection extends StatelessWidget {
           runSpacing: 4,
           children: links.map((link) => Text(
             link,
-            style: GoogleFonts.poppins(fontSize: 12, color: Colors.white54),
+            style: GoogleFonts.plusJakartaSans(fontSize: 12, color: AppColors.brandGoldLight.withValues(alpha: 0.7)),
           )).toList(),
         ),
       ],

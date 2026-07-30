@@ -271,7 +271,7 @@ class _WalletScreenState extends State<WalletScreen> {
             Iconsax.link,
             '$total',
             'Total Referrals',
-            AppColors.tertiary,
+            AppColors.brandGold,
           ),
         ),
       ],

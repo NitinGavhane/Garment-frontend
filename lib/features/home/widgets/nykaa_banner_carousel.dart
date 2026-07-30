@@ -86,7 +86,7 @@ class _NykaaBannerCarouselState extends State<NykaaBannerCarousel> {
                       Text(
                         banner['subtitle'] ?? '',
                         style: const TextStyle(
-                          color: Colors.white70,
+                          color: AppColors.brandGoldLight.withValues(alpha: 0.7),
                           fontSize: 13,
                         ),
                       ),
@@ -109,7 +109,7 @@ class _NykaaBannerCarouselState extends State<NykaaBannerCarousel> {
               margin: const EdgeInsets.symmetric(horizontal: 3),
               decoration: BoxDecoration(
                 color: _currentPage == i
-                    ? AppColors.nykaaPink
+                    ? AppColors.primary
                     : AppColors.border,
                 borderRadius: BorderRadius.circular(3),
               ),

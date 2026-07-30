@@ -35,7 +35,7 @@ class CategorySection extends StatelessWidget {
                 child: Text(
                   'See All',
                   style: AppTextStyles.bodySmall.copyWith(
-                    color: AppColors.tertiary,
+                    color: AppColors.brandGold,
                     fontWeight: FontWeight.w600,
                   ),
                 ),

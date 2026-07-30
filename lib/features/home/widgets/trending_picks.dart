@@ -22,10 +22,10 @@ class TrendingPicks extends StatelessWidget {
           padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
           child: Text(
             'Trending Summer Picks',
-            style: GoogleFonts.poppins(
+            style: GoogleFonts.plusJakartaSans(
               fontSize: 17,
               fontWeight: FontWeight.w600,
-              color: AppColors.nykaaBlack,
+              color: AppColors.onSurface,
             ),
           ),
         ),
@@ -68,13 +68,13 @@ class TrendingPicks extends StatelessWidget {
                           fit: BoxFit.cover,
                           placeholder: (_, __) => Container(
                             height: 140,
-                            color: AppColors.nykaaLightPink,
-                            child: const Icon(Icons.image, color: AppColors.nykaaPink, size: 32),
+                            color: AppColors.primaryLight,
+                            child: const Icon(Icons.image, color: AppColors.primary, size: 32),
                           ),
                           errorWidget: (_, __, ___) => Container(
                             height: 140,
-                            color: AppColors.nykaaLightPink,
-                            child: const Icon(Icons.image, color: AppColors.nykaaPink, size: 32),
+                            color: AppColors.primaryLight,
+                            child: const Icon(Icons.image, color: AppColors.primary, size: 32),
                           ),
                         ),
                       ),
@@ -85,10 +85,10 @@ class TrendingPicks extends StatelessWidget {
                             child: Text(
                               item['title'] ?? '',
                               textAlign: TextAlign.center,
-                              style: GoogleFonts.poppins(
+                              style: GoogleFonts.plusJakartaSans(
                                 fontSize: 11,
                                 fontWeight: FontWeight.w500,
-                                color: AppColors.nykaaBlack,
+                                color: AppColors.onSurface,
                               ),
                               maxLines: 2,
                               overflow: TextOverflow.ellipsis,

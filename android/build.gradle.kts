@@ -39,10 +39,11 @@ subprojects {
             }
         }
     }
-    // :app was already force-evaluated above, so configure it directly; plugin
-    // modules are still un-evaluated, so hook them via afterEvaluate (which runs
-    // before AGP finalizes each module's DSL).
-    if (state.executed) forceCompileSdk() else afterEvaluate { forceCompileSdk() }
+    if (state.executed) {
+        forceCompileSdk()
+    } else {
+        afterEvaluate { forceCompileSdk() }
+    }
 }
 
 tasks.register<Delete>("clean") {

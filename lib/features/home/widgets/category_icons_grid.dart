@@ -67,7 +67,7 @@ class _CategoryIconItem extends StatelessWidget {
             Text(
               category.name,
               textAlign: TextAlign.center,
-              style: GoogleFonts.poppins(
+              style: GoogleFonts.plusJakartaSans(
                 fontSize: 10,
                 fontWeight: FontWeight.w500,
                 color: AppColors.textPrimary,

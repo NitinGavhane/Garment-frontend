@@ -22,10 +22,10 @@ class LuxeSection extends StatelessWidget {
           padding: const EdgeInsets.fromLTRB(16, 20, 16, 8),
           child: Text(
             'Dristi Luxe',
-            style: GoogleFonts.poppins(
+            style: GoogleFonts.plusJakartaSans(
               fontSize: 17,
               fontWeight: FontWeight.w600,
-              color: AppColors.nykaaBlack,
+              color: AppColors.onSurface,
             ),
           ),
         ),
@@ -33,7 +33,7 @@ class LuxeSection extends StatelessWidget {
           padding: const EdgeInsets.symmetric(horizontal: 16),
           child: Text(
             'Premium designer wear for the style connoisseur',
-            style: GoogleFonts.poppins(
+            style: GoogleFonts.plusJakartaSans(
               fontSize: 12,
               color: AppColors.textMuted,
             ),
@@ -89,7 +89,7 @@ class LuxeSection extends StatelessWidget {
                             children: [
                               Text(
                                 item['title'] ?? '',
-                                style: GoogleFonts.poppins(
+                                style: GoogleFonts.plusJakartaSans(
                                   fontSize: 14,
                                   fontWeight: FontWeight.w600,
                                   color: AppColors.white,
@@ -98,7 +98,7 @@ class LuxeSection extends StatelessWidget {
                               const SizedBox(height: 2),
                               Text(
                                 item['subtitle'] ?? '',
-                                style: GoogleFonts.poppins(
+                                style: GoogleFonts.plusJakartaSans(
                                   fontSize: 11,
                                   color: AppColors.white.withValues(alpha: 0.8),
                                 ),

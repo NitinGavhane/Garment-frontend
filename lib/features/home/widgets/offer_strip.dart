@@ -1,65 +1,43 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:provider/provider.dart';
+import 'package:iconsax/iconsax.dart';
 import '../../../core/constants/app_colors.dart';
+import '../../../providers/delivery_provider.dart';
 
 class OfferStrip extends StatelessWidget {
   const OfferStrip({super.key});
 
   @override
   Widget build(BuildContext context) {
+    final delivery = context.watch<DeliveryProvider>();
+    final settings = delivery.settings;
+
+    if (settings.fee <= 0) {
+      return const SizedBox.shrink();
+    }
+
+    final message = settings.freeAbove != null && settings.freeAbove! > 0
+        ? 'Complimentary delivery on orders above \u20B9${settings.freeAbove!.toStringAsFixed(0)}'
+        : 'Flat \u20B9${settings.fee.toStringAsFixed(0)} delivery, anywhere in India';
+
     return Container(
-      margin: const EdgeInsets.symmetric(horizontal: 12),
-      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
-      decoration: BoxDecoration(
-        color: AppColors.white,
-        borderRadius: BorderRadius.circular(8),
-        border: Border.all(color: AppColors.border.withValues(alpha: 0.5)),
-      ),
+      color: AppColors.primaryDark,
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 6),
       child: Row(
+        mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          Container(
-            width: 32,
-            height: 20,
-            decoration: BoxDecoration(
-              color: AppColors.primary,
-              borderRadius: BorderRadius.circular(4),
-            ),
-            alignment: Alignment.center,
-            child: Text(
-              'G',
-              style: GoogleFonts.poppins(
-                fontSize: 12,
-                fontWeight: FontWeight.w800,
-                color: AppColors.white,
-              ),
+          Icon(Iconsax.truck, size: 14, color: AppColors.festiveGold),
+          const SizedBox(width: 6),
+          Text(
+            message.toUpperCase(),
+            style: GoogleFonts.plusJakartaSans(
+              fontSize: 10,
+              fontWeight: FontWeight.w600,
+              color: AppColors.brandGoldLight,
+              letterSpacing: 1,
             ),
           ),
-          const SizedBox(width: 8),
-          Expanded(
-            child: RichText(
-              text: TextSpan(
-                style: GoogleFonts.poppins(
-                  fontSize: 11,
-                  fontWeight: FontWeight.w400,
-                  color: AppColors.textSecondary,
-                ),
-                children: [
-                  const TextSpan(text: 'Get Extra '),
-                  TextSpan(
-                    text: '10% Savings*',
-                    style: GoogleFonts.poppins(
-                      fontWeight: FontWeight.w700,
-                      color: AppColors.trustGreen,
-                    ),
-                  ),
-                  const TextSpan(
-                    text: ' With Flipkart Axis Bank & SBI Credit Cards',
-                  ),
-                ],
-              ),
-            ),
-          ),
-          const Icon(Icons.close, size: 16, color: AppColors.textMuted),
         ],
       ),
     );

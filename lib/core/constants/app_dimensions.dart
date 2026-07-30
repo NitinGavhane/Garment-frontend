@@ -20,8 +20,8 @@ class AppDimensions {
   static const double iconMd = 24;
   static const double iconLg = 32;
 
-  static const double inputHeight = 52;
-  static const double buttonHeight = 52;
+  static const double inputHeight = 48;
+  static const double buttonHeight = 48;
   static const double bottomNavHeight = 60;
   static const double appBarHeight = 56;
 
@@ -30,11 +30,12 @@ class AppDimensions {
   static const double bannerHeight = 180;
   static const double categoryImageSize = 72;
 
-  static const double topBarHeight = 36;
-  static const double navHeight = 64;
-  static const double containerMaxW = 1200;
-  static const double sectionPadding = 60;
-  static const double sectionPaddingMobile = 30;
+  static const double maxContentWidth = 1280;
+  static const double pagePadding = 16;
+  static const double pagePaddingSm = 16;
+  static const double pagePaddingLg = 32;
+  static const double sectionGap = 48;
+  static const double sectionGapMobile = 32;
   static const double cardGap = 16;
   static const double cardPadding = 12;
   static const double productGridGap = 16;

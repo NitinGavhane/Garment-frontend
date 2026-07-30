@@ -142,7 +142,7 @@ class _LogoColumn extends StatelessWidget {
       children: [
         Text(
           'Flone.',
-          style: GoogleFonts.poppins(
+          style: GoogleFonts.plusJakartaSans(
             fontSize: 28,
             fontWeight: FontWeight.bold,
             color: AppColors.textPrimary,

@@ -60,7 +60,7 @@ class CategoryChips extends StatelessWidget {
                   const SizedBox(height: 4),
                   Text(
                     cat.name,
-                    style: GoogleFonts.poppins(
+                    style: GoogleFonts.plusJakartaSans(
                       fontSize: 11,
                       fontWeight: FontWeight.w600,
                       color: AppColors.onSurface,

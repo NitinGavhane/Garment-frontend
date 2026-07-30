@@ -43,17 +43,17 @@ class _CategoryTabsRowState extends State<CategoryTabsRow> {
               decoration: BoxDecoration(
                 border: Border(
                   bottom: BorderSide(
-                    color: isSelected ? AppColors.nykaaPink : Colors.transparent,
+                    color: isSelected ? AppColors.primary : Colors.transparent,
                     width: 2.5,
                   ),
                 ),
               ),
               child: Text(
                 category,
-                style: GoogleFonts.poppins(
+                style: GoogleFonts.plusJakartaSans(
                   fontSize: 13,
                   fontWeight: isSelected ? FontWeight.w600 : FontWeight.w400,
-                  color: isSelected ? AppColors.nykaaPink : AppColors.textSecondary,
+                  color: isSelected ? AppColors.primary : AppColors.textSecondary,
                 ),
               ),
             ),

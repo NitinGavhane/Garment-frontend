@@ -11,7 +11,7 @@ class AppTheme {
       useMaterial3: true,
       brightness: Brightness.light,
       primaryColor: AppColors.primary,
-      scaffoldBackgroundColor: AppColors.surface,
+      scaffoldBackgroundColor: AppColors.scaffoldBg,
       colorScheme: const ColorScheme.light(
         primary: AppColors.primary,
         onPrimary: AppColors.onPrimary,
@@ -37,7 +37,7 @@ class AppTheme {
         inverseSurface: AppColors.inverseSurface,
         inversePrimary: AppColors.inversePrimary,
       ),
-      textTheme: GoogleFonts.poppinsTextTheme(),
+      textTheme: GoogleFonts.plusJakartaSansTextTheme(),
       appBarTheme: AppBarTheme(
         elevation: 0,
         centerTitle: false,
@@ -46,27 +46,27 @@ class AppTheme {
         surfaceTintColor: Colors.transparent,
         iconTheme: const IconThemeData(color: AppColors.white),
         actionsIconTheme: const IconThemeData(color: AppColors.white),
-        titleTextStyle: GoogleFonts.poppins(
+        titleTextStyle: GoogleFonts.playfairDisplay(
           fontSize: 18,
           fontWeight: FontWeight.w600,
-          color: AppColors.festiveGold,
+          color: AppColors.brandGold,
         ),
         systemOverlayStyle: SystemUiOverlayStyle.light,
         titleSpacing: 0,
       ),
       bottomNavigationBarTheme: const BottomNavigationBarThemeData(
         elevation: 0,
-        backgroundColor: AppColors.surfaceContainerLowest,
+        backgroundColor: AppColors.surface,
         selectedItemColor: AppColors.primary,
-        unselectedItemColor: AppColors.secondary,
+        unselectedItemColor: AppColors.textMuted,
         type: BottomNavigationBarType.fixed,
         selectedLabelStyle: TextStyle(
-          fontFamily: 'Poppins',
+          fontFamily: 'PlusJakartaSans',
           fontSize: 10,
           fontWeight: FontWeight.w700,
         ),
         unselectedLabelStyle: TextStyle(
-          fontFamily: 'Poppins',
+          fontFamily: 'PlusJakartaSans',
           fontSize: 10,
           fontWeight: FontWeight.w600,
         ),
@@ -78,58 +78,65 @@ class AppTheme {
           elevation: 0,
           minimumSize: const Size(double.infinity, 48),
           shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(999),
-            side: const BorderSide(color: AppColors.festiveGold, width: 1.2),
+            borderRadius: BorderRadius.circular(4),
           ),
-          textStyle: GoogleFonts.poppins(
+          textStyle: GoogleFonts.plusJakartaSans(
             fontSize: 14,
             fontWeight: FontWeight.w600,
+            letterSpacing: 1,
           ),
+          padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 14),
         ),
       ),
       outlinedButtonTheme: OutlinedButtonThemeData(
         style: OutlinedButton.styleFrom(
-          foregroundColor: AppColors.tertiary,
-          side: const BorderSide(color: AppColors.festiveGold, width: 1.5),
+          foregroundColor: AppColors.brandGold,
+          side: const BorderSide(color: AppColors.brandGold, width: 1),
           minimumSize: const Size(double.infinity, 48),
           shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(999),
+            borderRadius: BorderRadius.circular(4),
           ),
-          textStyle: GoogleFonts.poppins(
+          textStyle: GoogleFonts.plusJakartaSans(
             fontSize: 14,
             fontWeight: FontWeight.w600,
+            letterSpacing: 1,
           ),
+          padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 14),
         ),
       ),
       inputDecorationTheme: InputDecorationTheme(
         filled: true,
-        fillColor: AppColors.surfaceContainerLowest,
+        fillColor: AppColors.white,
         contentPadding: const EdgeInsets.symmetric(
-          horizontal: 16,
+          horizontal: 14,
           vertical: 14,
         ),
         border: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(999),
-          borderSide: BorderSide.none,
+          borderRadius: BorderRadius.circular(4),
+          borderSide: const BorderSide(color: AppColors.border),
         ),
         enabledBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(999),
-          borderSide: BorderSide.none,
+          borderRadius: BorderRadius.circular(4),
+          borderSide: const BorderSide(color: AppColors.border),
         ),
         focusedBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(999),
-          borderSide: const BorderSide(color: AppColors.primary, width: 1.5),
+          borderRadius: BorderRadius.circular(4),
+          borderSide: const BorderSide(color: AppColors.brandGold, width: 1.5),
         ),
         errorBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(999),
+          borderRadius: BorderRadius.circular(4),
           borderSide: const BorderSide(color: AppColors.error, width: 1),
         ),
-        hintStyle: GoogleFonts.poppins(
+        focusedErrorBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(4),
+          borderSide: const BorderSide(color: AppColors.error, width: 1.5),
+        ),
+        hintStyle: GoogleFonts.plusJakartaSans(
           fontSize: 14,
           color: AppColors.textHint,
           fontWeight: FontWeight.w400,
         ),
-        labelStyle: GoogleFonts.poppins(
+        labelStyle: GoogleFonts.plusJakartaSans(
           fontSize: 14,
           color: AppColors.textSecondary,
         ),
@@ -137,9 +144,11 @@ class AppTheme {
       cardTheme: CardThemeData(
         elevation: 0,
         shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(12),
+          borderRadius: BorderRadius.circular(8),
+          side: const BorderSide(color: AppColors.border, width: 0.5),
         ),
-        color: AppColors.surfaceContainerLowest,
+        color: AppColors.white,
+        surfaceTintColor: Colors.transparent,
       ),
       dividerTheme: const DividerThemeData(
         color: AppColors.divider,
@@ -149,7 +158,7 @@ class AppTheme {
       chipTheme: ChipThemeData(
         backgroundColor: AppColors.surfaceContainer,
         selectedColor: AppColors.primary,
-        labelStyle: GoogleFonts.poppins(
+        labelStyle: GoogleFonts.plusJakartaSans(
           fontSize: 13,
           fontWeight: FontWeight.w600,
           color: AppColors.onSurfaceVariant,

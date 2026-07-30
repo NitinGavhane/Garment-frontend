@@ -86,7 +86,7 @@ class _BrandOfTheDay extends StatelessWidget {
                 ),
                 child: Text(
                   'SALE',
-                  style: GoogleFonts.poppins(
+                  style: GoogleFonts.plusJakartaSans(
                     fontSize: 9,
                     fontWeight: FontWeight.w700,
                     color: AppColors.white,
@@ -102,7 +102,7 @@ class _BrandOfTheDay extends StatelessWidget {
                 children: [
                   Text(
                     'Brand of the Day',
-                    style: GoogleFonts.poppins(
+                    style: GoogleFonts.plusJakartaSans(
                       fontSize: 10,
                       fontWeight: FontWeight.w700,
                       color: AppColors.urgencyOrange,
@@ -112,7 +112,7 @@ class _BrandOfTheDay extends StatelessWidget {
                   const SizedBox(height: 4),
                   Text(
                     'Bene Kleed',
-                    style: GoogleFonts.poppins(
+                    style: GoogleFonts.plusJakartaSans(
                       fontSize: 16,
                       fontWeight: FontWeight.w600,
                       color: AppColors.white,
@@ -199,7 +199,7 @@ class _StylishSteals extends StatelessWidget {
                 children: [
                   Text(
                     "Editor's Pick",
-                    style: GoogleFonts.poppins(
+                    style: GoogleFonts.plusJakartaSans(
                       fontSize: 10,
                       fontWeight: FontWeight.w700,
                       color: AppColors.secondary,
@@ -209,7 +209,7 @@ class _StylishSteals extends StatelessWidget {
                   const SizedBox(height: 4),
                   Text(
                     'Stylish Steals',
-                    style: GoogleFonts.poppins(
+                    style: GoogleFonts.plusJakartaSans(
                       fontSize: 16,
                       fontWeight: FontWeight.w600,
                       color: AppColors.white,

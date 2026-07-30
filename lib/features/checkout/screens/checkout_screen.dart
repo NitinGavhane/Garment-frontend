@@ -602,7 +602,7 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
                 _summaryRow('GST (18%)', '₹${gst.toStringAsFixed(2)}'),
                 _summaryRow('Delivery',
                     deliveryFee > 0 ? '₹${deliveryFee.toStringAsFixed(2)}' : 'FREE'),
-                const Divider(color: AppColors.festiveGold, thickness: 1),
+                const Divider(color: AppColors.brandGold, thickness: 1),
                 _summaryRow('Total', '₹${total.toStringAsFixed(2)}',
                     isTotal: true),
               ],
@@ -753,7 +753,7 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
           Text(value,
               style: isTotal
                   ? AppTextStyles.headline3.copyWith(
-                      color: AppColors.tertiary, fontSize: 18)
+                      color: AppColors.brandGold, fontSize: 18)
                   : AppTextStyles.body),
         ],
       ),

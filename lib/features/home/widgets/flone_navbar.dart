@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import '../../../core/constants/app_colors.dart';
-import '../../../core/constants/app_dimensions.dart';
+
 import '../../../core/constants/app_text_styles.dart';
 
 class FloneNavbar extends StatelessWidget {
@@ -27,7 +27,7 @@ class FloneNavbar extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      height: AppDimensions.navHeight,
+      height: 64,
       decoration: const BoxDecoration(
         color: AppColors.white,
         border: Border(
@@ -68,7 +68,7 @@ class _Logo extends StatelessWidget {
   Widget build(BuildContext context) {
     return Text(
       'Flone.',
-      style: GoogleFonts.poppins(
+      style: GoogleFonts.plusJakartaSans(
         fontSize: 26,
         fontWeight: FontWeight.bold,
         color: AppColors.textPrimary,

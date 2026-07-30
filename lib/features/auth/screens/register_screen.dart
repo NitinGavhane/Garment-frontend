@@ -42,8 +42,6 @@ class _RegisterScreenState extends State<RegisterScreen> {
       email: _emailController.text.trim(),
       phone: _phoneController.text.trim(),
       password: _passwordController.text,
-      // Whoever's link brought this customer here gets credited on their first
-      // order. Without this the code was captured and then thrown away.
       referralCode: ReferralLink.pendingCode,
     );
     if (success) await ReferralLink.clear();
@@ -66,11 +64,13 @@ class _RegisterScreenState extends State<RegisterScreen> {
     return Scaffold(
       backgroundColor: AppColors.white,
       appBar: AppBar(
+        backgroundColor: Colors.transparent,
+        elevation: 0,
+        foregroundColor: AppColors.primary,
         leading: IconButton(
           icon: const Icon(Icons.arrow_back_ios_new, size: 20),
           onPressed: () => Navigator.pop(context),
         ),
-        titleSpacing: 0,
       ),
       body: SafeArea(
         child: SingleChildScrollView(
@@ -83,16 +83,16 @@ class _RegisterScreenState extends State<RegisterScreen> {
                 const SizedBox(height: 16),
                 Text(
                   'Create Account',
-                  style: GoogleFonts.poppins(
+                  style: GoogleFonts.playfairDisplay(
                     fontSize: 24,
-                    fontWeight: FontWeight.bold,
-                    color: AppColors.nykaaBlack,
+                    fontWeight: FontWeight.w700,
+                    color: AppColors.primary,
                   ),
                 ),
                 const SizedBox(height: 8),
                 Text(
                   'Fill in your details to get started',
-                  style: GoogleFonts.poppins(
+                  style: GoogleFonts.plusJakartaSans(
                     fontSize: 14,
                     color: AppColors.textSecondary,
                   ),
@@ -101,7 +101,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                 AppTextField(
                   controller: _nameController,
                   hintText: 'Full Name',
-                  prefixIcon: const Icon(Iconsax.user, size: 20),
+                  prefixIcon: const Icon(Iconsax.user, size: 18, color: AppColors.textHint),
                   validator: (v) =>
                       v == null || v.trim().isEmpty ? 'Please enter your name' : null,
                 ),
@@ -110,14 +110,10 @@ class _RegisterScreenState extends State<RegisterScreen> {
                   controller: _emailController,
                   hintText: 'Email Address',
                   keyboardType: TextInputType.emailAddress,
-                  prefixIcon: const Icon(Iconsax.sms, size: 20),
+                  prefixIcon: const Icon(Iconsax.sms, size: 18, color: AppColors.textHint),
                   validator: (v) {
-                    if (v == null || v.trim().isEmpty) {
-                      return 'Please enter your email';
-                    }
-                    if (!v.contains('@')) {
-                      return 'Please enter a valid email';
-                    }
+                    if (v == null || v.trim().isEmpty) return 'Please enter your email';
+                    if (!v.contains('@')) return 'Please enter a valid email';
                     return null;
                   },
                 ),
@@ -126,14 +122,10 @@ class _RegisterScreenState extends State<RegisterScreen> {
                   controller: _phoneController,
                   hintText: 'Phone Number',
                   keyboardType: TextInputType.phone,
-                  prefixIcon: const Icon(Iconsax.call, size: 20),
+                  prefixIcon: const Icon(Iconsax.call, size: 18, color: AppColors.textHint),
                   validator: (v) {
-                    if (v == null || v.trim().isEmpty) {
-                      return 'Please enter your phone number';
-                    }
-                    if (v.trim().length < 10) {
-                      return 'Please enter a valid phone number';
-                    }
+                    if (v == null || v.trim().isEmpty) return 'Please enter your phone number';
+                    if (v.trim().length < 10) return 'Please enter a valid phone number';
                     return null;
                   },
                 ),
@@ -143,16 +135,12 @@ class _RegisterScreenState extends State<RegisterScreen> {
                   hintText: 'Password',
                   isPassword: true,
                   obscure: _obscurePassword,
-                  prefixIcon: const Icon(Iconsax.lock, size: 20),
+                  prefixIcon: const Icon(Iconsax.lock, size: 18, color: AppColors.textHint),
                   onTogglePassword: () =>
                       setState(() => _obscurePassword = !_obscurePassword),
                   validator: (v) {
-                    if (v == null || v.isEmpty) {
-                      return 'Please enter a password';
-                    }
-                    if (v.length < 6) {
-                      return 'Password must be at least 6 characters';
-                    }
+                    if (v == null || v.isEmpty) return 'Please enter a password';
+                    if (v.length < 6) return 'Password must be at least 6 characters';
                     return null;
                   },
                 ),
@@ -164,7 +152,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                         padding: const EdgeInsets.only(bottom: 8),
                         child: Text(
                           auth.error!,
-                          style: GoogleFonts.poppins(
+                          style: GoogleFonts.plusJakartaSans(
                             fontSize: 13,
                             color: AppColors.error,
                           ),
@@ -179,7 +167,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                   builder: (_, auth, __) => SizedBox(
                     width: double.infinity,
                     child: AppButton(
-                      label: 'Create Account',
+                      label: 'CREATE ACCOUNT',
                       onPressed: _register,
                       isLoading: auth.isLoading,
                     ),
@@ -191,7 +179,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                   children: [
                     Text(
                       'Already have an account? ',
-                      style: GoogleFonts.poppins(
+                      style: GoogleFonts.plusJakartaSans(
                         fontSize: 13,
                         color: AppColors.textSecondary,
                       ),
@@ -200,15 +188,16 @@ class _RegisterScreenState extends State<RegisterScreen> {
                       onTap: () => Navigator.pop(context),
                       child: Text(
                         'Sign In',
-                        style: GoogleFonts.poppins(
+                        style: GoogleFonts.plusJakartaSans(
                           fontSize: 13,
                           fontWeight: FontWeight.w600,
-                          color: AppColors.nykaaPink,
+                          color: AppColors.brandGold,
                         ),
                       ),
                     ),
                   ],
                 ),
+                const SizedBox(height: 32),
               ],
             ),
           ),

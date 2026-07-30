@@ -105,10 +105,7 @@ class Product {
   }
 
   List<Color> get gradientColors {
-    final idx = int.tryParse(id.replaceAll(RegExp(r'[^0-9]'), '')) ?? 0;
-    final i = idx % AppColors.productGradients.length;
-    final next = (i + 1) % AppColors.productGradients.length;
-    return [AppColors.productGradients[i], AppColors.productGradients[next]];
+    return [AppColors.primary, AppColors.primaryDark];
   }
 
   Product copyWith({

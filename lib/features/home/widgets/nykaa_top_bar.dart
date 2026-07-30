@@ -54,7 +54,7 @@ class NykaaTopBar extends StatelessWidget {
                 ),
               ),
               badgeStyle: const badges.BadgeStyle(
-                badgeColor: AppColors.nykaaPink,
+                badgeColor: AppColors.primary,
                 padding: EdgeInsets.all(3),
                 elevation: 0,
               ),
@@ -84,7 +84,7 @@ class _IconButton extends StatelessWidget {
         width: 40,
         height: 40,
         alignment: Alignment.center,
-        child: Icon(icon, size: 22, color: AppColors.nykaaBlack),
+        child: Icon(icon, size: 22, color: AppColors.onSurface),
       ),
     );
   }

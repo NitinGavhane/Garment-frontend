@@ -27,7 +27,7 @@ class _BannerCarouselState extends State<BannerCarousel> {
     final gradients = [
       [AppColors.primary, AppColors.primaryDark],
       [AppColors.primaryContainer, AppColors.primary],
-      [AppColors.brandGold, AppColors.tertiary],
+      [AppColors.brandGoldLight, AppColors.brandGold],
     ];
 
     return Column(

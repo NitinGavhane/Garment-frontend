@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:iconsax/iconsax.dart';
 import 'package:provider/provider.dart';
+import 'package:iconsax/iconsax.dart';
 import '../../../core/constants/app_colors.dart';
 import '../../../core/widgets/app_text_field.dart';
 import '../../../core/widgets/app_button.dart';
@@ -25,8 +25,7 @@ class _LoginScreenState extends State<LoginScreen> {
   int _timerSeconds = 30;
   final List<TextEditingController> _otpControllers =
       List.generate(6, (_) => TextEditingController());
-  final List<FocusNode> _focusNodes =
-      List.generate(6, (_) => FocusNode());
+  final List<FocusNode> _focusNodes = List.generate(6, (_) => FocusNode());
   final List<String> _prevValues = List.generate(6, (_) => '');
 
   @override
@@ -157,54 +156,78 @@ class _LoginScreenState extends State<LoginScreen> {
     return Scaffold(
       backgroundColor: AppColors.white,
       appBar: AppBar(
+        backgroundColor: Colors.transparent,
+        elevation: 0,
+        foregroundColor: AppColors.primary,
         leading: IconButton(
           icon: const Icon(Icons.arrow_back_ios_new, size: 20),
           onPressed: () => Navigator.pop(context),
         ),
-        titleSpacing: 0,
       ),
       body: SafeArea(
         child: SingleChildScrollView(
           padding: const EdgeInsets.symmetric(horizontal: 24),
           child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               const SizedBox(height: 16),
+              Image.asset(
+                'assets/logo.png',
+                height: 80,
+                fit: BoxFit.contain,
+              ),
+              const SizedBox(height: 16),
               Text(
-                'Sign In',
-                style: GoogleFonts.poppins(
-                  fontSize: 24,
-                  fontWeight: FontWeight.bold,
-                  color: AppColors.nykaaBlack,
+                'DRISTHI FASHIONS',
+                style: GoogleFonts.playfairDisplay(
+                  fontSize: 18,
+                  fontWeight: FontWeight.w800,
+                  color: AppColors.primary,
+                  letterSpacing: 3,
                 ),
               ),
-              const SizedBox(height: 8),
+              const SizedBox(height: 4),
               Text(
-                'Enter your credentials to continue',
-                style: GoogleFonts.poppins(
+                'Fashion That Reflects Your Personality',
+                style: GoogleFonts.plusJakartaSans(
+                  fontSize: 11,
+                  fontStyle: FontStyle.italic,
+                  color: AppColors.brandGold,
+                  letterSpacing: 1,
+                ),
+              ),
+              const SizedBox(height: 32),
+              Text(
+                'WELCOME BACK',
+                style: GoogleFonts.plusJakartaSans(
+                  fontSize: 10,
+                  fontWeight: FontWeight.w700,
+                  color: AppColors.brandGold,
+                  letterSpacing: 3,
+                ),
+              ),
+              const SizedBox(height: 4),
+              Text(
+                'Sign in to your account',
+                style: GoogleFonts.plusJakartaSans(
                   fontSize: 14,
                   color: AppColors.textSecondary,
                 ),
               ),
               const SizedBox(height: 24),
-
-              const SizedBox(height: 32),
-
               AppTextField(
                 controller: _emailController,
                 hintText: 'Email Address',
                 keyboardType: TextInputType.emailAddress,
-                prefixIcon: const Icon(Iconsax.sms, size: 20),
+                prefixIcon: const Icon(Iconsax.sms, size: 18, color: AppColors.textHint),
               ),
               const SizedBox(height: 16),
-
               if (!_useOtp) ...[
                 AppTextField(
                   controller: _passwordController,
                   hintText: 'Password',
                   isPassword: true,
                   obscure: _obscurePassword,
-                  prefixIcon: const Icon(Iconsax.lock, size: 20),
+                  prefixIcon: const Icon(Iconsax.lock, size: 18, color: AppColors.textHint),
                   onTogglePassword: () =>
                       setState(() => _obscurePassword = !_obscurePassword),
                 ),
@@ -218,10 +241,10 @@ class _LoginScreenState extends State<LoginScreen> {
                       }),
                       child: Text(
                         'Sign in with OTP',
-                        style: GoogleFonts.poppins(
+                        style: GoogleFonts.plusJakartaSans(
                           fontSize: 12,
                           fontWeight: FontWeight.w500,
-                          color: AppColors.nykaaPink,
+                          color: AppColors.brandGold,
                         ),
                       ),
                     ),
@@ -235,17 +258,16 @@ class _LoginScreenState extends State<LoginScreen> {
                       ),
                       child: Text(
                         'Forgot Password?',
-                        style: GoogleFonts.poppins(
+                        style: GoogleFonts.plusJakartaSans(
                           fontSize: 12,
                           fontWeight: FontWeight.w500,
-                          color: AppColors.nykaaPink,
+                          color: AppColors.brandGold,
                         ),
                       ),
                     ),
                   ],
                 ),
               ],
-
               if (_useOtp && _otpSent) ...[
                 const SizedBox(height: 8),
                 Form(
@@ -258,36 +280,39 @@ class _LoginScreenState extends State<LoginScreen> {
                           child: SizedBox(
                             height: 56,
                             child: TextField(
-                          controller: _otpControllers[index],
-                          focusNode: _focusNodes[index],
-                          keyboardType: TextInputType.number,
-                          textAlign: TextAlign.center,
-                          maxLength: 1,
-                          style: GoogleFonts.poppins(
-                            fontSize: 22,
-                            fontWeight: FontWeight.w600,
-                            color: AppColors.nykaaBlack,
-                          ),
-                          decoration: InputDecoration(
-                            counterText: '',
-                            filled: true,
-                            fillColor: AppColors.surfaceContainerLow,
-                            border: OutlineInputBorder(
-                              borderRadius: BorderRadius.circular(8),
-                              borderSide: BorderSide.none,
-                            ),
-                            focusedBorder: OutlineInputBorder(
-                              borderRadius: BorderRadius.circular(8),
-                              borderSide: const BorderSide(
-                                color: AppColors.nykaaPink,
-                                width: 1.5,
+                              controller: _otpControllers[index],
+                              focusNode: _focusNodes[index],
+                              keyboardType: TextInputType.number,
+                              textAlign: TextAlign.center,
+                              maxLength: 1,
+                              style: GoogleFonts.plusJakartaSans(
+                                fontSize: 22,
+                                fontWeight: FontWeight.w600,
+                                color: AppColors.textPrimary,
                               ),
+                              decoration: InputDecoration(
+                                counterText: '',
+                                filled: true,
+                                fillColor: AppColors.surfaceContainerLow,
+                                border: OutlineInputBorder(
+                                  borderRadius: BorderRadius.circular(4),
+                                  borderSide: const BorderSide(color: AppColors.border),
+                                ),
+                                enabledBorder: OutlineInputBorder(
+                                  borderRadius: BorderRadius.circular(4),
+                                  borderSide: const BorderSide(color: AppColors.border),
+                                ),
+                                focusedBorder: OutlineInputBorder(
+                                  borderRadius: BorderRadius.circular(4),
+                                  borderSide: const BorderSide(color: AppColors.brandGold, width: 1.5),
+                                ),
+                                contentPadding: EdgeInsets.zero,
+                              ),
+                              onChanged: (v) => _onOtpChange(index, v),
                             ),
-                            contentPadding: EdgeInsets.zero,
                           ),
-                          onChanged: (v) => _onOtpChange(index, v),
                         ),
-                      )));
+                      );
                     }),
                   ),
                 ),
@@ -304,20 +329,19 @@ class _LoginScreenState extends State<LoginScreen> {
                       _timerSeconds > 0
                           ? 'Resend code in ${_timerSeconds}s'
                           : 'Resend OTP',
-                      style: GoogleFonts.poppins(
+                      style: GoogleFonts.plusJakartaSans(
                         fontSize: 13,
                         fontWeight: _timerSeconds <= 0
                             ? FontWeight.w600
                             : FontWeight.normal,
                         color: _timerSeconds <= 0
-                            ? AppColors.nykaaPink
+                            ? AppColors.brandGold
                             : AppColors.textSecondary,
                       ),
                     ),
                   ),
                 ),
               ],
-
               const SizedBox(height: 8),
               Consumer<AuthProvider>(
                 builder: (_, auth, __) {
@@ -326,7 +350,7 @@ class _LoginScreenState extends State<LoginScreen> {
                       padding: const EdgeInsets.only(bottom: 8),
                       child: Text(
                         auth.error!,
-                        style: GoogleFonts.poppins(
+                        style: GoogleFonts.plusJakartaSans(
                           fontSize: 13,
                           color: AppColors.error,
                         ),
@@ -342,7 +366,7 @@ class _LoginScreenState extends State<LoginScreen> {
                   width: double.infinity,
                   child: AppButton(
                     label: _useOtp
-                        ? (_otpSent ? 'Verify' : 'Send OTP')
+                        ? (_otpSent ? 'Verify OTP' : 'Send OTP')
                         : 'Sign In',
                     onPressed: _useOtp
                         ? (_otpSent ? _loginWithOtp : _sendOtp)
@@ -357,7 +381,7 @@ class _LoginScreenState extends State<LoginScreen> {
                 children: [
                   Text(
                     "Don't have an account? ",
-                    style: GoogleFonts.poppins(
+                    style: GoogleFonts.plusJakartaSans(
                       fontSize: 13,
                       color: AppColors.textSecondary,
                     ),
@@ -371,15 +395,16 @@ class _LoginScreenState extends State<LoginScreen> {
                     ),
                     child: Text(
                       'Sign Up',
-                      style: GoogleFonts.poppins(
+                      style: GoogleFonts.plusJakartaSans(
                         fontSize: 13,
                         fontWeight: FontWeight.w600,
-                        color: AppColors.nykaaPink,
+                        color: AppColors.brandGold,
                       ),
                     ),
                   ),
                 ],
               ),
+              const SizedBox(height: 32),
             ],
           ),
         ),

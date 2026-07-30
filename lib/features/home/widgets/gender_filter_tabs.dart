@@ -12,12 +12,12 @@ class GenderFilterTabs extends StatelessWidget {
     this.onTabChanged,
   });
 
-  static const _tabs = ['ALL', 'MEN', 'WOMEN', 'KIDS'];
+  static const _tabs = ['ALL', 'WOMEN', 'MEN', 'KIDS'];
 
   @override
   Widget build(BuildContext context) {
     return Container(
-      color: AppColors.surface,
+      padding: const EdgeInsets.symmetric(vertical: 8),
       child: Row(
         children: _tabs.map((tab) {
           final isActive = selectedGender == tab;
@@ -25,23 +25,23 @@ class GenderFilterTabs extends StatelessWidget {
             child: GestureDetector(
               onTap: () => onTabChanged?.call(tab),
               child: Container(
-                padding: const EdgeInsets.symmetric(vertical: 12),
+                margin: const EdgeInsets.symmetric(horizontal: 4),
+                padding: const EdgeInsets.symmetric(vertical: 8),
                 decoration: BoxDecoration(
-                  border: Border(
-                    bottom: BorderSide(
-                      color: isActive ? AppColors.primary : Colors.transparent,
-                      width: 2,
-                    ),
+                  color: isActive ? AppColors.primary : Colors.transparent,
+                  borderRadius: BorderRadius.circular(999),
+                  border: Border.all(
+                    color: isActive ? AppColors.primary : AppColors.border.withValues(alpha: 0.5),
                   ),
                 ),
                 child: Text(
                   tab,
                   textAlign: TextAlign.center,
-                  style: GoogleFonts.poppins(
-                    fontSize: 13,
+                  style: GoogleFonts.plusJakartaSans(
+                    fontSize: 12,
                     fontWeight: FontWeight.w600,
-                    color: isActive ? AppColors.primary : AppColors.onSurfaceVariant,
-                    letterSpacing: 0.05,
+                    color: isActive ? AppColors.brandGoldLight : AppColors.textSecondary,
+                    letterSpacing: 1,
                   ),
                 ),
               ),

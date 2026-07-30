@@ -25,16 +25,16 @@ class BrandSpotlight extends StatelessWidget {
               Expanded(
                 child: Text(
                   'In The Spotlight',
-                  style: GoogleFonts.poppins(
+                  style: GoogleFonts.plusJakartaSans(
                     fontSize: 17,
                     fontWeight: FontWeight.w600,
-                    color: AppColors.nykaaBlack,
+                    color: AppColors.onSurface,
                   ),
                 ),
               ),
               Text(
                 'Hottest brands on offer',
-                style: GoogleFonts.poppins(
+                style: GoogleFonts.plusJakartaSans(
                   fontSize: 12,
                   color: AppColors.textMuted,
                 ),
@@ -81,13 +81,13 @@ class BrandSpotlight extends StatelessWidget {
                           fit: BoxFit.cover,
                           placeholder: (_, __) => Container(
                             height: 140,
-                            color: AppColors.nykaaLightPink,
-                            child: const Icon(Icons.store, color: AppColors.nykaaPink, size: 36),
+                            color: AppColors.primaryLight,
+                            child: const Icon(Icons.store, color: AppColors.primary, size: 36),
                           ),
                           errorWidget: (_, __, ___) => Container(
                             height: 140,
-                            color: AppColors.nykaaLightPink,
-                            child: const Icon(Icons.store, color: AppColors.nykaaPink, size: 36),
+                            color: AppColors.primaryLight,
+                            child: const Icon(Icons.store, color: AppColors.primary, size: 36),
                           ),
                         ),
                       ),
@@ -98,25 +98,25 @@ class BrandSpotlight extends StatelessWidget {
                           children: [
                             Text(
                               brand['offer'] ?? '',
-                              style: GoogleFonts.poppins(
+                              style: GoogleFonts.plusJakartaSans(
                                 fontSize: 14,
                                 fontWeight: FontWeight.bold,
-                                color: AppColors.nykaaPink,
+                                color: AppColors.primary,
                               ),
                             ),
                             const SizedBox(height: 4),
                             Text(
                               brand['name'] ?? '',
-                              style: GoogleFonts.poppins(
+                              style: GoogleFonts.plusJakartaSans(
                                 fontSize: 13,
                                 fontWeight: FontWeight.w600,
-                                color: AppColors.nykaaBlack,
+                                color: AppColors.onSurface,
                               ),
                             ),
                             const SizedBox(height: 2),
                             Text(
                               brand['tag'] ?? '',
-                              style: GoogleFonts.poppins(
+                              style: GoogleFonts.plusJakartaSans(
                                 fontSize: 11,
                                 color: AppColors.textMuted,
                               ),
