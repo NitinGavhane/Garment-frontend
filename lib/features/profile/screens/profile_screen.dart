@@ -226,7 +226,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                       ),
                       _menuItem(
                         icon: Iconsax.wallet,
-                        title: 'Dristhi Wallet',
+                        title: 'Dristi Wallet',
                         subtitle: '₹${user.walletBalance.toStringAsFixed(2)}',
                         onTap: () => Navigator.push(
                           context,

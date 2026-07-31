@@ -188,7 +188,7 @@ class _SearchHeaderState extends State<_SearchHeader> {
                   mainAxisSize: MainAxisSize.min,
                   children: [
                     Text(
-                      'DRISTHI FASHIONS',
+                      'DRISTI FASHIONS',
                       style: GoogleFonts.playfairDisplay(
                         fontSize: 13,
                         fontWeight: FontWeight.w700,
@@ -233,7 +233,7 @@ class _SearchHeaderState extends State<_SearchHeader> {
                                   color: AppColors.white,
                                 ),
                                 decoration: InputDecoration(
-                                  hintText: 'Search Dristhi Fashions…',
+                                  hintText: 'Search Dristi Fashions…',
                                   hintStyle: GoogleFonts.plusJakartaSans(
                                     fontSize: 11,
                                     color: AppColors.textMuted,
@@ -272,7 +272,7 @@ class _SearchHeaderState extends State<_SearchHeader> {
                               const SizedBox(width: 4),
                               Expanded(
                                 child: Text(
-                                  'Search Dristhi Fashions…',
+                                  'Search Dristi Fashions…',
                                   style: GoogleFonts.plusJakartaSans(
                                     fontSize: 11,
                                     color: AppColors.textMuted,

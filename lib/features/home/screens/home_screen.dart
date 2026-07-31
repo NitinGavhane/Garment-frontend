@@ -165,7 +165,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                 Icon(Iconsax.star1, size: 16, color: AppColors.festiveGold),
                                 const SizedBox(width: 6),
                                 Text(
-                                  'THE DRISTHI EDIT',
+                                  'THE DRISTI EDIT',
                                   style: GoogleFonts.plusJakartaSans(
                                     fontSize: 10,
                                     fontWeight: FontWeight.w700,

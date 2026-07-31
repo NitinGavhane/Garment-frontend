@@ -85,7 +85,7 @@ class _NykaaBannerCarouselState extends State<NykaaBannerCarousel> {
                       const SizedBox(height: 2),
                       Text(
                         banner['subtitle'] ?? '',
-                        style: const TextStyle(
+                        style: TextStyle(
                           color: AppColors.brandGoldLight.withValues(alpha: 0.7),
                           fontSize: 13,
                         ),
