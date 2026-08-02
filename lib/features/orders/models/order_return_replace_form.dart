@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:image_picker/image_picker.dart';
 
+import '../../../core/services/order_api_service.dart';
 import '../../../models/order.dart';
 import 'order_return_replace_request.dart';
 
@@ -24,6 +26,8 @@ class OrderReturnReplaceFormState extends State<OrderReturnReplaceForm> {
   late final List<_SelectableItem> _items;
 
   final _reasonController = TextEditingController();
+  final List<String> _evidence = [];
+  bool _uploading = false;
 
   @override
   void initState() {
@@ -124,8 +128,87 @@ class OrderReturnReplaceFormState extends State<OrderReturnReplaceForm> {
             border: OutlineInputBorder(),
           ),
         ),
+        const SizedBox(height: 16),
+        const Text('Photos (optional)'),
+        const SizedBox(height: 8),
+        if (_evidence.isNotEmpty) ...[
+          SizedBox(
+            height: 76,
+            child: ListView.separated(
+              scrollDirection: Axis.horizontal,
+              itemCount: _evidence.length,
+              separatorBuilder: (_, __) => const SizedBox(width: 8),
+              itemBuilder: (_, i) => Stack(
+                children: [
+                  ClipRRect(
+                    borderRadius: BorderRadius.circular(10),
+                    child: Image.network(
+                      _evidence[i],
+                      width: 76,
+                      height: 76,
+                      fit: BoxFit.cover,
+                    ),
+                  ),
+                  Positioned(
+                    top: 2,
+                    right: 2,
+                    child: GestureDetector(
+                      onTap: () => setState(() => _evidence.removeAt(i)),
+                      child: Container(
+                        padding: const EdgeInsets.all(2),
+                        decoration: BoxDecoration(
+                          color: Colors.black.withValues(alpha: 0.55),
+                          shape: BoxShape.circle,
+                        ),
+                        child: const Icon(Icons.close, size: 14, color: Colors.white),
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ),
+          const SizedBox(height: 8),
+        ],
+        OutlinedButton.icon(
+          onPressed: _uploading ? null : _pickAndUpload,
+          icon: _uploading
+              ? const SizedBox(
+                  width: 16, height: 16,
+                  child: CircularProgressIndicator(strokeWidth: 2),
+                )
+              : const Icon(Icons.add_a_photo_outlined, size: 18),
+          label: Text(_uploading ? 'Uploading…' : 'Add photo'),
+        ),
       ],
     );
+  }
+
+  Future<void> _pickAndUpload() async {
+    final picked = await ImagePicker().pickImage(
+      source: ImageSource.gallery,
+      imageQuality: 80,
+    );
+    if (picked == null) return;
+
+    final bytes = await picked.readAsBytes();
+    setState(() => _uploading = true);
+    try {
+      final url = await OrderApiService.uploadReturnEvidence(
+        fileBytes: bytes,
+        fileName: picked.name,
+        contentType: picked.mimeType ?? 'image/jpeg',
+      );
+      if (!mounted) return;
+      setState(() => _evidence.add(url));
+    } catch (_) {
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Could not upload that photo. Please try again.')),
+      );
+    } finally {
+      if (mounted) setState(() => _uploading = false);
+    }
   }
 
   bool get _hasSelection =>
@@ -156,6 +239,7 @@ class OrderReturnReplaceFormState extends State<OrderReturnReplaceForm> {
       status: ReturnReplaceStatus.submitted,
       items: selected,
       reason: _reasonController.text.trim(),
+      evidence: List.of(_evidence),
       createdAt: DateTime.now(),
     );
   }

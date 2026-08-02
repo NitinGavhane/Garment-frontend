@@ -28,6 +28,7 @@ class OrderReturnReplaceRequest {
   final ReturnReplaceStatus status;
   final List<OrderReturnReplaceRequestItem> items;
   final String reason;
+  final List<String> evidence;
   final DateTime createdAt;
 
   const OrderReturnReplaceRequest({
@@ -36,6 +37,7 @@ class OrderReturnReplaceRequest {
     required this.status,
     required this.items,
     required this.reason,
+    this.evidence = const [],
     required this.createdAt,
   });
 

@@ -125,6 +125,31 @@ class ApiClient {
     return _handleMapResponse(response);
   }
 
+  /// Multipart POST (used for customer evidence uploads). The auth header is
+  /// attached but Content-Type is left for the http package to set with the
+  /// boundary, so the backend can parse the uploaded file.
+  static Future<Map<String, dynamic>> postMultipart(
+    String path, {
+    required List<int> fileBytes,
+    required String fileName,
+    String? contentType,
+  }) async {
+    final uri = Uri.parse('$baseUrl$path');
+    final request = http.MultipartRequest('POST', uri);
+    if (_accessToken != null) {
+      request.headers['Authorization'] = 'Bearer $_accessToken';
+    }
+    request.files.add(http.MultipartFile.fromBytes(
+      'file',
+      fileBytes,
+      filename: fileName,
+      contentType: contentType != null ? http.MediaType.parse(contentType) : null,
+    ));
+    final streamed = await request.send();
+    final response = await http.Response.fromStream(streamed);
+    return _handleMapResponse(response);
+  }
+
   static Map<String, dynamic> _handleMapResponse(http.Response response) {
     final decoded = jsonDecode(response.body);
     if (response.statusCode >= 200 && response.statusCode < 300) {

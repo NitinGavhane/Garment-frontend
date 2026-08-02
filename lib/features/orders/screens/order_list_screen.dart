@@ -70,6 +70,10 @@ class _OrderListScreenState extends State<OrderListScreen> {
       paymentStatus: api.paymentStatus,
       createdAt: api.createdAt,
       estimatedDelivery: api.estimatedDelivery ?? api.createdAt,
+      returnReason: api.returnReason,
+      returnStatus: api.returnStatus,
+      returnEvidence: api.returnEvidence,
+      returnAdminNote: api.returnAdminNote,
     )).toList();
 
     if (_selectedFilter == 'All') return converted;

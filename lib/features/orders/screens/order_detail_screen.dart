@@ -159,7 +159,7 @@ class OrderDetailScreen extends StatelessWidget {
             ),
           ),
           const SizedBox(height: AppDimensions.md),
-          if (order.isReturnReplaceEligible)
+          if (order.isReturnReplaceEligible || order.returnStatus != null)
             Container(
               padding: const EdgeInsets.all(16),
               decoration: BoxDecoration(
@@ -171,50 +171,87 @@ class OrderDetailScreen extends StatelessWidget {
                 children: [
                   Text('Return / Replace', style: AppTextStyles.subtitle),
                   const SizedBox(height: 12),
-                  Row(
-                    children: [
-                      Expanded(
-                        child: OutlinedButton.icon(
-                          onPressed: () => showModalBottomSheet(
-                            context: context,
-                            isScrollControlled: true,
-                            builder: (_) => Padding(
-                              padding: const EdgeInsets.all(16),
-child: OrderReturnReplaceSheet(
-                                order: order,
-                                type: ReturnReplaceType.returnRequest,
-                              ),
+                  if (order.returnStatus != null) ...[
+                    _returnStatusLabel(order.returnStatus!),
+                    if (order.returnReason != null) ...[
+                      const SizedBox(height: 4),
+                      Text('Reason: ${order.returnReason}',
+                          style: AppTextStyles.bodySmall),
+                    ],
+                    if (order.returnStatus == 'rejected' &&
+                        order.returnAdminNote != null) ...[
+                      const SizedBox(height: 4),
+                      Text('Note: ${order.returnAdminNote}',
+                          style: AppTextStyles.bodySmall),
+                    ],
+                    if (order.returnEvidence.isNotEmpty) ...[
+                      const SizedBox(height: 8),
+                      SizedBox(
+                        height: 72,
+                        child: ListView.separated(
+                          scrollDirection: Axis.horizontal,
+                          itemCount: order.returnEvidence.length,
+                          separatorBuilder: (_, __) => const SizedBox(width: 8),
+                          itemBuilder: (_, i) => ClipRRect(
+                            borderRadius: BorderRadius.circular(8),
+                            child: Image.network(
+                              order.returnEvidence[i],
+                              width: 72,
+                              height: 72,
+                              fit: BoxFit.cover,
                             ),
                           ),
-                          icon: const Icon(Icons.undo_rounded),
-                          label: const Text('Return'),
-                        ),
-                      ),
-                      const SizedBox(width: 12),
-                      Expanded(
-                        child: OutlinedButton.icon(
-                          onPressed: () => showModalBottomSheet(
-                            context: context,
-                            isScrollControlled: true,
-                            builder: (_) => Padding(
-                              padding: const EdgeInsets.all(16),
-child: OrderReturnReplaceSheet(
-                                order: order,
-                                type: ReturnReplaceType.replaceRequest,
-                              ),
-                            ),
-                          ),
-                          icon: const Icon(Icons.swap_horiz_rounded),
-                          label: const Text('Replace'),
                         ),
                       ),
                     ],
-                  ),
-                  const SizedBox(height: 4),
-                  Text(
-                    'Select items and submit your request.',
-                    style: AppTextStyles.caption,
-                  ),
+                  ],
+                  if (order.isReturnReplaceEligible &&
+                      order.returnStatus == null) ...[
+                    Row(
+                      children: [
+                        Expanded(
+                          child: OutlinedButton.icon(
+                            onPressed: () => showModalBottomSheet(
+                              context: context,
+                              isScrollControlled: true,
+                              builder: (_) => Padding(
+                                padding: const EdgeInsets.all(16),
+                                child: OrderReturnReplaceSheet(
+                                  order: order,
+                                  type: ReturnReplaceType.returnRequest,
+                                ),
+                              ),
+                            ),
+                            icon: const Icon(Icons.undo_rounded),
+                            label: const Text('Return'),
+                          ),
+                        ),
+                        const SizedBox(width: 12),
+                        Expanded(
+                          child: OutlinedButton.icon(
+                            onPressed: () => showModalBottomSheet(
+                              context: context,
+                              isScrollControlled: true,
+                              builder: (_) => Padding(
+                                padding: const EdgeInsets.all(16),
+                                child: OrderReturnReplaceSheet(
+                                  order: order,
+                                  type: ReturnReplaceType.replaceRequest,
+                                ),
+                              ),
+                            ),
+                            icon: const Icon(Icons.swap_horiz_rounded),
+                            label: const Text('Replace'),
+                          ),
+                        ),
+                      ],
+                    ),
+                    const SizedBox(height: 4),
+                    Text(
+                      'Select items and submit your request.',
+                      style: AppTextStyles.caption,
+                    ),
+                  ],
                 ],
               ),
             ),
@@ -266,8 +303,25 @@ child: OrderReturnReplaceSheet(
     );
   }
 
-  Widget _detailRow(String label, String value) {
-    return Padding(
+  Widget _returnStatusLabel(String status) {
+    final (label, color) = switch (status) {
+      'approved' => ('Approved — pickup OTP sent to your phone/email', AppColors.success),
+      'rejected' => ('Not approved', AppColors.error),
+      'picked_up' => ('Picked up — refund/replacement in progress', AppColors.success),
+      'requested' => ('Return requested', AppColors.warning),
+      'replace_requested' => ('Replacement requested', AppColors.warning),
+      _ => ('Request submitted', AppColors.warning),
+    };
+    return Text(
+      label,
+      style: AppTextStyles.bodySmall.copyWith(
+        color: color,
+        fontWeight: FontWeight.w600,
+      ),
+    );
+  }
+
+  Widget _detailRow(String label, String value) {    return Padding(
       padding: const EdgeInsets.only(bottom: 6),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,

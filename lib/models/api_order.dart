@@ -42,6 +42,12 @@ class ApiOrder {
   final String orderStatus;
   final String paymentStatus;
   final String? shippingAddress;
+  final String? returnReason;
+  final String? returnStatus;
+  final List<String> returnEvidence;
+  final String? returnAdminNote;
+  final DateTime? dispatchedAt;
+  final DateTime? deliveredAt;
   final DateTime? estimatedDelivery;
   final DateTime createdAt;
   final List<ApiOrderItem> items;
@@ -61,6 +67,12 @@ class ApiOrder {
     this.orderStatus = 'placed',
     this.paymentStatus = 'pending',
     this.shippingAddress,
+    this.returnReason,
+    this.returnStatus,
+    this.returnEvidence = const [],
+    this.returnAdminNote,
+    this.dispatchedAt,
+    this.deliveredAt,
     this.estimatedDelivery,
     required this.createdAt,
     this.items = const [],
@@ -82,6 +94,16 @@ class ApiOrder {
       orderStatus: json['order_status'] as String? ?? 'placed',
       paymentStatus: json['payment_status'] as String? ?? 'pending',
       shippingAddress: json['shipping_address'] as String?,
+      returnReason: json['return_reason'] as String?,
+      returnStatus: json['return_status'] as String?,
+      returnEvidence: (json['return_evidence'] as List<dynamic>?)?.map((e) => e.toString()).toList() ?? [],
+      returnAdminNote: json['return_admin_note'] as String?,
+      dispatchedAt: json['dispatched_at'] != null
+          ? DateTime.tryParse(json['dispatched_at'] as String)
+          : null,
+      deliveredAt: json['delivered_at'] != null
+          ? DateTime.tryParse(json['delivered_at'] as String)
+          : null,
       estimatedDelivery: json['estimated_delivery'] != null
           ? DateTime.parse(json['estimated_delivery'] as String)
           : null,

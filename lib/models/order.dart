@@ -91,6 +91,10 @@ class Order {
   final DateTime createdAt;
   final DateTime estimatedDelivery;
   final String? trackingId;
+  final String? returnReason;
+  final String? returnStatus;
+  final List<String> returnEvidence;
+  final String? returnAdminNote;
   final List<OrderReturnReplaceRequest> returnReplaceRequests;
 
   const Order({
@@ -112,6 +116,10 @@ class Order {
     required this.createdAt,
     required this.estimatedDelivery,
     this.trackingId,
+    this.returnReason,
+    this.returnStatus,
+    this.returnEvidence = const [],
+    this.returnAdminNote,
     this.returnReplaceRequests = const [],
   });
 

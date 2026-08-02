@@ -30,4 +30,19 @@ class OrderApiService {
   static Future<Uint8List> downloadInvoice(String orderId) async {
     return ApiClient.getBytes('/api/v1/orders/$orderId/invoice');
   }
+
+  /// Uploads a customer return/replace evidence photo; returns the public URL.
+  static Future<String> uploadReturnEvidence({
+    required List<int> fileBytes,
+    required String fileName,
+    String? contentType,
+  }) async {
+    final res = await ApiClient.postMultipart(
+      '/api/v1/upload/return-evidence',
+      fileBytes: fileBytes,
+      fileName: fileName,
+      contentType: contentType,
+    );
+    return res['url'] as String;
+  }
 }

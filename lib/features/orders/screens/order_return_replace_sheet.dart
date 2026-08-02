@@ -80,6 +80,7 @@ class _OrderReturnReplaceSheetState extends State<OrderReturnReplaceSheet> {
 
       await ApiClient.post(endpoint, body: {
         'reason': req.reason,
+        if (req.evidence.isNotEmpty) 'evidence': req.evidence,
         if (req.items.isNotEmpty)
           'items': req.items.map((i) => {
             'order_item_id': i.orderItemId,
