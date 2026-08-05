@@ -158,6 +158,23 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
         orderId: orderId,
         paymentMethod: method.code,
       );
+
+      // Cash on Delivery: no gateway order is opened and nothing needs to be
+      // verified, so the order is confirmed the moment it is created.
+      if (payment['cod'] == true) {
+        if (!mounted) return;
+        setState(() {
+          _isPlacing = false;
+          _isProcessing = true;
+        });
+        _showSuccessDialog(
+          orderId: orderId,
+          amount: amount,
+          methodLabel: 'Cash on Delivery',
+        );
+        return;
+      }
+
       final rzpOrderId = payment['razorpay_order_id'] as String?;
       final keyId = payment['razorpay_key_id'] as String?;
       final amountPaise =

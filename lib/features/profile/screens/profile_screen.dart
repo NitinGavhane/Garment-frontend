@@ -16,6 +16,10 @@ import 'referral_screen.dart';
 import 'help_screen.dart';
 import 'settings_screen.dart';
 import 'change_password_screen.dart';
+import 'privacy_policy_screen.dart';
+import 'terms_conditions_screen.dart';
+import 'loyalty_program_screen.dart';
+import 'faq_screen.dart';
 import '../../auth/screens/register_screen.dart';
 
 class ProfileScreen extends StatefulWidget {
@@ -263,6 +267,54 @@ class _ProfileScreenState extends State<ProfileScreen> {
                         onTap: () => Navigator.push(
                           context,
                           MaterialPageRoute(builder: (_) => const HelpScreen()),
+                        ),
+                      ),
+                      const SizedBox(height: AppDimensions.xs),
+                      Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 4),
+                        child: Text(
+                          'POLICIES',
+                          style: GoogleFonts.plusJakartaSans(
+                            fontSize: 11,
+                            fontWeight: FontWeight.w700,
+                            letterSpacing: 1,
+                            color: AppColors.textMuted,
+                          ),
+                        ),
+                      ),
+                      _menuItem(
+                        icon: Iconsax.crown,
+                        title: 'Drishti Rewards & Club',
+                        subtitle: 'Loyalty program',
+                        onTap: () => Navigator.push(
+                          context,
+                          MaterialPageRoute(builder: (_) => const LoyaltyProgramScreen()),
+                        ),
+                      ),
+                      _menuItem(
+                        icon: Iconsax.shield_tick,
+                        title: 'Privacy Policy',
+                        subtitle: 'Your data & rights',
+                        onTap: () => Navigator.push(
+                          context,
+                          MaterialPageRoute(builder: (_) => const PrivacyPolicyScreen()),
+                        ),
+                      ),
+                      _menuItem(
+                        icon: Iconsax.document_text,
+                        title: 'Terms & Conditions',
+                        onTap: () => Navigator.push(
+                          context,
+                          MaterialPageRoute(builder: (_) => const TermsConditionsScreen()),
+                        ),
+                      ),
+                      _menuItem(
+                        icon: Iconsax.message_question,
+                        title: 'FAQ',
+                        subtitle: 'Frequently asked questions',
+                        onTap: () => Navigator.push(
+                          context,
+                          MaterialPageRoute(builder: (_) => const FaqScreen()),
                         ),
                       ),
                       const SizedBox(height: AppDimensions.lg),
