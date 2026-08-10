@@ -6,7 +6,7 @@ set -euo pipefail
 
 AWS="/c/Program Files/Amazon/AWSCLIV2/aws.exe"   # aws CLI is not on PATH in Git Bash
 BUCKET="dristi-shop-web-078525505229"
-DIST_ID="E21DI09WL10QOU"
+DIST_ID="EB913BB06JAAA"
 REGION="ap-south-1"
 
 DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
@@ -21,4 +21,4 @@ echo "==> Uploading to S3..."
 echo "==> Invalidating CloudFront cache (so users get the new version)..."
 "$AWS" cloudfront create-invalidation --distribution-id "$DIST_ID" --paths "/*" --query "Invalidation.Status" --output text
 
-echo "==> Done. Live at https://da6i5bomtji8s.cloudfront.net (cache clears in ~1-2 min)"
+echo "==> Done. Live at https://d26k0k074gy5o4.cloudfront.net (cache clears in ~1-2 min)"
