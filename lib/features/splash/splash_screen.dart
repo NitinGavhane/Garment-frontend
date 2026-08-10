@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -23,6 +24,7 @@ class _SplashScreenState extends State<SplashScreen>
   late final Animation<double> _taglineFade;
   late final Animation<double> _progress;
   late final Animation<double> _spinner;
+  Timer? _navTimer;
 
   @override
   void initState() {
@@ -71,7 +73,7 @@ class _SplashScreenState extends State<SplashScreen>
     WidgetsBinding.instance.addPostFrameCallback((_) {
       context.read<LocationProvider>().requestLocation();
     });
-    Future.delayed(const Duration(milliseconds: 2800), () {
+    _navTimer = Timer(const Duration(milliseconds: 2800), () {
       if (!mounted) return;
       if (widget.pendingProductId != null) {
         Navigator.pushReplacementNamed(
@@ -90,6 +92,7 @@ class _SplashScreenState extends State<SplashScreen>
 
   @override
   void dispose() {
+    _navTimer?.cancel();
     _controller.dispose();
     super.dispose();
   }
