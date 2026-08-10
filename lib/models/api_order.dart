@@ -50,6 +50,11 @@ class ApiOrder {
   final DateTime? deliveredAt;
   final DateTime? estimatedDelivery;
   final DateTime createdAt;
+  // ShipRocket courier tracking (populated once the order is dispatched).
+  final String? awbCode;
+  final String? courierName;
+  final String? shipmentStatus;
+  final String? trackingUrl;
   final List<ApiOrderItem> items;
 
   const ApiOrder({
@@ -75,6 +80,10 @@ class ApiOrder {
     this.deliveredAt,
     this.estimatedDelivery,
     required this.createdAt,
+    this.awbCode,
+    this.courierName,
+    this.shipmentStatus,
+    this.trackingUrl,
     this.items = const [],
   });
 
@@ -108,6 +117,10 @@ class ApiOrder {
           ? DateTime.parse(json['estimated_delivery'] as String)
           : null,
       createdAt: DateTime.parse(json['created_at'] as String),
+      awbCode: json['awb_code'] as String?,
+      courierName: json['courier_name'] as String?,
+      shipmentStatus: json['shipment_status'] as String?,
+      trackingUrl: json['tracking_url'] as String?,
       items: (json['items'] as List<dynamic>?)
               ?.map((i) => ApiOrderItem.fromJson(i as Map<String, dynamic>))
               .toList() ??

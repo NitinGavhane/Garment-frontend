@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:printing/printing.dart';
+import 'package:url_launcher/url_launcher.dart';
 import '../../../core/constants/app_colors.dart';
 import '../../../core/constants/app_dimensions.dart';
 import '../../../core/constants/app_text_styles.dart';
@@ -62,6 +63,45 @@ class OrderDetailScreen extends StatelessWidget {
               ],
             ),
           ),
+          if (order.awbCode != null || order.courierName != null ||
+              order.shipmentStatus != null)
+            ...[
+              const SizedBox(height: AppDimensions.md),
+              Container(
+                padding: const EdgeInsets.all(16),
+                decoration: BoxDecoration(
+                  color: AppColors.surface,
+                  borderRadius: BorderRadius.circular(AppDimensions.radiusMd),
+                ),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text('Tracking', style: AppTextStyles.subtitle),
+                    const SizedBox(height: 12),
+                    if (order.courierName != null)
+                      _detailRow('Courier', order.courierName!),
+                    if (order.awbCode != null)
+                      _detailRow('AWB No.', order.awbCode!),
+                    if (order.shipmentStatus != null)
+                      _detailRow('Status', order.shipmentStatus!),
+                    if (order.trackingUrl != null) ...[
+                      const SizedBox(height: 12),
+                      SizedBox(
+                        width: double.infinity,
+                        child: OutlinedButton.icon(
+                          onPressed: () => launchUrl(
+                            Uri.parse(order.trackingUrl!),
+                            mode: LaunchMode.externalApplication,
+                          ),
+                          icon: const Icon(Icons.local_shipping_rounded),
+                          label: const Text('Track on ShipRocket'),
+                        ),
+                      ),
+                    ],
+                  ],
+                ),
+              ),
+            ],
           const SizedBox(height: AppDimensions.md),
           Container(
             padding: const EdgeInsets.all(16),

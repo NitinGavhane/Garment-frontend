@@ -91,6 +91,11 @@ class Order {
   final DateTime createdAt;
   final DateTime estimatedDelivery;
   final String? trackingId;
+  /// ShipRocket courier AWB once the order is dispatched.
+  final String? awbCode;
+  final String? courierName;
+  final String? shipmentStatus;
+  final String? trackingUrl;
   final String? returnReason;
   final String? returnStatus;
   final List<String> returnEvidence;
@@ -116,6 +121,10 @@ class Order {
     required this.createdAt,
     required this.estimatedDelivery,
     this.trackingId,
+    this.awbCode,
+    this.courierName,
+    this.shipmentStatus,
+    this.trackingUrl,
     this.returnReason,
     this.returnStatus,
     this.returnEvidence = const [],
