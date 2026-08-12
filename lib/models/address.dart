@@ -38,4 +38,21 @@ class Address {
       type: json['type'] as String? ?? 'Home',
     );
   }
+
+  /// The one-line shipping string the orders endpoint stores. Mirrors the web
+  /// storefront's `formatAddressLine` so the backend can parse it back into
+  /// the billing fields ShipRocket needs (name, phone, street, city, state,
+  /// pincode, country).
+  @override
+  String toString() => [
+        fullName,
+        phone,
+        street,
+        city,
+        state,
+        pincode,
+        country,
+      ]
+          .where((e) => e.trim().isNotEmpty)
+          .join(', ');
 }
