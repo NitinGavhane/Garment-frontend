@@ -67,40 +67,7 @@ class OrderDetailScreen extends StatelessWidget {
               order.shipmentStatus != null)
             ...[
               const SizedBox(height: AppDimensions.md),
-              Container(
-                padding: const EdgeInsets.all(16),
-                decoration: BoxDecoration(
-                  color: AppColors.surface,
-                  borderRadius: BorderRadius.circular(AppDimensions.radiusMd),
-                ),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text('Tracking', style: AppTextStyles.subtitle),
-                    const SizedBox(height: 12),
-                    if (order.courierName != null)
-                      _detailRow('Courier', order.courierName!),
-                    if (order.awbCode != null)
-                      _detailRow('AWB No.', order.awbCode!),
-                    if (order.shipmentStatus != null)
-                      _detailRow('Status', order.shipmentStatus!),
-                    if (order.trackingUrl != null) ...[
-                      const SizedBox(height: 12),
-                      SizedBox(
-                        width: double.infinity,
-                        child: OutlinedButton.icon(
-                          onPressed: () => launchUrl(
-                            Uri.parse(order.trackingUrl!),
-                            mode: LaunchMode.externalApplication,
-                          ),
-                          icon: const Icon(Icons.local_shipping_rounded),
-                          label: const Text('Track on ShipRocket'),
-                        ),
-                      ),
-                    ],
-                  ],
-                ),
-              ),
+              _LiveTrackingCard(order: order),
             ],
           const SizedBox(height: AppDimensions.md),
           Container(
@@ -399,6 +366,131 @@ class OrderDetailScreen extends StatelessWidget {
       ),
     );
   }
+}
+
+/// Fetches live ShipRocket tracking for the order and renders the courier
+/// card with a refresh button, falling back to the snapshot fields stored on
+/// the order when the live call fails (e.g. offline or 404 before an AWB).
+class _LiveTrackingCard extends StatefulWidget {
+  final Order order;
+
+  const _LiveTrackingCard({required this.order});
+
+  @override
+  State<_LiveTrackingCard> createState() => _LiveTrackingCardState();
+}
+
+class _LiveTrackingCardState extends State<_LiveTrackingCard> {
+  String? _awb;
+  String? _courier;
+  String? _status;
+  String? _trackingUrl;
+  bool _busy = false;
+
+  Order get order => widget.order;
+
+  @override
+  void initState() {
+    super.initState();
+    _awb = order.awbCode;
+    _courier = order.courierName;
+    _status = order.shipmentStatus;
+    _trackingUrl = order.trackingUrl;
+    _refresh();
+  }
+
+  Future<void> _refresh() async {
+    setState(() => _busy = true);
+    try {
+      final data = await OrderApiService.getTracking(order.id);
+      if (!mounted) return;
+      setState(() {
+        _awb = (data['awb_code'] as String?) ?? _awb;
+        _courier = (data['courier_name'] as String?) ?? _courier;
+        _status =
+            (data['shipment_status'] as String?) ?? _status;
+        _trackingUrl = (data['tracking_url'] as String?) ?? _trackingUrl;
+      });
+    } on ApiException catch (_) {
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+        content: Text('Could not refresh tracking. Showing saved status.'),
+      ));
+    } catch (_) {
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+        content: Text('Could not refresh tracking. Showing saved status.'),
+      ));
+    } finally {
+      if (mounted) setState(() => _busy = false);
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      padding: const EdgeInsets.all(16),
+      decoration: BoxDecoration(
+        color: AppColors.surface,
+        borderRadius: BorderRadius.circular(AppDimensions.radiusMd),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Text('Tracking', style: AppTextStyles.subtitle),
+              IconButton(
+                onPressed: _busy ? null : _refresh,
+                icon: _busy
+                    ? const SizedBox(
+                        width: 18,
+                        height: 18,
+                        child: CircularProgressIndicator(strokeWidth: 2),
+                      )
+                    : const Icon(Icons.refresh_rounded, size: 20),
+                tooltip: 'Refresh tracking',
+                visualDensity: VisualDensity.compact,
+              ),
+            ],
+          ),
+          const SizedBox(height: 4),
+          if (_courier != null) _row('Courier', _courier!),
+          if (_awb != null) _row('AWB No.', _awb!),
+          if (_status != null) _row('Status', _status!),
+          if (_trackingUrl != null) ...[
+            const SizedBox(height: 12),
+            SizedBox(
+              width: double.infinity,
+              child: OutlinedButton.icon(
+                onPressed: () => launchUrl(
+                  Uri.parse(_trackingUrl!),
+                  mode: LaunchMode.externalApplication,
+                ),
+                icon: const Icon(Icons.local_shipping_rounded),
+                label: const Text('Track on ShipRocket'),
+              ),
+            ),
+          ],
+        ],
+      ),
+    );
+  }
+
+  Widget _row(String label, String value) => Padding(
+        padding: const EdgeInsets.only(bottom: 6),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            Text(label, style: AppTextStyles.bodySmall),
+            Text(value,
+                style: AppTextStyles.bodySmall.copyWith(
+                  fontWeight: FontWeight.w500,
+                )),
+          ],
+        ),
+      );
 }
 
 /// Downloads the order's GST invoice PDF from the backend and hands it to the

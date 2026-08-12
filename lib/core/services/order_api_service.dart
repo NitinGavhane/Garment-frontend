@@ -25,6 +25,11 @@ class OrderApiService {
     return ApiClient.get('/api/v1/orders/$orderId');
   }
 
+  /// Live ShipRocket courier tracking for a shipped order (fresh AWB status).
+  static Future<Map<String, dynamic>> getTracking(String orderId) async {
+    return ApiClient.get('/api/v1/orders/$orderId/tracking');
+  }
+
   /// The order's GST tax invoice as PDF bytes. The backend only serves it for
   /// paid orders, otherwise it throws an ApiException the caller can show.
   static Future<Uint8List> downloadInvoice(String orderId) async {
