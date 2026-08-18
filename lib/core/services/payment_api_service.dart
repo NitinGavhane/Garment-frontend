@@ -13,15 +13,11 @@ class PaymentApiService {
 
   static Future<Map<String, dynamic>> verifyPayment({
     required String orderId,
-    required String razorpayOrderId,
-    required String razorpayPaymentId,
-    required String razorpaySignature,
+    required String cashfreeOrderId,
   }) async {
     return ApiClient.post('/api/v1/payments/verify', body: {
       'order_id': orderId,
-      'razorpay_order_id': razorpayOrderId,
-      'razorpay_payment_id': razorpayPaymentId,
-      'razorpay_signature': razorpaySignature,
+      'cashfree_order_id': cashfreeOrderId,
     });
   }
 }

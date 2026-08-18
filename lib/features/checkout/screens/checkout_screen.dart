@@ -12,7 +12,7 @@ import '../../../core/services/payment_api_service.dart';
 import '../../../core/services/payment_methods_api_service.dart';
 import '../../../core/services/delivery_api_service.dart';
 import '../../../core/services/api_client.dart';
-import '../../../core/services/razorpay/razorpay_checkout.dart';
+import '../../../core/services/cashfree/cashfree_checkout.dart';
 import '../../../providers/cart_provider.dart';
 import '../../../providers/auth_provider.dart';
 import '../../../providers/address_provider.dart';
@@ -32,7 +32,7 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
   bool _isPlacing = false;
   bool _isProcessing = false;
   String? _error;
-  final RazorpayCheckout _razorpay = RazorpayCheckout();
+  final CashfreeCheckout _cashfree = CashfreeCheckout();
 
   List<PaymentMethod> _methods = [];
   PaymentMethod? _selectedMethod;
@@ -49,7 +49,7 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
 
   @override
   void dispose() {
-    _razorpay.dispose();
+    _cashfree.dispose();
     super.dispose();
   }
 
@@ -126,6 +126,11 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
       return;
     }
 
+    if (_selectedAddress == null) {
+      setState(() => _error = 'Please set up a delivery address to continue.');
+      return;
+    }
+
     final method = _selectedMethod;
     if (method == null) {
       setState(() => _error = 'Please choose a payment method.');
@@ -175,15 +180,18 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
         return;
       }
 
-      final rzpOrderId = payment['razorpay_order_id'] as String?;
-      final keyId = payment['razorpay_key_id'] as String?;
-      final amountPaise =
-          (payment['amount_paise'] as num?)?.toInt() ?? (amount * 100).round();
-      final currency = payment['currency'] as String? ?? 'INR';
+      final paymentSessionId = payment['payment_session_id'] as String?;
+      final cashfreeOrderId = payment['cashfree_order_id'] as String?;
+      final cashfreeEnvironment = payment['cashfree_environment'] as String?;
+      final returnUrl = payment['return_url'] as String?;
 
       if (!mounted) return;
 
-      if (rzpOrderId == null || keyId == null || keyId.isEmpty) {
+      if (paymentSessionId == null ||
+          paymentSessionId.isEmpty ||
+          cashfreeOrderId == null ||
+          cashfreeOrderId.isEmpty ||
+          cashfreeEnvironment == null) {
         setState(() {
           _error = 'Payment gateway is not available right now. Please try again later.';
           _isPlacing = false;
@@ -197,18 +205,12 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
         _isProcessing = true;
       });
 
-      final user = auth.user;
-      _razorpay.open(
-        RazorpayOptions(
-          keyId: keyId,
-          orderId: rzpOrderId,
-          amountPaise: amountPaise,
-          currency: currency,
-          name: 'Dristi Fashions',
-          description: 'Order payment',
-          email: user?.email,
-          contact: user?.phone,
-          method: method.code,
+      _cashfree.open(
+        CashfreeOptions(
+          paymentSessionId: paymentSessionId,
+          cashfreeOrderId: cashfreeOrderId,
+          cashfreeEnvironment: cashfreeEnvironment,
+          returnUrl: returnUrl,
         ),
         onSuccess: (result) => _onPaymentSuccess(orderId, amount, result),
         onError: _onPaymentError,
@@ -244,13 +246,11 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
   }
 
   Future<void> _onPaymentSuccess(
-      String orderId, double amount, RazorpaySuccess result) async {
+      String orderId, double amount, CashfreeSuccess result) async {
     try {
       final verified = await PaymentApiService.verifyPayment(
         orderId: orderId,
-        razorpayOrderId: result.orderId,
-        razorpayPaymentId: result.paymentId,
-        razorpaySignature: result.signature,
+        cashfreeOrderId: result.cashfreeOrderId,
       );
       if (!mounted) return;
       setState(() => _isProcessing = false);
@@ -538,6 +538,54 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
                   ],
                 ),
               ),
+            )
+          else
+            GestureDetector(
+              onTap: () => _openAddressSetup(context, addresses),
+              child: Container(
+                padding: const EdgeInsets.all(16),
+                decoration: BoxDecoration(
+                  color: AppColors.warning.withValues(alpha: 0.08),
+                  borderRadius: BorderRadius.circular(AppDimensions.radiusMd),
+                  border: Border.all(color: AppColors.warning),
+                ),
+                child: Row(
+                  children: [
+                    Container(
+                      width: 44, height: 44,
+                      decoration: BoxDecoration(
+                        color: AppColors.warning.withValues(alpha: 0.15),
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                      child: const Icon(Iconsax.add_circle,
+                          color: AppColors.warning, size: 22),
+                    ),
+                    const SizedBox(width: 12),
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            'Add Delivery Address',
+                            style: AppTextStyles.subtitle.copyWith(
+                              fontWeight: FontWeight.w600, fontSize: 13,
+                            ),
+                          ),
+                          const SizedBox(height: 2),
+                          Text(
+                            'You need a delivery address to place this order.',
+                            style: AppTextStyles.caption.copyWith(
+                              color: AppColors.textSecondary, fontSize: 11,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                    const Icon(Icons.chevron_right,
+                        color: AppColors.warning, size: 20),
+                  ],
+                ),
+              ),
             ),
           const SizedBox(height: AppDimensions.lg),
           _sectionHeader('Payment Methods', Iconsax.wallet),
@@ -684,7 +732,35 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
     );
   }
 
+  void _openAddressSetup(BuildContext context, List<Address> addresses) {
+    if (addresses.isEmpty) {
+      _openNewAddress();
+      return;
+    }
+    _showAddressPicker(context, addresses);
+  }
+
+  Future<void> _openNewAddress() async {
+    await Navigator.push(
+      context,
+      MaterialPageRoute(builder: (_) => const _NewAddressScreen()),
+    );
+    if (!mounted) return;
+    final provider = context.read<AddressProvider>();
+    await provider.fetchAddresses();
+    if (!mounted) return;
+    final updated = provider.addresses;
+    if (updated.isNotEmpty && _selectedAddress == null) {
+      setState(() => _selectedAddress = updated.first);
+      await _loadPaymentMethods();
+    }
+  }
+
   void _showAddressPicker(BuildContext context, List<Address> addresses) {
+    if (addresses.isEmpty) {
+      _openNewAddress();
+      return;
+    }
     showModalBottomSheet(
       context: context,
       shape: const RoundedRectangleBorder(

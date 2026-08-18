@@ -36,7 +36,7 @@ class PrivacyPolicyScreen extends StatelessWidget {
     PolicySection(
       heading: '4. Cookies and Tracking Technologies',
       paragraph:
-          'We use cookies, pixel tags, log files, and third-party SDKs (such as analytics and payment gateways like Razorpay, PayU, or Cashfree) to make our Platform function smoothly.',
+          'We use cookies, pixel tags, log files, and third-party SDKs (such as analytics and payment gateways like Cashfree) to make our Platform function smoothly.',
       bullets: [
         'Strictly Necessary Cookies: Required for basic site navigation, security, and account logins. Disabling these may impact platform functionality.',
         'Functional & Performance Cookies: Help remember your preferences (like region or font size) and analyse traffic to improve our services.',

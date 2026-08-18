@@ -69,7 +69,7 @@ class FaqScreen extends StatelessWidget {
       FaqItem(
         question: 'Is it safe to use my credit/debit card on the platform?',
         answer:
-            'Yes, absolutely. All online transactions are processed through encrypted, secure payment gateways (such as Razorpay and PayU). Fashions Drishti never stores your complete card details or CVV.',
+            'Yes, absolutely. All online transactions are processed through encrypted, secure payment gateways (such as Cashfree). Fashions Drishti never stores your complete card details or CVV.',
       ),
     ]),
     FaqCategory(heading: '4. Returns, Exchanges & Refunds', items: [
